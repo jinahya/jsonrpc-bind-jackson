@@ -21,7 +21,6 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,7 @@ public class CalculatorControllerTest {
         final CalculatorRequest calculatorRequest = new CalculatorRequest();
         calculatorRequest.setMethod(CalculatorRequest.METHOD_ADD);
         calculatorRequest.setParams(paramsNode);
-        calculatorRequest.setId((ValueNode) OBJECT_MAPPER.createObjectNode().put("id", System.nanoTime()).get("id"));
+        calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().numberNode(System.nanoTime()));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
@@ -85,8 +84,7 @@ public class CalculatorControllerTest {
         final CalculatorRequest calculatorRequest = new CalculatorRequest();
         calculatorRequest.setMethod(CalculatorRequest.METHOD_SUBTRACT);
         calculatorRequest.setParams(paramsNode);
-        calculatorRequest.setId((ValueNode) OBJECT_MAPPER.createObjectNode().put("id", "subtract1").get("id"));
-//        calculatorRequest.setId(Long.toString(System.nanoTime()));
+        calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().textNode("subtract1"));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
@@ -110,8 +108,7 @@ public class CalculatorControllerTest {
         final CalculatorRequest calculatorRequest = new CalculatorRequest();
         calculatorRequest.setMethod(CalculatorRequest.METHOD_MULTIPLY);
         calculatorRequest.setParams(paramsNode);
-//        calculatorRequest.setId(Long.toString(System.nanoTime()));
-        calculatorRequest.setId((ValueNode) OBJECT_MAPPER.createObjectNode().put("id", 1.1d).get("id"));
+        calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().numberNode(1.1d));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
