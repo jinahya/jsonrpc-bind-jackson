@@ -64,7 +64,7 @@ public class CalculatorControllerTest {
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
-                        .accept(APPLICATION_JSON))
+                                 .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -88,7 +88,7 @@ public class CalculatorControllerTest {
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
-                        .accept(APPLICATION_JSON))
+                                 .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -112,7 +112,7 @@ public class CalculatorControllerTest {
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
                 .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
-                        .accept(APPLICATION_JSON))
+                                 .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

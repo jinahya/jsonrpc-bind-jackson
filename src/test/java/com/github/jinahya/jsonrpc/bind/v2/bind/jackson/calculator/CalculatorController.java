@@ -122,7 +122,7 @@ public class CalculatorController {
             );
         }
         final CalculatorRequestParams calculatorRequestParams = calculatorRequest.applyParams(
-                () -> OBJECT_MAPPER,
+                OBJECT_MAPPER,
                 serviceParameterType.asSubclass(CalculatorRequestParams.class),
                 Function.identity());
         final BigDecimal result;
@@ -163,7 +163,7 @@ public class CalculatorController {
         }
         final CalculatorResponse calculatorResponse = new CalculatorResponse();
         calculatorResponse.setResultExclusively(result);
-        calculatorResponse.setIdFrom(calculatorRequest);
+        calculatorResponse.copyIdFrom(calculatorRequest);
         return ResponseEntity.ok(calculatorResponse);
     }
 

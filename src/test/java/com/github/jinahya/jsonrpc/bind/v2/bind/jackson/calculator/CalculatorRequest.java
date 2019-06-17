@@ -21,11 +21,11 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jinahya.jsonrpc.v2.bind.jackson.LazyRequest;
+import com.github.jinahya.jsonrpc.v2.bind.jackson.JacksonRequest;
 
 import javax.validation.constraints.NotNull;
 
-public class CalculatorRequest extends LazyRequest {
+public class CalculatorRequest extends JacksonRequest {
 
     // -----------------------------------------------------------------------------------------------------------------
     public static final String METHOD_ADD = "add";

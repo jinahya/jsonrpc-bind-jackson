@@ -20,11 +20,11 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.v2.bind.jackson.LazyResponse;
+import com.github.jinahya.jsonrpc.v2.bind.jackson.JacksonResponse;
 
 import java.math.BigDecimal;
 
-public class CalculatorResponse extends LazyResponse<BigDecimal, CalculatorResponseError> {
+public class CalculatorResponse extends JacksonResponse<BigDecimal, CalculatorResponseError> {
 
     public static CalculatorResponse withResult(final BigDecimal result) {
         final CalculatorResponse instance = new CalculatorResponse();
