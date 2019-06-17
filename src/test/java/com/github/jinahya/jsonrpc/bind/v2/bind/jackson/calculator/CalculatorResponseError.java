@@ -20,9 +20,9 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
+import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-public class CalculatorResponseError extends ResponseObject.ErrorObject<CalculatorResponseErrorData> {
+public class CalculatorResponseError extends ErrorObject<CalculatorResponseErrorData> {
 
     public static CalculatorResponseError of(final long code, final String message,
                                              final CalculatorResponseErrorData data) {

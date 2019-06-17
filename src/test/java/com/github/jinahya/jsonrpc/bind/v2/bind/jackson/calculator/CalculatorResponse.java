@@ -26,15 +26,27 @@ import java.math.BigDecimal;
 
 public class CalculatorResponse extends JacksonResponse<BigDecimal, CalculatorResponseError> {
 
-    public static CalculatorResponse withResult(final BigDecimal result) {
+    /**
+     * Creates a new instance whose {@value #PROPERTY_NAME_RESULT} property set with specified value.
+     *
+     * @param result the value for {@value #PROPERTY_NAME_RESULT} property.
+     * @return a new instance with specified {@code result}.
+     */
+    public static CalculatorResponse of(final BigDecimal result) {
         final CalculatorResponse instance = new CalculatorResponse();
-        instance.setResult(result);
+        instance.setResultExclusively(result);
         return instance;
     }
 
-    public static CalculatorResponse withError(final CalculatorResponseError error) {
+    /**
+     * Creates a new instance whose {@value #PROPERTY_NAME_ERROR} property set with specified value.
+     *
+     * @param error the value for {@value #PROPERTY_NAME_ERROR} property.
+     * @return a new instance with specified {@code error}.
+     */
+    public static CalculatorResponse of(final CalculatorResponseError error) {
         final CalculatorResponse instance = new CalculatorResponse();
-        instance.setError(error);
+        instance.setErrorExclusively(error);
         return instance;
     }
 }
