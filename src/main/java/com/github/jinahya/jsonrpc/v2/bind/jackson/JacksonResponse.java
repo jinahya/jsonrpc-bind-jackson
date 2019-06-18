@@ -5,6 +5,6 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>>
-        extends ResponseObject<ValueNode, ResultType, ErrorType> {
+        extends ResponseObject<ResultType, ErrorType, ValueNode> {
 
 }

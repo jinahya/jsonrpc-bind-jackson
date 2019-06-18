@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.2.1-SNAPSHOT</version>
+      <version>0.2.2-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

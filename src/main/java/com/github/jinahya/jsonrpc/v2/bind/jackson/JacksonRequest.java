@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class JacksonRequest extends RequestObject<ValueNode, JsonNode> {
+public class JacksonRequest extends RequestObject<JsonNode, ValueNode> {
 
     /**
      * Returns current value of {@link #getParams()} mapped to specified type.
