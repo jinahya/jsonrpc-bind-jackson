@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
+package com.github.jinahya.jsonrpc.bind.calculator;
 
 /*-
  * #%L
@@ -21,7 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jinahya.jsonrpc.v2.bind.jackson.JacksonRequest;
+import com.github.jinahya.jsonrpc.v2.bind.JacksonRequest;
 
 import javax.validation.constraints.NotNull;
 

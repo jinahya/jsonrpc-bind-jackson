@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
+package com.github.jinahya.jsonrpc.bind.calculator;
 
 /*-
  * #%L
@@ -27,16 +27,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 
-import static com.github.jinahya.jsonrpc.bind.v2.bind.JacksonUtils.OBJECT_MAPPER;
-import static com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator.CalculatorController.PATH_VALUE_CALL;
+import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -63,7 +62,8 @@ public class CalculatorControllerTest {
         calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().numberNode(System.nanoTime()));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
-                .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
+                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
+                                 .contentType(APPLICATION_JSON).content(content)
                                  .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -87,7 +87,8 @@ public class CalculatorControllerTest {
         calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().textNode("subtract1"));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
-                .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
+                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
+                                 .contentType(APPLICATION_JSON).content(content)
                                  .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -111,7 +112,8 @@ public class CalculatorControllerTest {
         calculatorRequest.setId(OBJECT_MAPPER.getNodeFactory().numberNode(1.1d));
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
         final MvcResult mvcResult = mockMvc
-                .perform(post("/" + PATH_VALUE_CALL).contentType(APPLICATION_JSON).content(content)
+                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
+                                 .contentType(APPLICATION_JSON).content(content)
                                  .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())

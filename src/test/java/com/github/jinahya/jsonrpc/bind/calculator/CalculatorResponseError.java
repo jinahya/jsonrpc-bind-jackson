@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
+package com.github.jinahya.jsonrpc.bind.calculator;
 
 /*-
  * #%L
@@ -20,24 +20,16 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  * #L%
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-@SpringBootApplication
-public class Application {
+public class CalculatorResponseError extends ErrorObject<CalculatorResponseErrorData> {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-    @Bean
-    public Calculator calculator() {
-        return new CalculatorImpl();
-    }
-
-    @Bean
-    public CalculatorService calculatorService() {
-        return new CalculatorServiceImpl();
+    public static CalculatorResponseError of(final long code, final String message,
+                                             final CalculatorResponseErrorData data) {
+        final CalculatorResponseError instance = new CalculatorResponseError();
+        instance.setCode(code);
+        instance.setMessage(message);
+        instance.setData(data);
+        return instance;
     }
 }

@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
+package com.github.jinahya.jsonrpc.bind.calculator;
 
 /*-
  * #%L
@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.bind.jackson.calculator;
  */
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.github.jinahya.jsonrpc.bind.JsonProcedure;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.function.Function;
 
-import static com.github.jinahya.jsonrpc.bind.v2.bind.BeanValidationUtils.requireValid;
-import static com.github.jinahya.jsonrpc.bind.v2.bind.JacksonUtils.OBJECT_MAPPER;
+import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
+import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
 
 @RestController
 @Slf4j
@@ -74,10 +75,10 @@ public class CalculatorController {
         Method serviceMethod = null;
         Class<?> serviceParameterType = null;
         for (final Method declaredMethod : CalculatorService.class.getDeclaredMethods()) {
-            final CalculatorService.CalculatorProcedure calculatorProcedure
-                    = declaredMethod.getAnnotation(CalculatorService.CalculatorProcedure.class);
+            final JsonProcedure calculatorProcedure
+                    = declaredMethod.getAnnotation(JsonProcedure.class);
             if (calculatorProcedure == null) {
-                log.info("not annotated with {}: {}", CalculatorService.CalculatorProcedure.class, declaredMethod);
+                log.info("not annotated with {}: {}", JsonProcedure.class, declaredMethod);
                 continue;
             }
             String procedureMethod = calculatorProcedure.method();
