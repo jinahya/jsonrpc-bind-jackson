@@ -20,11 +20,12 @@ package com.github.jinahya.jsonrpc.bind.calculator;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.v2.bind.JacksonResponse;
+import com.fasterxml.jackson.databind.node.ValueNode;
+import com.github.jinahya.jsonrpc.bind.v2.JacksonResponse;
 
 import java.math.BigDecimal;
 
-public class CalculatorResponse extends JacksonResponse<BigDecimal, CalculatorResponseError> {
+public class CalculatorResponse extends JacksonResponse<BigDecimal, CalculatorResponseError, ValueNode> {
 
     /**
      * Creates a new instance whose {@value #PROPERTY_NAME_RESULT} property set with specified value.

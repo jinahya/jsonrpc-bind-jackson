@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.v2.bind;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -21,10 +21,9 @@ package com.github.jinahya.jsonrpc.v2.bind;
  */
 
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>>
-        extends ResponseObject<ResultType, ErrorType, ValueNode> {
+public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType extends ValueNode>
+        extends ResponseObject<ResultType, ErrorType, IdType> {
 
 }

@@ -21,7 +21,6 @@ package com.github.jinahya.jsonrpc.bind.calculator;
  */
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.github.jinahya.jsonrpc.bind.JsonProcedure;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +57,7 @@ public class CalculatorController {
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
-    public ResponseEntity<?> call(final InputStream bodyStream) throws IOException {
+    public ResponseEntity<?> call(@NotNull final InputStream bodyStream) throws IOException {
         final CalculatorRequest calculatorRequest;
         try {
             calculatorRequest = requireValid(OBJECT_MAPPER.readValue(bodyStream, CalculatorRequest.class));
@@ -75,10 +75,10 @@ public class CalculatorController {
         Method serviceMethod = null;
         Class<?> serviceParameterType = null;
         for (final Method declaredMethod : CalculatorService.class.getDeclaredMethods()) {
-            final JsonProcedure calculatorProcedure
-                    = declaredMethod.getAnnotation(JsonProcedure.class);
+            final CalculatorProcedure calculatorProcedure
+                    = declaredMethod.getAnnotation(CalculatorProcedure.class);
             if (calculatorProcedure == null) {
-                log.info("not annotated with {}: {}", JsonProcedure.class, declaredMethod);
+                log.info("not annotated with {}: {}", CalculatorProcedure.class, declaredMethod);
                 continue;
             }
             String procedureMethod = calculatorProcedure.method();
