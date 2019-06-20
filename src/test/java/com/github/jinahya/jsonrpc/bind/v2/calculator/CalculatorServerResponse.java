@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.calculator;
+package com.github.jinahya.jsonrpc.bind.v2.calculator;
 
 /*-
  * #%L
@@ -21,7 +21,6 @@ package com.github.jinahya.jsonrpc.bind.calculator;
  */
 
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.JacksonResponse;
 import com.github.jinahya.jsonrpc.bind.v2.JacksonServerResponse;
 
 import java.math.BigDecimal;

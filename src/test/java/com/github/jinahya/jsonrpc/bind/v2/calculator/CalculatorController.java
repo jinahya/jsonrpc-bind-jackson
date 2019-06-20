@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.calculator;
+package com.github.jinahya.jsonrpc.bind.v2.calculator;
 
 /*-
  * #%L
@@ -58,15 +58,15 @@ public class CalculatorController {
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<?> call(@NotNull final InputStream bodyStream) throws IOException {
-        final CalculatorRequest calculatorRequest;
+        final CalculatorServerRequest calculatorRequest;
         try {
-            calculatorRequest = requireValid(OBJECT_MAPPER.readValue(bodyStream, CalculatorRequest.class));
+            calculatorRequest = requireValid(OBJECT_MAPPER.readValue(bodyStream, CalculatorServerRequest.class));
         } catch (final JsonParseException jpe) {
-            return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
+            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
                     ErrorObject.CODE_PARSE_ERROR, "failed to parse json; " + jpe.getMessage(),
                     CalculatorResponseErrorData.of(null, null))));
         } catch (final ConstraintViolationException cve) {
-            return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
+            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
                     ErrorObject.CODE_INVALID_REQUEST,
                     "not valid; " + cve.getConstraintViolations().iterator().next().getMessage(),
                     CalculatorResponseErrorData.of(null, null))));
@@ -106,7 +106,7 @@ public class CalculatorController {
             break;
         }
         if (serviceMethod == null) {
-            return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
+            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
                     ErrorObject.CODE_METHOD_NOT_FOUND, "unknown method: " + requestMethod,
                     CalculatorResponseErrorData.of(calculatorRequest, null))));
         }
@@ -119,19 +119,20 @@ public class CalculatorController {
             final Throwable cause = ite.getCause();
             if (cause instanceof ArithmeticException) {
                 final ArithmeticException arithmeticException = (ArithmeticException) cause;
-                return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
-                        ErrorObject.CODE_INTERNAL_ERROR, cause.getMessage(),
+                return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
+                        ErrorObject.CODE_INVALID_REQUEST, cause.getMessage(),
                         CalculatorResponseErrorData.of(calculatorRequest, arithmeticException))));
             }
-            return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
+            cause.printStackTrace();
+            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
                     ErrorObject.CODE_INTERNAL_ERROR, cause.getMessage(),
                     CalculatorResponseErrorData.of(calculatorRequest, null))));
         } catch (final Exception e) {
-            return ResponseEntity.ok(CalculatorResponse.of(CalculatorResponseError.of(
+            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
                     ErrorObject.CODE_INTERNAL_ERROR, e.getMessage(),
                     CalculatorResponseErrorData.of(calculatorRequest, null))));
         }
-        final CalculatorResponse calculatorResponse = CalculatorResponse.of(result);
+        final CalculatorServerResponse calculatorResponse = CalculatorServerResponse.of(result);
         calculatorResponse.copyIdFrom(calculatorRequest);
         return ResponseEntity.ok(calculatorResponse);
     }

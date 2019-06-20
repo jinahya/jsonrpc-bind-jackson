@@ -1,8 +1,8 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.calculator;
 
 /*-
  * #%L
- * jsonrpc-bind-jackson
+ * jsonrpc-bind
  * %%
  * Copyright (C) 2019 Jinahya, Inc.
  * %%
@@ -20,11 +20,24 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class AbJacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
-        extends ResponseObject<ResultType, ErrorType, IdType> {
+@SpringBootApplication
+public class Application {
 
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public Calculator calculator() {
+        return new CalculatorImpl();
+    }
+
+    @Bean
+    public CalculatorService calculatorService() {
+        return new CalculatorServiceImpl();
+    }
 }

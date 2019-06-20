@@ -20,6 +20,12 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-public abstract class JacksonClientRequest<ParamsType, IdType> extends AbJacksonRequest<ParamsType, IdType> {
+/**
+ * An abstract class for client-side request objects.
+ *
+ * @param <ParamsType> params type parameter.
+ * @param <IdType>     id type parameter.
+ */
+public abstract class JacksonClientRequest<ParamsType, IdType> extends JacksonRequest<ParamsType, IdType> {
 
 }

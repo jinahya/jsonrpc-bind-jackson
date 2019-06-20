@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.calculator;
+package com.github.jinahya.jsonrpc.bind.v2.calculator;
 
 /*-
  * #%L

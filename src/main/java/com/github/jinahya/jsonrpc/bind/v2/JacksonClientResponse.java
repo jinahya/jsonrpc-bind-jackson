@@ -22,7 +22,14 @@ package com.github.jinahya.jsonrpc.bind.v2;
 
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
+/**
+ * An abstract class for client-side response objects.
+ *
+ * @param <ResultType> result type parameter.
+ * @param <ErrorType>  error type parameter.
+ * @param <IdType>     id type parameter.
+ */
 public abstract class JacksonClientResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
-        extends AbJacksonResponse<ResultType, ErrorType, IdType> {
+        extends JacksonResponse<ResultType, ErrorType, IdType> {
 
 }

@@ -22,8 +22,12 @@ package com.github.jinahya.jsonrpc.bind.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
+import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -31,10 +35,30 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class JacksonServerRequest<IdType extends ValueNode> extends AbJacksonRequest<JsonNode, IdType> {
+/**
+ * An abstract class for server-side request object.
+ *
+ * @param <IdType> id type parameter
+ */
+public abstract class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
 
     /**
-     * Returns current value of {@link #getParams()} mapped to specified type.
+     * Check whether {@link #getId()} is an instance of either {@link TextNode}, {@link NumericNode}, or {@link
+     * NullNode}.
+     *
+     * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
+     * NumericNode}, or {@link NullNode}; {@code false} otherwise.
+     */
+    @AssertTrue
+    private boolean isIdForEitherStringNumberOrNull() {
+        return getId() == null
+               || getId() instanceof TextNode
+               || getId() instanceof NumericNode
+               || getId() instanceof NullNode;
+    }
+
+    /**
+     * Returns current value of {@link #getParams()} translated to specified type.
      *
      * @param objectMapper an object mapper.
      * @param paramsClass  the class to parse the {@value #PROPERTY_NAME_PARAMS} property.

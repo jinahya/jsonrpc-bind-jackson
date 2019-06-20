@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.calculator;
+package com.github.jinahya.jsonrpc.bind.v2.calculator;
 
 /*-
  * #%L
@@ -20,24 +20,17 @@ package com.github.jinahya.jsonrpc.bind.calculator;
  * #L%
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
+import com.github.jinahya.jsonrpc.bind.v2.JacksonServerRequest;
 
-@SpringBootApplication
-public class Application {
+import javax.validation.constraints.NotNull;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+public class CalculatorServerRequest extends JacksonServerRequest<ValueNode> {
 
-    @Bean
-    public Calculator calculator() {
-        return new CalculatorImpl();
-    }
-
-    @Bean
-    public CalculatorService calculatorService() {
-        return new CalculatorServiceImpl();
+    @NotNull
+    @Override
+    public JsonNode getParams() {
+        return super.getParams();
     }
 }

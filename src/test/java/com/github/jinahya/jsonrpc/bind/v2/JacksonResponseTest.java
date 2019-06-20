@@ -1,11 +1,10 @@
 package com.github.jinahya.jsonrpc.bind.v2;
 
-import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 public abstract class JacksonResponseTest<
-        ObjectType extends JacksonResponse<ResultType, ErrorType, IdType>, ResultType, ErrorType extends ErrorObject<?>,
-        IdType extends ValueNode>
+        ObjectType extends ResponseObject<ResultType, ErrorType, IdType>, ResultType, ErrorType extends ErrorObject<?>,
+        IdType>
         extends ResponseObjectTest<ObjectType, ResultType, ErrorType, IdType> {
 
     public JacksonResponseTest(final Class<? extends ObjectType> objectClass,
