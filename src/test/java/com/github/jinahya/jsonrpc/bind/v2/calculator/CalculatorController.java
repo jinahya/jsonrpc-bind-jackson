@@ -71,7 +71,8 @@ public class CalculatorController {
                     CalculatorResponseErrorData.of(null, cve))));
         }
         final String requestMethod = calculatorRequest.getMethod();
-        final Method serviceMethod = CalculatorService.findCalculatorMethod(ExtendedCalculatorService.class, requestMethod);
+        final Method serviceMethod
+                = CalculatorService.findCalculatorMethod(ExtendedCalculatorService.class, requestMethod);
         log.debug("serviceMethod: {}", serviceMethod);
         if (serviceMethod == null) {
             return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
@@ -81,50 +82,6 @@ public class CalculatorController {
             serviceMethod.setAccessible(true);
         }
         final Class<?> serviceParameterType = serviceMethod.getParameterTypes()[0];
-////        for (final Method declaredMethod : CalculatorService.class.getDeclaredMethods()) {
-//        for (final Method declaredMethod : ReflectionUtils.getAllDeclaredMethods(ExtendedCalculatorService.class)) {
-//            final CalculatorProcedure calculatorProcedure
-//                    = declaredMethod.getAnnotation(CalculatorProcedure.class);
-//            if (calculatorProcedure == null) {
-//                log.debug("not annotated with {}: {}", CalculatorProcedure.class, declaredMethod);
-//                continue;
-//            }
-//            final String procedureMethod = calculatorProcedure.method();
-//            if (!procedureMethod.equals(requestMethod)) {
-//                log.debug("procedureMethod({}) <> requestMethod({})", procedureMethod, requestMethod);
-//                continue;
-//            }
-//            final Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
-//            if (parameterTypes.length != 1) {
-//                continue;
-//            }
-////            final Class<?> parameterType = parameterTypes[0];
-////            if (!CalculatorRequestParams.class.isAssignableFrom(parameterType)) {
-////                log.info("parameterType({}) is not assignable to {}", parameterType, CalculatorRequestParams.class);
-////                continue;
-////            }
-//            serviceMethod = declaredMethod;
-//            serviceParameterType = parameterTypes[0];
-//            break;
-//        }
-//        if (serviceMethod == null) {
-//            return ResponseEntity.ok(CalculatorServerResponse.of(CalculatorResponseError.of(
-//                    ErrorObject.CODE_METHOD_NOT_FOUND, "unknown method: " + requestMethod,
-//                    CalculatorResponseErrorData.of(calculatorRequest, null))));
-//        }
-//        if (!serviceMethod.isAccessible()) {
-//            serviceMethod.setAccessible(true);
-//        }
-//        final CalculatorRequestParams calculatorRequestParams = calculatorRequest.applyParams(
-//                OBJECT_MAPPER, serviceParameterType.asSubclass(CalculatorRequestParams.class), Function.identity());
-//        final Object calculatorRequestParams = calculatorRequest.applyParams(
-//                OBJECT_MAPPER, serviceParameterType, Function.identity());
-//        Object calculatorRequestParams;
-//        if (List.class.isAssignableFrom(serviceParameterType)) {
-//            calculatorRequestParams = calculatorRequest.getParamsAsPositioned(OBJECT_MAPPER, BigDecimal.class);
-//        } else {
-//            calculatorRequestParams = calculatorRequest.getParamsAsNamed(OBJECT_MAPPER, serviceParameterType);
-//        }
         final Object requestParams = calculatorRequest.getParams(OBJECT_MAPPER, serviceParameterType, BigDecimal.class);
         log.debug("requestParams: {}", requestParams);
         final BigDecimal result;
