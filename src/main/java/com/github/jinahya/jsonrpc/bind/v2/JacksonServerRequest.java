@@ -49,7 +49,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
      * @return {@code true} if {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link ArrayNode}, {@link
      * * ObjectNode}, or {@link NullNode}; {@code false} otherwise.
      */
-    @AssertTrue
+    @AssertTrue(message = "a non-null params must be either ArrayNode, ObjectNode, or NullNode")
     private boolean isParamsEitherArrayObjectOrNull() {
         final JsonNode params = getParams();
         return params == null
@@ -65,7 +65,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
      * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
      * NumericNode}, or {@link NullNode}; {@code false} otherwise.
      */
-    @AssertTrue
+    @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
         final IdType id = getId();
         return id == null
