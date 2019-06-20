@@ -22,8 +22,10 @@ package com.github.jinahya.jsonrpc.bind.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
@@ -39,22 +41,40 @@ import java.util.function.Supplier;
  * An abstract class for server-side request object.
  *
  * @param <IdType> id type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public abstract class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
 
     /**
-     * Check whether {@link #getId()} is an instance of either {@link TextNode}, {@link NumericNode}, or {@link
-     * NullNode}.
+     * Checks whether the current value of {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link
+     * ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
+     *
+     * @return {@code true} if {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link ArrayNode}, {@link
+     * * ObjectNode}, or {@link NullNode}; {@code false} otherwise.
+     */
+    @AssertTrue
+    private boolean isParamsEitherArrayObjectOrNull() {
+        final JsonNode params = getParams();
+        return params == null
+               || params instanceof ArrayNode
+               || params instanceof ObjectNode
+               || params instanceof NullNode;
+    }
+
+    /**
+     * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},
+     * {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
      * NumericNode}, or {@link NullNode}; {@code false} otherwise.
      */
     @AssertTrue
-    private boolean isIdForEitherStringNumberOrNull() {
-        return getId() == null
-               || getId() instanceof TextNode
-               || getId() instanceof NumericNode
-               || getId() instanceof NullNode;
+    private boolean isIdEitherTextNumberOrNull() {
+        final IdType id = getId();
+        return id == null
+               || id instanceof TextNode
+               || id instanceof NumericNode
+               || id instanceof NullNode;
     }
 
     /**

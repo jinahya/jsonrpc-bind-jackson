@@ -20,8 +20,13 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+
+import javax.validation.constraints.AssertTrue;
 
 /**
  * An abstract class for server-side response object.
@@ -29,8 +34,24 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <ResultType> result type parameter.
  * @param <ErrorType>  error type parameter.
  * @param <IdType>     id type parameter.
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public abstract class JacksonServerResponse<ResultType, ErrorType extends ErrorObject<?>, IdType extends ValueNode>
         extends JacksonResponse<ResultType, ErrorType, IdType> {
 
+    /**
+     * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},
+     * {@link NumericNode}, or {@link NullNode}.
+     *
+     * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
+     * NumericNode}, or {@link NullNode}; {@code false} otherwise.
+     */
+    @AssertTrue
+    private boolean isIdEitherTextNumberOrNull() {
+        final IdType id = getId();
+        return id == null
+               || id instanceof TextNode
+               || id instanceof NumericNode
+               || id instanceof NullNode;
+    }
 }
