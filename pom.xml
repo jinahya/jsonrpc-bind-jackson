@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Types for binding JSON-RPC 2.0 Objects for Jackson</description>
+  <description>Types for binding JSON-RPC 2.0 Objects with Jackson</description>
   <url>https://github.com/jinahya/${project.artifactId}</url>
   <inceptionYear>2019</inceptionYear>
   <organization>
