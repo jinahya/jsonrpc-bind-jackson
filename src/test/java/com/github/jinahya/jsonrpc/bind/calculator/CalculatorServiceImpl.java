@@ -22,11 +22,9 @@ package com.github.jinahya.jsonrpc.bind.calculator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 
-@Validated
 @Slf4j
 public class CalculatorServiceImpl implements CalculatorService {
 

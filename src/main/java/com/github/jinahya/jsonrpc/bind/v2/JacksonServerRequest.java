@@ -20,8 +20,6 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ValueNode;
@@ -33,8 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class JacksonRequest<IdType extends ValueNode> extends RequestObject<JsonNode, IdType> {
+public abstract class JacksonServerRequest<IdType extends ValueNode> extends AbJacksonRequest<JsonNode, IdType> {
 
     /**
      * Returns current value of {@link #getParams()} mapped to specified type.

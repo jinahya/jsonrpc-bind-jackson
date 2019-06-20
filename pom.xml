@@ -49,7 +49,7 @@
     <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
     <version.org.junit.jupiter>5.4.2</version.org.junit.jupiter>
     <version.org.springframework.boot>2.1.5.RELEASE</version.org.springframework.boot>
-    <version.jsonrpc-bind>0.2.2-SNAPSHOT</version.jsonrpc-bind>
+    <version.jsonrpc-bind>0.2.2</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>
