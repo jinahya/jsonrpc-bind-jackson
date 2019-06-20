@@ -20,7 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.calculator;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
+import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.annotation.PostConstruct;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -42,7 +43,9 @@ import java.util.stream.Stream;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,6 +57,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 class CalculatorControllerTest {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Sources arguments for all values of {@link RoundingMode}.
+     *
+     * @return a stream of arguments which each is a value of {@link RoundingMode}.
+     */
     static Stream<Arguments> sourceRoundingModes() {
         return Arrays.stream(RoundingMode.values()).map(Arguments::of);
     }
@@ -65,162 +74,196 @@ class CalculatorControllerTest {
         log.debug("mockMvc: {}", mockMvc);
     }
 
+    /**
+     * Calls for {@link CalculatorController#call(InputStream)} with given request.
+     *
+     * @param request the request to send.
+     * @return an instance of {@link CalculatorClientResponse}.
+     * @throws Exception if an error occurs.
+     */
+    CalculatorClientResponse call(final CalculatorClientRequest<?> request) throws Exception {
+        final String content = OBJECT_MAPPER.writeValueAsString(requireValid(requireNonNull(request)));
+        final MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
+                                 .contentType(APPLICATION_JSON).content(content)
+                                 .accept(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        return OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Calls for for {@value CalculatorService#METHOD_ADD_NAMED} method.
+     *
+     * @throws Exception if an error occurs.
+     */
     @Test
-    void callAddNamed() throws Exception {
+    void call_add_named() throws Exception {
         final CalculatorRequestParams.AdditionParams params = new CalculatorRequestParams.AdditionParams();
         params.setAugend(BigDecimal.ZERO);
         params.setAddend(BigDecimal.ONE);
-        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
-        calculatorRequest.setMethod(CalculatorService.METHOD_ADD_NAMED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getError());
-        final BigDecimal result = calculatorResponse.getResult();
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(CalculatorService.METHOD_ADD_NAMED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
     }
 
     @Test
-    void callAddPositioned() throws Exception {
+    void call_add_positioned() throws Exception {
         final List<BigDecimal> params = new ArrayList<>();
         params.add(BigDecimal.ZERO);
         params.add(BigDecimal.ONE);
-        final CalculatorClientRequestPositioned calculatorRequest = new CalculatorClientRequestPositioned();
-        calculatorRequest.setMethod(CalculatorService.METHOD_ADD_POSITIONED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getError());
-        final BigDecimal result = calculatorResponse.getResult();
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(CalculatorService.METHOD_ADD_POSITIONED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @Test
-    void callForSubtraction() throws Exception {
+    void call_subtract_named() throws Exception {
         final CalculatorRequestParams.SubtractionParams params = new CalculatorRequestParams.SubtractionParams();
         params.setMinuend(BigDecimal.ONE);
         params.setSubtrahend(BigDecimal.ZERO);
-        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
-        calculatorRequest.setMethod(CalculatorService.METHOD_SUBTRACT_NAMED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getError());
-        final BigDecimal result = calculatorResponse.getResult();
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(CalculatorService.METHOD_SUBTRACT_NAMED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
+        assertEquals(BigDecimal.ONE, result);
+    }
+
+    @Test
+    void call_subtract_positioned() throws Exception {
+        final List<BigDecimal> params = new ArrayList<>();
+        params.add(BigDecimal.ONE);
+        params.add(BigDecimal.ZERO);
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(CalculatorService.METHOD_SUBTRACT_POSITIONED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @Test
-    void callForMultiplication() throws Exception {
+    void call_multiply_named() throws Exception {
         final CalculatorRequestParams.MultiplicationParam params = new CalculatorRequestParams.MultiplicationParam();
         params.setMultiplicand(BigDecimal.ONE);
         params.setMultiplier(BigDecimal.ZERO);
-        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
-        calculatorRequest.setMethod(CalculatorService.METHOD_MULTIPLY_NAMED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getError());
-        final BigDecimal result = calculatorResponse.getResult();
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(CalculatorService.METHOD_MULTIPLY_NAMED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
+        assertEquals(BigDecimal.ZERO, result);
+    }
+
+    @Test
+    void call_multiply_positioned() throws Exception {
+        final List<BigDecimal> params = new ArrayList<>();
+        params.add(BigDecimal.ONE);
+        params.add(BigDecimal.ZERO);
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(CalculatorService.METHOD_MULTIPLY_POSITIONED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ZERO, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @MethodSource({"sourceRoundingModes"})
     @ParameterizedTest
-    void callForDivision(final RoundingMode roundingMode) throws Exception {
+    void call_divide_named(final RoundingMode roundingMode) throws Exception {
         final CalculatorRequestParams.DivisionParam params = new CalculatorRequestParams.DivisionParam();
         params.setDividend(BigDecimal.ONE);
         params.setDivisor(BigDecimal.ONE);
         params.setRoundingMode(roundingMode);
-        requireValid(params);
-        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
-        calculatorRequest.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getError());
-        final BigDecimal result = calculatorResponse.getResult();
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
     }
 
     @MethodSource({"sourceRoundingModes"})
     @ParameterizedTest
-    void callForDivisionWithDivisorOfZero(final RoundingMode roundingMode) throws Exception {
+    void call_divide_named_zero_divisor(final RoundingMode roundingMode) throws Exception {
         final CalculatorRequestParams.DivisionParam params = new CalculatorRequestParams.DivisionParam();
         params.setDividend(BigDecimal.ONE);
         params.setDivisor(BigDecimal.ZERO);
         params.setRoundingMode(roundingMode);
-        requireValid(params);
-        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
-        calculatorRequest.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
-        calculatorRequest.setParams(params);
-        calculatorRequest.setId(System.nanoTime());
-        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
-        final MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
-                                 .contentType(APPLICATION_JSON).content(content)
-                                 .accept(APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
-                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
-        assertNull(calculatorResponse.getResult());
-        final CalculatorResponseError error = calculatorResponse.getError();
-        log.debug("error: {}", error);
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        final BigDecimal result = response.getResult();
+        assertNull(result);
+        final CalculatorResponseError error = response.getError();
+        assertNotNull(error);
         final long code = error.getCode();
-        assertEquals(ResponseObject.ErrorObject.CODE_INVALID_REQUEST, code);
+        assertEquals(ErrorObject.CODE_INVALID_REQUEST, code);
     }
 
+    @Test
+    void call_divide_positioned() throws Exception {
+        final List<BigDecimal> params = new ArrayList<>();
+        params.add(BigDecimal.ONE);
+        params.add(BigDecimal.ONE);
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(CalculatorService.METHOD_DIVIDE_POSITIONED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        assertNull(response.getError());
+        final BigDecimal result = response.getResult();
+        assertEquals(BigDecimal.ONE, result);
+    }
+
+    @Test
+    void call_divide_positioned_zero_divisor() throws Exception {
+        final List<BigDecimal> params = new ArrayList<>();
+        params.add(BigDecimal.ONE);
+        params.add(BigDecimal.ZERO);
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(CalculatorService.METHOD_DIVIDE_POSITIONED);
+        request.setParams(params);
+        request.setId(System.nanoTime());
+        final CalculatorClientResponse response = call(request);
+        final BigDecimal result = response.getResult();
+        assertNull(result);
+        final CalculatorResponseError error = response.getError();
+        assertNotNull(error);
+        final long code = error.getCode();
+        assertEquals(ErrorObject.CODE_INVALID_REQUEST, code);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     @Autowired
     private CalculatorController calculatorController;
 

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 
 @Slf4j
-public class CalculatorServiceImpl implements CalculatorService {
+public class ExtendedCalculatorServiceImpl implements ExtendedCalculatorService {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override

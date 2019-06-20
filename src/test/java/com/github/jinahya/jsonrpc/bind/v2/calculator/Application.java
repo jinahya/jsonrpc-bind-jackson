@@ -38,6 +38,11 @@ public class Application {
 
     @Bean
     public CalculatorService calculatorService() {
-        return new CalculatorServiceImpl();
+        return new ExtendedCalculatorServiceImpl();
+    }
+
+    @Bean
+    public ExtendedCalculatorService extendedCalculatorService() {
+        return new ExtendedCalculatorServiceImpl();
     }
 }
