@@ -45,6 +45,11 @@ import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
 import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_ADD_NAMED;
 import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_ADD_POSITIONED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_DIVIDE_POSITIONED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_MULTIPLY_NAMED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_MULTIPLY_POSITIONED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_SUBTRACT_NAMED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_SUBTRACT_POSITIONED;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,7 +119,7 @@ class CalculatorControllerTest {
 
     CalculatorClientResponse call(final String method, List<BigDecimal> params) throws Exception {
         final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(METHOD_ADD_POSITIONED);
+        request.setMethod(method);
         request.setParams(params);
         return call(request);
     }
@@ -154,11 +159,7 @@ class CalculatorControllerTest {
         final CalculatorRequestParams.SubtractionParams params = new CalculatorRequestParams.SubtractionParams();
         params.setMinuend(BigDecimal.ONE);
         params.setSubtrahend(BigDecimal.ZERO);
-        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
-        request.setMethod(CalculatorService.METHOD_SUBTRACT_NAMED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_SUBTRACT_NAMED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
@@ -169,11 +170,7 @@ class CalculatorControllerTest {
         final List<BigDecimal> params = new ArrayList<>();
         params.add(BigDecimal.ONE);
         params.add(BigDecimal.ZERO);
-        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(CalculatorService.METHOD_SUBTRACT_POSITIONED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_SUBTRACT_POSITIONED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
@@ -185,11 +182,7 @@ class CalculatorControllerTest {
         final CalculatorRequestParams.MultiplicationParam params = new CalculatorRequestParams.MultiplicationParam();
         params.setMultiplicand(BigDecimal.ONE);
         params.setMultiplier(BigDecimal.ZERO);
-        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
-        request.setMethod(CalculatorService.METHOD_MULTIPLY_NAMED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_MULTIPLY_NAMED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ZERO, result);
@@ -200,11 +193,7 @@ class CalculatorControllerTest {
         final List<BigDecimal> params = new ArrayList<>();
         params.add(BigDecimal.ONE);
         params.add(BigDecimal.ZERO);
-        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(CalculatorService.METHOD_MULTIPLY_POSITIONED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_MULTIPLY_POSITIONED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ZERO, result);
@@ -254,7 +243,7 @@ class CalculatorControllerTest {
         params.add(BigDecimal.ONE);
         params.add(BigDecimal.ONE);
         final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(CalculatorService.METHOD_DIVIDE_POSITIONED);
+        request.setMethod(METHOD_DIVIDE_POSITIONED);
         request.setParams(params);
         request.setId(System.nanoTime());
         final CalculatorClientResponse response = call(request);
@@ -269,7 +258,7 @@ class CalculatorControllerTest {
         params.add(BigDecimal.ONE);
         params.add(BigDecimal.ZERO);
         final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(CalculatorService.METHOD_DIVIDE_POSITIONED);
+        request.setMethod(METHOD_DIVIDE_POSITIONED);
         request.setParams(params);
         request.setId(System.nanoTime());
         final CalculatorClientResponse response = call(request);
