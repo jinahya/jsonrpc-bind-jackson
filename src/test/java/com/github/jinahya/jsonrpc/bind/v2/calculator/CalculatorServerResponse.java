@@ -31,11 +31,13 @@ public class CalculatorServerResponse extends JacksonServerResponse<BigDecimal, 
      * Creates a new instance whose {@value #PROPERTY_NAME_RESULT} property set with specified value.
      *
      * @param result the value for {@value #PROPERTY_NAME_RESULT} property.
+     * @param id     id
      * @return a new instance with specified {@code result}.
      */
-    public static CalculatorServerResponse of(final BigDecimal result) {
+    public static CalculatorServerResponse of(final BigDecimal result, final ValueNode id) {
         final CalculatorServerResponse instance = new CalculatorServerResponse();
         instance.setResultExclusively(result);
+        instance.setId(id);
         return instance;
     }
 
@@ -43,11 +45,13 @@ public class CalculatorServerResponse extends JacksonServerResponse<BigDecimal, 
      * Creates a new instance whose {@value #PROPERTY_NAME_ERROR} property set with specified value.
      *
      * @param error the value for {@value #PROPERTY_NAME_ERROR} property.
+     * @param id    id
      * @return a new instance with specified {@code error}.
      */
-    public static CalculatorServerResponse of(final CalculatorResponseError error) {
+    public static CalculatorServerResponse of(final CalculatorResponseError error, final ValueNode id) {
         final CalculatorServerResponse instance = new CalculatorServerResponse();
         instance.setErrorExclusively(error);
+        instance.setId(id);
         return instance;
     }
 }

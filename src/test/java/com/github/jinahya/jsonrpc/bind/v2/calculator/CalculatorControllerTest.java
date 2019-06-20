@@ -43,7 +43,10 @@ import java.util.stream.Stream;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_ADD_NAMED;
+import static com.github.jinahya.jsonrpc.bind.v2.calculator.CalculatorService.METHOD_ADD_POSITIONED;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -82,6 +85,10 @@ class CalculatorControllerTest {
      * @throws Exception if an error occurs.
      */
     CalculatorClientResponse call(final CalculatorClientRequest<?> request) throws Exception {
+        log.debug("request: {}", request);
+        final long id = System.nanoTime();
+        log.debug("id: {}", id);
+        request.setId(id);
         final String content = OBJECT_MAPPER.writeValueAsString(requireValid(requireNonNull(request)));
         final MvcResult mvcResult = mockMvc
                 .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
@@ -90,7 +97,26 @@ class CalculatorControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        return OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
+        final CalculatorClientResponse response
+                = OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
+        log.debug("response: {}", response);
+        ofNullable(response.getResult()).ifPresent(v -> assertEquals(request.getId(), response.getId()));
+        ofNullable(response.getId()).ifPresent(v -> assertEquals(request.getId(), v));
+        return response;
+    }
+
+    CalculatorClientResponse call(final String method, final CalculatorRequestParams params) throws Exception {
+        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
+        request.setMethod(method);
+        request.setParams(params);
+        return call(request);
+    }
+
+    CalculatorClientResponse call(final String method, List<BigDecimal> params) throws Exception {
+        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
+        request.setMethod(METHOD_ADD_POSITIONED);
+        request.setParams(params);
+        return call(request);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -105,11 +131,7 @@ class CalculatorControllerTest {
         final CalculatorRequestParams.AdditionParams params = new CalculatorRequestParams.AdditionParams();
         params.setAugend(BigDecimal.ZERO);
         params.setAddend(BigDecimal.ONE);
-        final CalculatorClientRequest<CalculatorRequestParams> request = new CalculatorClientRequestNamed();
-        request.setMethod(CalculatorService.METHOD_ADD_NAMED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_ADD_NAMED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
@@ -120,11 +142,7 @@ class CalculatorControllerTest {
         final List<BigDecimal> params = new ArrayList<>();
         params.add(BigDecimal.ZERO);
         params.add(BigDecimal.ONE);
-        final CalculatorClientRequest<List<BigDecimal>> request = new CalculatorClientRequestPositioned();
-        request.setMethod(CalculatorService.METHOD_ADD_POSITIONED);
-        request.setParams(params);
-        request.setId(System.nanoTime());
-        final CalculatorClientResponse response = call(request);
+        final CalculatorClientResponse response = call(METHOD_ADD_POSITIONED, params);
         assertNull(response.getError());
         final BigDecimal result = response.getResult();
         assertEquals(BigDecimal.ONE, result);
