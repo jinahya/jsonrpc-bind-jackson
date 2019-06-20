@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.function.Function;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
@@ -78,29 +77,23 @@ public class CalculatorController {
             final CalculatorProcedure calculatorProcedure
                     = declaredMethod.getAnnotation(CalculatorProcedure.class);
             if (calculatorProcedure == null) {
-                log.info("not annotated with {}: {}", CalculatorProcedure.class, declaredMethod);
+                log.debug("not annotated with {}: {}", CalculatorProcedure.class, declaredMethod);
                 continue;
             }
-            String procedureMethod = calculatorProcedure.method();
-            if (procedureMethod.isEmpty()) {
-                procedureMethod = declaredMethod.getName();
-            }
+            final String procedureMethod = calculatorProcedure.method();
             if (!procedureMethod.equals(requestMethod)) {
-                log.info("procedureMethod({}) <> requestMethod({})", procedureMethod, requestMethod);
+                log.debug("procedureMethod({}) <> requestMethod({})", procedureMethod, requestMethod);
                 continue;
             }
             final Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
             if (parameterTypes.length != 1) {
                 continue;
             }
-            final Class<?> parameterType = parameterTypes[0];
-            if (!CalculatorRequestParams.class.isAssignableFrom(parameterType)) {
-                log.info("parameterType({}) is not assignable to {}", parameterType, CalculatorRequestParams.class);
-                continue;
-            }
-            if (!declaredMethod.isAccessible()) {
-                declaredMethod.setAccessible(true);
-            }
+//            final Class<?> parameterType = parameterTypes[0];
+//            if (!CalculatorRequestParams.class.isAssignableFrom(parameterType)) {
+//                log.info("parameterType({}) is not assignable to {}", parameterType, CalculatorRequestParams.class);
+//                continue;
+//            }
             serviceMethod = declaredMethod;
             serviceParameterType = parameterTypes[0];
             break;
@@ -110,8 +103,21 @@ public class CalculatorController {
                     ErrorObject.CODE_METHOD_NOT_FOUND, "unknown method: " + requestMethod,
                     CalculatorResponseErrorData.of(calculatorRequest, null))));
         }
-        final CalculatorRequestParams calculatorRequestParams = calculatorRequest.applyParams(
-                OBJECT_MAPPER, serviceParameterType.asSubclass(CalculatorRequestParams.class), Function.identity());
+        if (!serviceMethod.isAccessible()) {
+            serviceMethod.setAccessible(true);
+        }
+//        final CalculatorRequestParams calculatorRequestParams = calculatorRequest.applyParams(
+//                OBJECT_MAPPER, serviceParameterType.asSubclass(CalculatorRequestParams.class), Function.identity());
+//        final Object calculatorRequestParams = calculatorRequest.applyParams(
+//                OBJECT_MAPPER, serviceParameterType, Function.identity());
+//        Object calculatorRequestParams;
+//        if (List.class.isAssignableFrom(serviceParameterType)) {
+//            calculatorRequestParams = calculatorRequest.getParamsAsPositioned(OBJECT_MAPPER, BigDecimal.class);
+//        } else {
+//            calculatorRequestParams = calculatorRequest.getParamsAsNamed(OBJECT_MAPPER, serviceParameterType);
+//        }
+        final Object calculatorRequestParams = calculatorRequest.getParams(
+                OBJECT_MAPPER, serviceParameterType, BigDecimal.class);
         final BigDecimal result;
         try {
             result = (BigDecimal) serviceMethod.invoke(calculatorService, calculatorRequestParams);

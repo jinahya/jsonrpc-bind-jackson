@@ -35,7 +35,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
@@ -65,12 +67,12 @@ class CalculatorControllerTest {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Test
-    void callForAddition() throws Exception {
+    void callAddNamed() throws Exception {
         final CalculatorRequestParams.AdditionParams params = new CalculatorRequestParams.AdditionParams();
         params.setAugend(BigDecimal.ZERO);
         params.setAddend(BigDecimal.ONE);
-        final CalculatorClientRequest calculatorRequest = new CalculatorClientRequest();
-        calculatorRequest.setMethod(CalculatorClientRequest.METHOD_ADD);
+        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
+        calculatorRequest.setMethod(CalculatorService.METHOD_ADD_NAMED);
         calculatorRequest.setParams(params);
         calculatorRequest.setId(System.nanoTime());
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
@@ -88,13 +90,38 @@ class CalculatorControllerTest {
         assertEquals(BigDecimal.ONE, result);
     }
 
+    @Test
+    void callAddPositioned() throws Exception {
+        final List<BigDecimal> params = new ArrayList<>();
+        params.add(BigDecimal.ZERO);
+        params.add(BigDecimal.ONE);
+        final CalculatorClientRequestPositioned calculatorRequest = new CalculatorClientRequestPositioned();
+        calculatorRequest.setMethod(CalculatorService.METHOD_ADD_POSITIONED);
+        calculatorRequest.setParams(params);
+        calculatorRequest.setId(System.nanoTime());
+        final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
+        final MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/" + CalculatorController.PATH_VALUE_CALL)
+                                 .contentType(APPLICATION_JSON).content(content)
+                                 .accept(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        final CalculatorClientResponse calculatorResponse = OBJECT_MAPPER.readValue(
+                mvcResult.getResponse().getContentAsString(), CalculatorClientResponse.class);
+        assertNull(calculatorResponse.getError());
+        final BigDecimal result = calculatorResponse.getResult();
+        assertEquals(BigDecimal.ONE, result);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
     void callForSubtraction() throws Exception {
         final CalculatorRequestParams.SubtractionParams params = new CalculatorRequestParams.SubtractionParams();
         params.setMinuend(BigDecimal.ONE);
         params.setSubtrahend(BigDecimal.ZERO);
-        final CalculatorClientRequest calculatorRequest = new CalculatorClientRequest();
-        calculatorRequest.setMethod(CalculatorClientRequest.METHOD_SUBTRACT);
+        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
+        calculatorRequest.setMethod(CalculatorService.METHOD_SUBTRACT_NAMED);
         calculatorRequest.setParams(params);
         calculatorRequest.setId(System.nanoTime());
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
@@ -112,13 +139,14 @@ class CalculatorControllerTest {
         assertEquals(BigDecimal.ONE, result);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
     void callForMultiplication() throws Exception {
         final CalculatorRequestParams.MultiplicationParam params = new CalculatorRequestParams.MultiplicationParam();
         params.setMultiplicand(BigDecimal.ONE);
         params.setMultiplier(BigDecimal.ZERO);
-        final CalculatorClientRequest calculatorRequest = new CalculatorClientRequest();
-        calculatorRequest.setMethod(CalculatorClientRequest.METHOD_MULTIPLY);
+        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
+        calculatorRequest.setMethod(CalculatorService.METHOD_MULTIPLY_NAMED);
         calculatorRequest.setParams(params);
         calculatorRequest.setId(System.nanoTime());
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
@@ -136,6 +164,7 @@ class CalculatorControllerTest {
         assertEquals(BigDecimal.ZERO, result);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @MethodSource({"sourceRoundingModes"})
     @ParameterizedTest
     void callForDivision(final RoundingMode roundingMode) throws Exception {
@@ -144,8 +173,8 @@ class CalculatorControllerTest {
         params.setDivisor(BigDecimal.ONE);
         params.setRoundingMode(roundingMode);
         requireValid(params);
-        final CalculatorClientRequest calculatorRequest = new CalculatorClientRequest();
-        calculatorRequest.setMethod(CalculatorClientRequest.METHOD_DIVIDE);
+        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
+        calculatorRequest.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
         calculatorRequest.setParams(params);
         calculatorRequest.setId(System.nanoTime());
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);
@@ -171,8 +200,8 @@ class CalculatorControllerTest {
         params.setDivisor(BigDecimal.ZERO);
         params.setRoundingMode(roundingMode);
         requireValid(params);
-        final CalculatorClientRequest calculatorRequest = new CalculatorClientRequest();
-        calculatorRequest.setMethod(CalculatorClientRequest.METHOD_DIVIDE);
+        final CalculatorClientRequestNamed calculatorRequest = new CalculatorClientRequestNamed();
+        calculatorRequest.setMethod(CalculatorService.METHOD_DIVIDE_NAMED);
         calculatorRequest.setParams(params);
         calculatorRequest.setId(System.nanoTime());
         final String content = OBJECT_MAPPER.writeValueAsString(calculatorRequest);

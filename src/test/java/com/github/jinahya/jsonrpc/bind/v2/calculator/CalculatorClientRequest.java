@@ -4,19 +4,11 @@ import com.github.jinahya.jsonrpc.bind.v2.JacksonClientRequest;
 
 import javax.validation.constraints.NotNull;
 
-public class CalculatorClientRequest extends JacksonClientRequest<CalculatorRequestParams, Long> {
-
-    public static final String METHOD_ADD = "add";
-
-    public static final String METHOD_SUBTRACT = "subtract";
-
-    public static final String METHOD_MULTIPLY = "multiply";
-
-    public static final String METHOD_DIVIDE = "divide";
+public abstract class CalculatorClientRequest<ParamsType> extends JacksonClientRequest<ParamsType, Long> {
 
     @NotNull
     @Override
-    public CalculatorRequestParams getParams() {
+    public ParamsType getParams() {
         return super.getParams();
     }
 }

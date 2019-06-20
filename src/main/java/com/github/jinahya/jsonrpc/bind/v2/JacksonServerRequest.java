@@ -28,14 +28,11 @@ import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.List;
 
 /**
  * An abstract class for server-side request object.
@@ -86,42 +83,57 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
      * @return the value of {@value #PROPERTY_NAME_PARAMS} property mapped to specified params class.
      * @throws IOException if an I/O error occurs.
      */
-    public <T> T getParams(final ObjectMapper objectMapper, final Class<? extends T> paramsClass)
+    public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final Class<? extends T> paramsClass)
             throws IOException {
         final JsonNode params = getParams();
         if (params == null) {
+            throw new IllegalStateException("params is currently null");
+        }
+        if (params instanceof NullNode) {
             return null;
+        }
+        if (!(params instanceof ObjectNode)) {
+            throw new IllegalStateException("params(" + params + ") is not an instance of " + ObjectNode.class);
         }
         final String valueString = objectMapper.writeValueAsString(params);
         return objectMapper.readValue(valueString, paramsClass);
     }
 
-    public <T, R> R applyParams(final ObjectMapper objectMapper, final Class<? extends T> paramsClass,
-                                final Function<? super T, ? extends R> paramsFunction)
+    public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
             throws IOException {
-        return paramsFunction.apply(getParams(objectMapper, paramsClass));
-    }
-
-    public <T, U, R> R applyParams(final ObjectMapper objectMapper, final Class<? extends T> paramsClass,
-                                   final BiFunction<? super T, ? super U, ? extends R> paramsFunction,
-                                   final Supplier<? extends U> argumentSupplier)
-            throws IOException {
-        return applyParams(objectMapper, paramsClass, v -> paramsFunction.apply(v, argumentSupplier.get()));
-    }
-
-    public <T> void acceptParams(final ObjectMapper objectMapper, final Class<? extends T> paramsClass,
-                                 final Consumer<? super T> paramsConsumer)
-            throws IOException {
-        applyParams(objectMapper, paramsClass, v -> {
-            paramsConsumer.accept(v);
+        final JsonNode params = getParams();
+        if (params == null) {
+            throw new IllegalStateException("params is currently null");
+        }
+        if (params instanceof NullNode) {
             return null;
-        });
+        }
+        if (!(params instanceof ArrayNode)) {
+            throw new IllegalStateException("params(" + params + ") is not an instance of " + ArrayNode.class);
+        }
+        final String valueString = objectMapper.writeValueAsString(params);
+        final CollectionType collectionType
+                = objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass);
+        return objectMapper.readValue(valueString, collectionType);
     }
 
-    public <T, U> void acceptParams(final ObjectMapper objectMapper, final Class<? extends T> paramsClass,
-                                    final BiConsumer<? super T, ? super U> paramsConsumer,
-                                    final Supplier<? extends U> argumentSupplier)
+    @Deprecated
+    public Object getParams(final ObjectMapper objectMapper, final Class<?> namedObjectClass,
+                            final Class<?> positionedElementClass)
             throws IOException {
-        acceptParams(objectMapper, paramsClass, v -> paramsConsumer.accept(v, argumentSupplier.get()));
+        final JsonNode params = getParams();
+        if (params == null) {
+            throw new IllegalStateException("params is currently null");
+        }
+        if (params instanceof NullNode) {
+            return null;
+        }
+        if (params instanceof ObjectNode) {
+            return getParamsAsNamed(objectMapper, namedObjectClass);
+        }
+        if (params instanceof ArrayNode) {
+            return getParamsAsPositioned(objectMapper, positionedElementClass);
+        }
+        throw new IllegalStateException("unknown param type: " + params);
     }
 }
