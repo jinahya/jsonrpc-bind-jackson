@@ -20,6 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 /**
@@ -29,7 +31,13 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <ErrorType>  error type parameter.
  * @param <IdType>     id type parameter.
  */
-public abstract class JacksonClientResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
+public class JacksonClientResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
         extends JacksonResponse<ResultType, ErrorType, IdType> {
 
+    /**
+     * A class of client-side response object for evaluating data lazily.
+     */
+    public static class Unknown extends JacksonClientResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> {
+
+    }
 }

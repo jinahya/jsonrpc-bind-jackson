@@ -40,7 +40,14 @@ import java.util.List;
  * @param <IdType> id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public abstract class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
+public class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
+
+    /**
+     * A class of server-side request object for evaluating data lazily.
+     */
+    public static class Unknown extends JacksonServerRequest<ValueNode> {
+
+    }
 
     /**
      * Check whether specified value node is an instance of either {@link TextNode}, {@link NumericNode}, or {@link
@@ -110,7 +117,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
         return objectMapper.readValue(valueString, paramsClass);
     }
 
-    public <T> List<? extends T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
+    public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
             throws IOException {
         final JsonNode params = getParams();
         if (params == null) {

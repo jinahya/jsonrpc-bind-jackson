@@ -36,7 +36,7 @@ import javax.validation.constraints.AssertTrue;
  * @param <IdType>     id type parameter.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public abstract class JacksonServerResponse<ResultType, ErrorType extends ErrorObject<?>, IdType extends ValueNode>
+public class JacksonServerResponse<ResultType, ErrorType extends ErrorObject<?>, IdType extends ValueNode>
         extends JacksonResponse<ResultType, ErrorType, IdType> {
 
     /**

@@ -26,6 +26,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * @param <ParamsType> params type parameter.
  * @param <IdType>     id type parameter.
  */
-public abstract class JacksonClientRequest<ParamsType, IdType> extends JacksonRequest<ParamsType, IdType> {
+public class JacksonClientRequest<ParamsType, IdType> extends JacksonRequest<ParamsType, IdType> {
 
 }

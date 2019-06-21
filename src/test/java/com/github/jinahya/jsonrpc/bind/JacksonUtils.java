@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +33,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
+import static java.util.Optional.ofNullable;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Slf4j
 public final class JacksonUtils {
 
+    // -----------------------------------------------------------------------------------------------------------------
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(); // fully thread-safe!
 
-    public static final JsonFactory JSON_FACTORY = new JsonFactory();
-
+    // -----------------------------------------------------------------------------------------------------------------
     public static <R> R applyObjectMapper(final Function<? super ObjectMapper, ? extends R> function) {
         return function.apply(OBJECT_MAPPER);
     }
@@ -64,37 +64,14 @@ public final class JacksonUtils {
         acceptObjectMapper(v -> consumer.accept(v, supplier.get()));
     }
 
-    public static <T> void readTreeFromResource(final String resourceName, final Class<? extends T> valueClass,
-                                                final Consumer<? super JsonNode> treeConsumer)
-            throws IOException {
-        try (InputStream resourceStream = valueClass.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            final JsonNode tree = OBJECT_MAPPER.readTree(resourceStream);
-            treeConsumer.accept(tree);
+    // -----------------------------------------------------------------------------------------------------------------
+    public static JsonNode readTreeFromResource(final String resourceName, final Class clientClass) throws IOException {
+        try (InputStream resourceStream = clientClass.getResourceAsStream(resourceName)) {
+            return OBJECT_MAPPER.readTree(resourceStream);
         }
     }
 
-    public static <T> T withResource(final String resourceName, final Class<? extends T> valueClass,
-                                     final BiConsumer<? super T, ? super String> valueConsumer)
-            throws IOException {
-        try (InputStream resourceStream = valueClass.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            final T value = requireValid(OBJECT_MAPPER.readValue(resourceStream, valueClass));
-            final String string = OBJECT_MAPPER.writeValueAsString(value);
-            log.debug("jackson: {}", value);
-            log.debug("jackson: {}", string);
-            valueConsumer.accept(value, string);
-            return value;
-        }
-    }
-
-    public static <T> T withResource(final String resourceName, final Class<? extends T> valueClass,
-                                     final Consumer<? super String> stringConsumer)
-            throws IOException {
-        return withResource(resourceName, valueClass, (v, s) -> stringConsumer.accept(s));
-    }
-
-    public static <T> T readValue(final String resourceName, final Class<? extends T> valueClass)
+    public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass)
             throws IOException {
         try (InputStream resourceStream = valueClass.getResourceAsStream(resourceName)) {
             assertNotNull(resourceStream, "null resource stream for " + resourceName);
@@ -106,6 +83,7 @@ public final class JacksonUtils {
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     private JacksonUtils() {
         super();
     }
