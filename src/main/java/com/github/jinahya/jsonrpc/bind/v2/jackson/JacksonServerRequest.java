@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 /*-
  * #%L

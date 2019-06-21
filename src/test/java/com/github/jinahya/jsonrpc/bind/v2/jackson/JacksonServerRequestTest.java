@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 /*-
  * #%L
@@ -20,12 +20,15 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-/**
- * An abstract class for client-side request objects.
- *
- * @param <ParamsType> params type parameter.
- * @param <IdType>     id type parameter.
- */
-public abstract class JacksonClientRequest<ParamsType, IdType> extends JacksonRequest<ParamsType, IdType> {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 
+public abstract class JacksonServerRequestTest<
+        ObjectType extends JacksonServerRequest<IdType>, IdType extends ValueNode>
+        extends JacksonRequestTest<ObjectType, JsonNode, IdType> {
+
+    public JacksonServerRequestTest(final Class<? extends ObjectType> objectClass,
+                                    final Class<? extends IdType> idClass) {
+        super(objectClass, JsonNode.class, idClass);
+    }
 }

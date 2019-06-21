@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 /*-
  * #%L
@@ -20,19 +20,12 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
-
 /**
- * An abstract class for response objects.
+ * An abstract class for client-side request objects.
  *
- * @param <ResultType> result type parameter.
- * @param <ErrorType>  error type parameter.
+ * @param <ParamsType> params type parameter.
  * @param <IdType>     id type parameter.
- * @see <a href="https://github.com/FasterXML/jackson-databind">jackson-databind</a>
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
-        extends ResponseObject<ResultType, ErrorType, IdType> {
+public abstract class JacksonClientRequest<ParamsType, IdType> extends JacksonRequest<ParamsType, IdType> {
 
 }

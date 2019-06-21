@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 /*-
  * #%L
@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2;
  */
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
 
 /**
  * An abstract class request objects.

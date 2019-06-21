@@ -1,8 +1,8 @@
-package com.github.jinahya.jsonrpc.bind.v2.calculator;
+package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 /*-
  * #%L
- * jsonrpc-bind
+ * jsonrpc-bind-jackson
  * %%
  * Copyright (C) 2019 Jinahya, Inc.
  * %%
@@ -20,17 +20,13 @@ package com.github.jinahya.jsonrpc.bind.v2.calculator;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.JacksonServerRequest;
+public abstract class JacksonClientRequestTest<
+        ObjectType extends JacksonClientRequest<ParamsType, IdType>, ParamsType, IdType>
+        extends JacksonRequestTest<ObjectType, ParamsType, IdType> {
 
-import javax.validation.constraints.NotNull;
-
-public class CalculatorServerRequest extends JacksonServerRequest<ValueNode> {
-
-    @NotNull
-    @Override
-    public JsonNode getParams() {
-        return super.getParams();
+    public JacksonClientRequestTest(final Class<? extends ObjectType> objectClass,
+                                    final Class<? extends ParamsType> paramsClass,
+                                    final Class<? extends IdType> idClass) {
+        super(objectClass, paramsClass, idClass);
     }
 }

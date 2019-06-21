@@ -48,7 +48,6 @@
     <version.maven-surefire>3.0.0-M3</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
     <version.org.junit.jupiter>5.4.2</version.org.junit.jupiter>
-    <version.org.springframework.boot>2.1.6.RELEASE</version.org.springframework.boot>
     <version.jsonrpc-bind>0.2.3-SNAPSHOT</version.jsonrpc-bind>
   </properties>
 
@@ -76,74 +75,40 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.jinahya</groupId>
-      <artifactId>jsonrpc-bind</artifactId>
-      <version>${version.jsonrpc-bind}</version>
-      <classifier>tests</classifier>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
       <version>2.0.1.Final</version>
       <scope>provided</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.hibernate.validator</groupId>-->
-<!--      <artifactId>hibernate-validator</artifactId>-->
-<!--      <version>6.1.0.Alpha5</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.1.0.Alpha5</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-dependency-versions.html -->
-      <!-- https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-dependencies/pom.xml -->
+      <artifactId>junit-jupiter-api</artifactId>
       <version>${version.org.junit.jupiter}</version>
       <scope>test</scope>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.junit.jupiter</groupId>-->
-    <!--      <artifactId>junit-jupiter-api</artifactId>-->
-    <!--      <version>${version.org.junit.jupiter}</version>-->
-    <!--      <scope>test</scope>-->
-    <!--    </dependency>-->
-    <!--    <dependency>-->
-    <!--      <groupId>org.junit.jupiter</groupId>-->
-    <!--      <artifactId>junit-jupiter-engine</artifactId>-->
-    <!--      <version>${version.org.junit.jupiter}</version>-->
-    <!--      <scope>test</scope>-->
-    <!--    </dependency>-->
-    <!--    <dependency>-->
-    <!--      <groupId>org.junit.jupiter</groupId>-->
-    <!--      <artifactId>junit-jupiter-params</artifactId>-->
-    <!--      <version>${version.org.junit.jupiter}</version>-->
-    <!--      <scope>test</scope>-->
-    <!--    </dependency>-->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${version.org.junit.jupiter}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${version.org.junit.jupiter}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.8</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <version>${version.org.springframework.boot}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <version>${version.org.springframework.boot}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 
@@ -295,11 +260,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${version.org.springframework.boot}</version>
       </plugin>
     </plugins>
   </build>
