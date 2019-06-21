@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "method": "update",
+  "params": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
+}
