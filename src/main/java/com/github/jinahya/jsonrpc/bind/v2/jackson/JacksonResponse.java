@@ -30,7 +30,6 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <ResultType> result type parameter.
  * @param <ErrorType>  error type parameter.
  * @param <IdType>     id type parameter.
- * @see <a href="https://github.com/FasterXML/jackson-databind">jackson-databind</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>

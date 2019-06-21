@@ -49,9 +49,6 @@ public abstract class JacksonServerResponse<ResultType, ErrorType extends ErrorO
     @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
         final IdType id = getId();
-        return id == null
-               || id instanceof TextNode
-               || id instanceof NumericNode
-               || id instanceof NullNode;
+        return id == null || JacksonServerRequest.isEitherTextNumberOrNull(id);
     }
 }

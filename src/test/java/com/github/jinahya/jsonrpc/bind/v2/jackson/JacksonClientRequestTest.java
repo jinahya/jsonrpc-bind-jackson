@@ -21,7 +21,9 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 public abstract class JacksonClientRequestTest<
-        ObjectType extends JacksonClientRequest<ParamsType, IdType>, ParamsType, IdType>
+        ObjectType extends JacksonClientRequest<ParamsType, IdType>,
+        ParamsType,
+        IdType>
         extends JacksonRequestTest<ObjectType, ParamsType, IdType> {
 
     public JacksonClientRequestTest(final Class<? extends ObjectType> objectClass,

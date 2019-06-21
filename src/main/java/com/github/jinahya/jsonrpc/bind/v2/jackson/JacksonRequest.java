@@ -24,11 +24,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
 
 /**
- * An abstract class request objects.
+ * An abstract class for request objects.
  *
  * @param <ParamsType> params type parameter
  * @param <IdType>     id type parameter
- * @see <a href="https://github.com/FasterXML/jackson-databind">jackson-databind</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {

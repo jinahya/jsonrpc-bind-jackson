@@ -43,6 +43,20 @@ import java.util.List;
 public abstract class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
 
     /**
+     * Check whether specified value node is an instance of either {@link TextNode}, {@link NumericNode}, or {@link
+     * NullNode}.
+     *
+     * @return {@code true} if {@code valueNode} is an instance of either {@link TextNode}, {@link NumericNode}, or
+     * {@link NullNode}; {@code false} otherwise.
+     */
+    static boolean isEitherTextNumberOrNull(final ValueNode valueNode) {
+        if (valueNode == null) {
+            throw new NullPointerException("valueNode is null");
+        }
+        return valueNode instanceof TextNode || valueNode instanceof NumericNode || valueNode instanceof NullNode;
+    }
+
+    /**
      * Checks whether the current value of {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link
      * ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
      *
@@ -68,10 +82,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
     @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
         final IdType id = getId();
-        return id == null
-               || id instanceof TextNode
-               || id instanceof NumericNode
-               || id instanceof NullNode;
+        return id == null || isEitherTextNumberOrNull(id);
     }
 
     /**
@@ -99,7 +110,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
         return objectMapper.readValue(valueString, paramsClass);
     }
 
-    public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
+    public <T> List<? extends T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
             throws IOException {
         final JsonNode params = getParams();
         if (params == null) {
@@ -123,7 +134,7 @@ public abstract class JacksonServerRequest<IdType extends ValueNode> extends Jac
             throws IOException {
         final JsonNode params = getParams();
         if (params == null) {
-            throw new IllegalStateException("params is currently null");
+            throw new IllegalStateException("params property is currently null");
         }
         if (params instanceof NullNode) {
             return null;

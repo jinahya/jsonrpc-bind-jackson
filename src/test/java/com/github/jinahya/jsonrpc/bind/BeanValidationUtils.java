@@ -20,6 +20,7 @@ package com.github.jinahya.jsonrpc.bind;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.validation.ConstraintViolation;
@@ -34,6 +35,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@Slf4j
 public final class BeanValidationUtils {
 
 //    public static final ValidatorFactory VALIDATION_FACTORY = Validation.buildDefaultValidatorFactory();
