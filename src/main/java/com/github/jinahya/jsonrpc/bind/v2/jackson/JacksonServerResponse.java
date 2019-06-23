@@ -20,29 +20,25 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 import javax.validation.constraints.AssertTrue;
 
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonUtils.isEitherTextNumberOrNull;
+
 /**
  * A base class for server-side response object.
  *
- * @param <ResultType> result type parameter.
- * @param <ErrorType>  error type parameter.
- * @param <IdType>     id type parameter.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class JacksonServerResponse<ResultType, ErrorType extends ErrorObject<?>, IdType extends ValueNode>
-        extends JacksonResponse<ResultType, ErrorType, IdType> {
+public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
     @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
-        final IdType id = getId();
-        return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
+        final ValueNode id = getId();
+        return id == null || isEitherTextNumberOrNull(id);
     }
 }

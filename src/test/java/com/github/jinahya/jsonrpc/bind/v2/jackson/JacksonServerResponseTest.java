@@ -20,20 +20,16 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
+import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-public abstract class JacksonServerResponseTest<
-        ObjectType extends JacksonServerResponse<ResultType, ErrorType, IdType>,
-        ResultType,
-        ErrorType extends ResponseObject.ErrorObject<?>,
-        IdType extends ValueNode>
-        extends JacksonResponseTest<ObjectType, ResultType, ErrorType, IdType> {
+public abstract class JacksonServerResponseTest<ObjectType extends JacksonServerResponse>
+        extends JacksonResponseTest<ObjectType, JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
-    public JacksonServerResponseTest(final Class<? extends ObjectType> objectClass,
-                                     final Class<? extends ResultType> resultClass,
-                                     final Class<? extends ErrorType> errorClass,
-                                     final Class<? extends IdType> idClass) {
-        super(objectClass, resultClass, errorClass, idClass);
+    @SuppressWarnings({"unchecked"})
+    public JacksonServerResponseTest(final Class<? extends ObjectType> objectClass) {
+        super(objectClass, JsonNode.class, (Class<ErrorObject<JsonNode>>) (Class<?>) ErrorObject.class,
+              ValueNode.class);
     }
 }

@@ -35,24 +35,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonUtils.isEitherArrayObjectOrNull;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonUtils.isEitherTextNumberOrNull;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
 /**
  * A base class for server-side request object.
  *
- * @param <IdType> id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class JacksonServerRequest<IdType extends ValueNode> extends JacksonRequest<JsonNode, IdType> {
-
-    /**
-     * A class of server-side request object for evaluating data lazily.
-     */
-    @Deprecated
-    public static class Unknown extends JacksonServerRequest<ValueNode> {
-
-    }
+public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -66,8 +59,7 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
     @AssertTrue(message = "a non-null params must be either ArrayNode, ObjectNode, or NullNode")
     private boolean isParamsEitherArrayObjectOrNull() {
         final JsonNode params = getParams();
-        return params == null
-               || params instanceof ArrayNode || params instanceof ObjectNode || params instanceof NullNode;
+        return params == null || isEitherArrayObjectOrNull(params);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -81,9 +73,11 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
      */
     @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
-        final IdType id = getId();
-        return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
+        final ValueNode id = getId();
+        return id == null || isEitherTextNumberOrNull(id);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Returns current value of {@link #getParams()} translated to specified type.
@@ -148,7 +142,6 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
         throw new IllegalStateException("unknown param type: " + params);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     public void setParamsAsPositioned(final ObjectMapper objectMapper, final List<?> paramsValue) {
         final ArrayNode params = objectMapper.createArrayNode();
         for (final Object paramsElement : paramsValue) {
@@ -160,7 +153,7 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
     public void setParamsAsNamed(final ObjectMapper objectMapper, final Map<String, ?> paramsValue) {
         final ObjectNode params = objectMapper.createObjectNode();
         for (final Map.Entry<String, ?> e : paramsValue.entrySet()) {
-            params.set(e.getKey(),objectMapper.valueToTree(e.getValue()));
+            params.set(e.getKey(), objectMapper.valueToTree(e.getValue()));
         }
         setParams(params);
     }

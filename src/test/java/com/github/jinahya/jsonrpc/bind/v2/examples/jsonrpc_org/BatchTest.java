@@ -2,11 +2,8 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
-import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonClientResponse;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
-import com.github.jinahya.jsonrpc.bind.v2.jackson.LazyMappedRequest;
+import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class BatchTest {
@@ -32,7 +28,8 @@ class BatchTest {
         final JsonNode array = readTreeFromResource("batch_01_request.json", getClass());
         {
             final JsonNode element = array.get(0);
-            final LazyMappedRequest request = requireValid(OBJECT_MAPPER.treeToValue(element, LazyMappedRequest.class));
+            final JacksonServerRequest request
+                    = requireValid(OBJECT_MAPPER.treeToValue(element, JacksonServerRequest.class));
             assertEquals("sum", request.getMethod());
             final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(asList(1, 2, 4), params);
@@ -40,8 +37,8 @@ class BatchTest {
         }
         {
             final JsonNode element = array.get(1);
-            final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                    element, JacksonServerRequest.Unknown.class));
+            final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
+                    element, JacksonServerRequest.class));
             assertEquals("notify_hello", request.getMethod());
             final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(singletonList(7), params);
@@ -49,8 +46,8 @@ class BatchTest {
         }
         {
             final JsonNode element = array.get(2);
-            final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                    element, JacksonServerRequest.Unknown.class));
+            final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
+                    element, JacksonServerRequest.class));
             assertEquals("subtract", request.getMethod());
             final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(asList(42, 23), params);
@@ -59,14 +56,14 @@ class BatchTest {
         {
             final JsonNode element = array.get(3);
             assertThrows(JsonProcessingException.class, () -> {
-                final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                        element, JacksonServerRequest.Unknown.class));
+                final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
+                        element, JacksonServerRequest.class));
             });
         }
         {
             final JsonNode element = array.get(4);
-            final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                    element, JacksonServerRequest.Unknown.class));
+            final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
+                    element, JacksonServerRequest.class));
             assertEquals("foo.get", request.getMethod());
             final JsonNode params = request.getParams();
             assertEquals("myself", params.get("name").asText());
@@ -74,8 +71,8 @@ class BatchTest {
         }
         {
             final JsonNode element = array.get(5);
-            final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                    element, JacksonServerRequest.Unknown.class));
+            final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
+                    element, JacksonServerRequest.class));
             assertEquals("get_data", request.getMethod());
             assertNull(request.getParams());
             assertEquals("9", request.getId().asText());
@@ -84,12 +81,11 @@ class BatchTest {
 
     @Test
     void batch_01_response() throws IOException {
-        final JsonNode root = readTreeFromResource("batch_01_response.json", getClass());
-        assertTrue(root.isArray());
+        final JsonNode array = readTreeFromResource("batch_01_response.json", getClass());
         {
-            final JsonNode element = root.get(0);
-            final JacksonClientResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> response
-                    = requireValid(OBJECT_MAPPER.treeToValue(element, JacksonClientResponse.Unknown.class));
+            final JsonNode element = array.get(0);
+            final JacksonServerResponse response
+                    = requireValid(OBJECT_MAPPER.treeToValue(element, JacksonServerResponse.class));
             assertEquals(7, response.getResult().asInt());
             assertEquals("1", response.getId().asText());
         }

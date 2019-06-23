@@ -20,13 +20,12 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 import static java.util.Objects.requireNonNull;
 
 public abstract class JacksonResponseTest<
-        ObjectType extends ResponseObject<ResultType, ErrorType, IdType>,
+        ObjectType extends JacksonResponse<ResultType, ErrorType, IdType>,
         ResultType,
         ErrorType extends ErrorObject<?>,
         IdType> {
