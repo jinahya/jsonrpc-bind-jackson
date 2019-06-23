@@ -20,6 +20,7 @@ package com.github.jinahya.jsonrpc.bind;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +34,17 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
-import static java.util.Optional.ofNullable;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Slf4j
-public final class JacksonUtils {
+public final class JacksonTests {
 
     // -----------------------------------------------------------------------------------------------------------------
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(); // fully thread-safe!
+
+    static {
+        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     public static <R> R applyObjectMapper(final Function<? super ObjectMapper, ? extends R> function) {
@@ -65,8 +69,10 @@ public final class JacksonUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static JsonNode readTreeFromResource(final String resourceName, final Class clientClass) throws IOException {
+    public static JsonNode readTreeFromResource(final String resourceName, final Class<?> clientClass)
+            throws IOException {
         try (InputStream resourceStream = clientClass.getResourceAsStream(resourceName)) {
+            assertNotNull(resourceStream, "null resource stream for " + resourceName);
             return OBJECT_MAPPER.readTree(resourceStream);
         }
     }
@@ -84,7 +90,7 @@ public final class JacksonUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private JacksonUtils() {
+    private JacksonTests() {
         super();
     }
 }

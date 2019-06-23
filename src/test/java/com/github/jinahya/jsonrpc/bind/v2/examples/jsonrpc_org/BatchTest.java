@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonClientResponse;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
+import com.github.jinahya.jsonrpc.bind.v2.jackson.LazyMappedRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
-import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
-import static com.github.jinahya.jsonrpc.bind.JacksonUtils.readTreeFromResource;
+import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
+import static com.github.jinahya.jsonrpc.bind.JacksonTests.readTreeFromResource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,19 +29,17 @@ class BatchTest {
 
     @Test
     void batch_01_request() throws IOException {
-        final JsonNode root = readTreeFromResource("batch_01_request.json", getClass());
-        assertTrue(root.isArray());
+        final JsonNode array = readTreeFromResource("batch_01_request.json", getClass());
         {
-            final JsonNode element = root.get(0);
-            final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
-                    element, JacksonServerRequest.Unknown.class));
+            final JsonNode element = array.get(0);
+            final LazyMappedRequest request = requireValid(OBJECT_MAPPER.treeToValue(element, LazyMappedRequest.class));
             assertEquals("sum", request.getMethod());
             final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(asList(1, 2, 4), params);
             assertEquals("1", request.getId().asText());
         }
         {
-            final JsonNode element = root.get(1);
+            final JsonNode element = array.get(1);
             final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.Unknown.class));
             assertEquals("notify_hello", request.getMethod());
@@ -49,7 +48,7 @@ class BatchTest {
             assertNull(request.getId());
         }
         {
-            final JsonNode element = root.get(2);
+            final JsonNode element = array.get(2);
             final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.Unknown.class));
             assertEquals("subtract", request.getMethod());
@@ -58,14 +57,14 @@ class BatchTest {
             assertEquals("2", request.getId().asText());
         }
         {
-            final JsonNode element = root.get(3);
+            final JsonNode element = array.get(3);
             assertThrows(JsonProcessingException.class, () -> {
                 final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
                         element, JacksonServerRequest.Unknown.class));
             });
         }
         {
-            final JsonNode element = root.get(4);
+            final JsonNode element = array.get(4);
             final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.Unknown.class));
             assertEquals("foo.get", request.getMethod());
@@ -74,7 +73,7 @@ class BatchTest {
             assertEquals("5", request.getId().asText());
         }
         {
-            final JsonNode element = root.get(5);
+            final JsonNode element = array.get(5);
             final JacksonServerRequest<ValueNode> request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.Unknown.class));
             assertEquals("get_data", request.getMethod());

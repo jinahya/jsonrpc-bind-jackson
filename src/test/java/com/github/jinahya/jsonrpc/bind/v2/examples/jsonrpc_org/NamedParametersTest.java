@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
-import static com.github.jinahya.jsonrpc.bind.JacksonUtils.OBJECT_MAPPER;
-import static com.github.jinahya.jsonrpc.bind.JacksonUtils.readValueFromResource;
+import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
+import static com.github.jinahya.jsonrpc.bind.JacksonTests.readValueFromResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

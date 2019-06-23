@@ -33,9 +33,13 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 
 /**
- * An abstract class for server-side request object.
+ * A base class for server-side request object.
  *
  * @param <IdType> id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -45,23 +49,12 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
     /**
      * A class of server-side request object for evaluating data lazily.
      */
+    @Deprecated
     public static class Unknown extends JacksonServerRequest<ValueNode> {
 
     }
 
-    /**
-     * Check whether specified value node is an instance of either {@link TextNode}, {@link NumericNode}, or {@link
-     * NullNode}.
-     *
-     * @return {@code true} if {@code valueNode} is an instance of either {@link TextNode}, {@link NumericNode}, or
-     * {@link NullNode}; {@code false} otherwise.
-     */
-    static boolean isEitherTextNumberOrNull(final ValueNode valueNode) {
-        if (valueNode == null) {
-            throw new NullPointerException("valueNode is null");
-        }
-        return valueNode instanceof TextNode || valueNode instanceof NumericNode || valueNode instanceof NullNode;
-    }
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Checks whether the current value of {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link
@@ -74,10 +67,10 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
     private boolean isParamsEitherArrayObjectOrNull() {
         final JsonNode params = getParams();
         return params == null
-               || params instanceof ArrayNode
-               || params instanceof ObjectNode
-               || params instanceof NullNode;
+               || params instanceof ArrayNode || params instanceof ObjectNode || params instanceof NullNode;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},
@@ -89,7 +82,7 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
     @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNumberOrNull() {
         final IdType id = getId();
-        return id == null || isEitherTextNumberOrNull(id);
+        return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
     }
 
     /**
@@ -153,5 +146,43 @@ public class JacksonServerRequest<IdType extends ValueNode> extends JacksonReque
             return getParamsAsPositioned(objectMapper, positionedElementClass);
         }
         throw new IllegalStateException("unknown param type: " + params);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public void setParamsAsPositioned(final ObjectMapper objectMapper, final List<?> paramsValue) {
+        final ArrayNode params = objectMapper.createArrayNode();
+        for (final Object paramsElement : paramsValue) {
+            params.add(objectMapper.valueToTree(paramsElement));
+        }
+        setParams(params);
+    }
+
+    public void setParamsAsNamed(final ObjectMapper objectMapper, final Map<String, ?> paramsValue) {
+        final ObjectNode params = objectMapper.createObjectNode();
+        for (final Map.Entry<String, ?> e : paramsValue.entrySet()) {
+            params.set(e.getKey(),objectMapper.valueToTree(e.getValue()));
+        }
+        setParams(params);
+    }
+
+    public void setParamsAsNamed(final ObjectMapper objectMapper, final Object paramsValue) {
+        setParams(ofNullable(paramsValue).map(v -> (JsonNode) objectMapper.valueToTree(v)).orElse(null));
+        if (paramsValue == null) {
+            setParams(NullNode.getInstance());
+            return;
+        }
+        setParams(objectMapper.valueToTree(paramsValue));
+    }
+
+    public void setParams(final ObjectMapper objectMapper, final Object paramsValue) {
+        if (paramsValue == null) {
+            setParams(NullNode.getInstance());
+            setParams(null);
+            return;
+        }
+        if (paramsValue.getClass().isArray()) {
+            setParamsAsPositioned(objectMapper, asList((Object[]) paramsValue));
+            return;
+        }
     }
 }
