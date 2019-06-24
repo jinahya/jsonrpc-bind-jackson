@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
@@ -35,4 +36,22 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 
+    @Override
+    protected boolean isResultSemanticallyNull() {
+        if (super.isResultSemanticallyNull()) {
+            return true;
+        }
+        final ResultType result = getResult();
+        if (result instanceof NullNode) {
+            return true;
+        }
+        return false;
+    }
+//    @Override
+//    protected boolean isErrorSemanticallyNull() {
+//        if (super.isErrorSemanticallyNull()) {
+//            return true;
+//        }
+//        return false;
+//    }
 }
