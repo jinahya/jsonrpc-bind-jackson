@@ -30,7 +30,7 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import javax.validation.constraints.AssertTrue;
 
 /**
- * A base class for server-side response object.
+ * A base class for server-side response objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

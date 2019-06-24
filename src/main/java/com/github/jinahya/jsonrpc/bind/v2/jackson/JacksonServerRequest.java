@@ -39,7 +39,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
 /**
- * A base class for server-side request object.
+ * A base class for server-side request objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
