@@ -24,7 +24,7 @@ final class JacksonUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static boolean isEitherTextNumberOrNull(final ValueNode node) {
+    static boolean isEitherTextNumericOrNull(final ValueNode node) {
         if (node == null) {
             throw new NullPointerException("Node is null");
         }

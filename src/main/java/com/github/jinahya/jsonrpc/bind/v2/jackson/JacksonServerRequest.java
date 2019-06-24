@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonUtils.isEitherArrayObjectOrNull;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonUtils.isEitherTextNumberOrNull;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
@@ -56,10 +54,11 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @return {@code true} if {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link ArrayNode}, {@link
      * * ObjectNode}, or {@link NullNode}; {@code false} otherwise.
      */
-    @AssertTrue(message = "a non-null params must be either ArrayNode, ObjectNode, or NullNode")
+    @AssertTrue//(message = "a non-null params must be an instance of either ArrayNode, ObjectNode, or NullNode")
     private boolean isParamsEitherArrayObjectOrNull() {
         final JsonNode params = getParams();
-        return params == null || isEitherArrayObjectOrNull(params);
+        return params == null
+               || params instanceof ArrayNode || params instanceof ObjectNode || params instanceof NullNode;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -71,10 +70,10 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
      * NumericNode}, or {@link NullNode}; {@code false} otherwise.
      */
-    @AssertTrue(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
-    private boolean isIdEitherTextNumberOrNull() {
+    @AssertTrue//(message = "a non-null id must be an instance of either TextNode, NumericNode, or NullNode")
+    private boolean isIdEitherTextNodeNumericNodeOrNullNode() {
         final ValueNode id = getId();
-        return id == null || isEitherTextNumberOrNull(id);
+        return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -91,10 +90,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final Class<? extends T> paramsClass)
             throws IOException {
         final JsonNode params = getParams();
-        if (params == null) {
-            throw new IllegalStateException("params is currently null");
-        }
-        if (params instanceof NullNode) {
+        if (params == null || params instanceof NullNode) {
             return null;
         }
         if (!(params instanceof ObjectNode)) {
@@ -104,13 +100,10 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         return objectMapper.readValue(valueString, paramsClass);
     }
 
-    public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<?> elementClass)
+    public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<? extends T> elementClass)
             throws IOException {
         final JsonNode params = getParams();
-        if (params == null) {
-            throw new IllegalStateException("params is currently null");
-        }
-        if (params instanceof NullNode) {
+        if (params == null || params instanceof NullNode) {
             return null;
         }
         if (!(params instanceof ArrayNode)) {

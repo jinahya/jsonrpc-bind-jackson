@@ -36,6 +36,15 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Indicates whether the current value of {@value #PROPERTY_NAME_RESULT} property is <i>semantically</i> {@code
+     * null}. Overridden to check whether the current value of {@value #PROPERTY_NAME_RESULT} property is an instance of
+     * {@link NullNode}.
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     protected boolean isResultSemanticallyNull() {
         if (super.isResultSemanticallyNull()) {
@@ -47,11 +56,4 @@ public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdTyp
         }
         return false;
     }
-//    @Override
-//    protected boolean isErrorSemanticallyNull() {
-//        if (super.isErrorSemanticallyNull()) {
-//            return true;
-//        }
-//        return false;
-//    }
 }
