@@ -22,13 +22,11 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-class JacksonServerResponseTest
-        extends JacksonResponseTest<JacksonServerResponse, JsonNode, ErrorObject<JsonNode>, ValueNode> {
+public abstract class AbstractJacksonServerRequestTest<ObjectType extends JacksonServerRequest>
+        extends JacksonRequestTest<ObjectType, JsonNode, ValueNode> {
 
-    JacksonServerResponseTest() {
-        super(JacksonServerResponse.class, JsonNode.class, JacksonServerResponse.JacksonServerError.class,
-              ValueNode.class);
+    public AbstractJacksonServerRequestTest(final Class<? extends ObjectType> objectClass) {
+        super(objectClass, JsonNode.class, ValueNode.class);
     }
 }

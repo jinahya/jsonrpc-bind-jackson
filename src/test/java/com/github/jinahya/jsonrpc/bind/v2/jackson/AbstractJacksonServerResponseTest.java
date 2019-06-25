@@ -24,11 +24,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
-class JacksonServerResponseTest
-        extends JacksonResponseTest<JacksonServerResponse, JsonNode, ErrorObject<JsonNode>, ValueNode> {
+public abstract class AbstractJacksonServerResponseTest<ObjectType extends JacksonServerResponse>
+        extends JacksonResponseTest<ObjectType, JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
-    JacksonServerResponseTest() {
-        super(JacksonServerResponse.class, JsonNode.class, JacksonServerResponse.JacksonServerError.class,
-              ValueNode.class);
+    public AbstractJacksonServerResponseTest(final Class<? extends ObjectType> objectClass) {
+        super(objectClass, JsonNode.class, JacksonServerResponse.JacksonServerError.class, ValueNode.class);
     }
 }

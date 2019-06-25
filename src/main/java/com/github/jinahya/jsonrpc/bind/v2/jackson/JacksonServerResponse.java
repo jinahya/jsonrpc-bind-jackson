@@ -37,6 +37,19 @@ import javax.validation.constraints.AssertTrue;
 public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
+    public static class JacksonServerError extends ErrorObject<JsonNode> {
+
+    }
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    public JacksonServerResponse() {
+        super();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},

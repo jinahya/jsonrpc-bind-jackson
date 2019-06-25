@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.ofNullable;
 
 /**
  * A base class for server-side request objects.
@@ -44,6 +43,15 @@ import static java.util.Optional.ofNullable;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    public JacksonServerRequest() {
+        super();
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -96,8 +104,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!(params instanceof ObjectNode)) {
             throw new IllegalStateException("params(" + params + ") is not an instance of " + ObjectNode.class);
         }
-        final String valueString = objectMapper.writeValueAsString(params);
-        return objectMapper.readValue(valueString, paramsClass);
+        return objectMapper.treeToValue(params, paramsClass);
     }
 
     public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<? extends T> elementClass)
@@ -136,6 +143,10 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     public void setParamsAsPositioned(final ObjectMapper objectMapper, final List<?> paramsValue) {
+        if (paramsValue == null) {
+            setParams(NullNode.getInstance());
+            return;
+        }
         final ArrayNode params = objectMapper.createArrayNode();
         for (final Object paramsElement : paramsValue) {
             params.add(objectMapper.valueToTree(paramsElement));
@@ -144,6 +155,10 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     public void setParamsAsNamed(final ObjectMapper objectMapper, final Map<String, ?> paramsValue) {
+        if (paramsValue == null) {
+            setParams(NullNode.getInstance());
+            return;
+        }
         final ObjectNode params = objectMapper.createObjectNode();
         for (final Map.Entry<String, ?> e : paramsValue.entrySet()) {
             params.set(e.getKey(), objectMapper.valueToTree(e.getValue()));
@@ -152,7 +167,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     public void setParamsAsNamed(final ObjectMapper objectMapper, final Object paramsValue) {
-        setParams(ofNullable(paramsValue).map(v -> (JsonNode) objectMapper.valueToTree(v)).orElse(null));
         if (paramsValue == null) {
             setParams(NullNode.getInstance());
             return;
@@ -160,6 +174,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         setParams(objectMapper.valueToTree(paramsValue));
     }
 
+    @Deprecated
     public void setParams(final ObjectMapper objectMapper, final Object paramsValue) {
         if (paramsValue == null) {
             setParams(NullNode.getInstance());

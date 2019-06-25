@@ -50,10 +50,6 @@ public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdTyp
         if (super.isResultSemanticallyNull()) {
             return true;
         }
-        final ResultType result = getResult();
-        if (result instanceof NullNode) {
-            return true;
-        }
-        return false;
+        return getResult() instanceof NullNode;
     }
 }
