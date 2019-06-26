@@ -40,6 +40,7 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject
     public static class JacksonServerError extends ErrorObject<JsonNode> {
 
     }
+
     // -----------------------------------------------------------------------------------------------------------------
 
     /**

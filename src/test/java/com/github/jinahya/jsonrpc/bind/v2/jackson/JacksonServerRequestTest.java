@@ -23,9 +23,10 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-class JacksonServerRequestTest extends JacksonRequestTest<JacksonServerRequest, JsonNode, ValueNode> {
+public abstract class JacksonServerRequestTest<ObjectType extends JacksonServerRequest>
+        extends JacksonRequestTest<ObjectType, JsonNode, ValueNode> {
 
-    JacksonServerRequestTest() {
-        super(JacksonServerRequest.class, JsonNode.class, ValueNode.class);
+    public JacksonServerRequestTest(final Class<? extends ObjectType> objectClass) {
+        super(objectClass, JsonNode.class, ValueNode.class);
     }
 }
