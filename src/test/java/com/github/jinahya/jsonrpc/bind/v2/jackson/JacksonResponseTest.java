@@ -50,10 +50,8 @@ public abstract class JacksonResponseTest<
     protected ObjectType readValueFromResource(final String name) throws IOException {
         {
             @SuppressWarnings({"unchecked"})
-            final Class<JacksonResponse<ResultType, ErrorType, IdType>> valueClass
-                    = (Class<JacksonResponse<ResultType, ErrorType, IdType>>) (Class<?>) JacksonResponse.class;
             final JacksonResponse<ResultType, ErrorType, IdType> response =
-                    JacksonTests.readValueFromResource(name, valueClass, getClass());
+                    JacksonTests.readValueFromResource(name, JacksonResponse.class, getClass());
             log.debug("response: {}", response);
         }
         return JacksonTests.readValueFromResource(name, objectClass, getClass());
