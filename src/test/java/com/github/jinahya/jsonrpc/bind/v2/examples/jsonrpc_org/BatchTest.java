@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
+import static com.github.jinahya.jsonrpc.bind.BeanValidationTests.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.readTreeFromResource;
 import static java.util.Arrays.asList;

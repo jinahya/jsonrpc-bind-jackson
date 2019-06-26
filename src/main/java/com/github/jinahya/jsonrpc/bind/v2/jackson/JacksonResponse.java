@@ -31,6 +31,7 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <ResultType> result type parameter
  * @param <ErrorType>  error type parameter
  * @param <IdType>     id type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>

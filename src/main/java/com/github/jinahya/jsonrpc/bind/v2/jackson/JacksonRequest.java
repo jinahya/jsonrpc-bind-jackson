@@ -28,6 +28,7 @@ import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
  *
  * @param <ParamsType> params type parameter
  * @param <IdType>     id type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {

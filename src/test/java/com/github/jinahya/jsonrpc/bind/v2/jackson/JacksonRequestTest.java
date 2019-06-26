@@ -22,6 +22,14 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An abstract class for testing subclsses of {@link JacksonRequest}.
+ *
+ * @param <ObjectType> subclass type parameter
+ * @param <ParamsType> params type parameter
+ * @param <IdType>     id type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public abstract class JacksonRequestTest<ObjectType extends JacksonRequest<ParamsType, IdType>, ParamsType, IdType> {
 
     public JacksonRequestTest(final Class<? extends ObjectType> objectClass,

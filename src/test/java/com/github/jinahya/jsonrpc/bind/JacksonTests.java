@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.github.jinahya.jsonrpc.bind.BeanValidationUtils.requireValid;
+import static com.github.jinahya.jsonrpc.bind.BeanValidationTests.requireValid;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Slf4j
