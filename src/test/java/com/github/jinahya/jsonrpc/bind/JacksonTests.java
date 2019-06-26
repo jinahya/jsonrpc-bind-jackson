@@ -77,9 +77,10 @@ public final class JacksonTests {
         }
     }
 
-    public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass)
+    public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass,
+                                              final Class<?> resourceLoader)
             throws IOException {
-        try (InputStream resourceStream = valueClass.getResourceAsStream(resourceName)) {
+        try (InputStream resourceStream = resourceLoader.getResourceAsStream(resourceName)) {
             assertNotNull(resourceStream, "null resource stream for " + resourceName);
             final T value = requireValid(OBJECT_MAPPER.readValue(resourceStream, valueClass));
             final String string = OBJECT_MAPPER.writeValueAsString(value);
@@ -87,6 +88,11 @@ public final class JacksonTests {
             log.debug("jackson: {}", string);
             return value;
         }
+    }
+
+    public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass)
+            throws IOException {
+        return readValueFromResource(resourceName, valueClass, valueClass);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

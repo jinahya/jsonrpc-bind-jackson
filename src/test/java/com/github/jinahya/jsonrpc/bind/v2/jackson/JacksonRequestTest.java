@@ -20,6 +20,10 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.github.jinahya.jsonrpc.bind.JacksonTests;
+
+import java.io.IOException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -32,6 +36,7 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class JacksonRequestTest<ObjectType extends JacksonRequest<ParamsType, IdType>, ParamsType, IdType> {
 
+    // -----------------------------------------------------------------------------------------------------------------
     public JacksonRequestTest(final Class<? extends ObjectType> objectClass,
                               final Class<? extends ParamsType> paramsClass, final Class<? extends IdType> idClass) {
         super();
@@ -40,6 +45,12 @@ public abstract class JacksonRequestTest<ObjectType extends JacksonRequest<Param
         this.idClass = requireNonNull(idClass, "idClass is null");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    protected ObjectType readValueFromResource(final String name) throws IOException {
+        return JacksonTests.readValueFromResource(name, objectClass, getClass());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     protected final Class<? extends ObjectType> objectClass;
 
     protected final Class<? extends ParamsType> paramsClass;

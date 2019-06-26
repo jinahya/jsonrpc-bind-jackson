@@ -20,16 +20,22 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.github.jinahya.jsonrpc.bind.JacksonTests;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+@Slf4j
 public abstract class JacksonResponseTest<
         ObjectType extends JacksonResponse<ResultType, ErrorType, IdType>,
         ResultType,
         ErrorType extends ErrorObject<?>,
         IdType> {
 
+    // -----------------------------------------------------------------------------------------------------------------
     public JacksonResponseTest(final Class<? extends ObjectType> objectClass,
                                final Class<? extends ResultType> resultClass,
                                final Class<? extends ErrorType> errorClass, final Class<? extends IdType> idClass) {
@@ -40,6 +46,20 @@ public abstract class JacksonResponseTest<
         this.idClass = requireNonNull(idClass, "idClass is null");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    protected ObjectType readValueFromResource(final String name) throws IOException {
+        {
+            @SuppressWarnings({"unchecked"})
+            final Class<JacksonResponse<ResultType, ErrorType, IdType>> valueClass
+                    = (Class<JacksonResponse<ResultType, ErrorType, IdType>>) (Class<?>) JacksonResponse.class;
+            final JacksonResponse<ResultType, ErrorType, IdType> response =
+                    JacksonTests.readValueFromResource(name, valueClass, getClass());
+            log.debug("response: {}", response);
+        }
+        return JacksonTests.readValueFromResource(name, objectClass, getClass());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     protected final Class<? extends ObjectType> objectClass;
 
     protected final Class<? extends ResultType> resultClass;
