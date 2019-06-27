@@ -30,13 +30,17 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import javax.validation.constraints.AssertTrue;
 
 /**
- * A base class for server-side response objects.
+ * A class for lazily mappable response objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * A class for lazily mappable error objects.
+     */
     public static class JacksonServerError extends ErrorObject<JsonNode> {
 
     }
@@ -53,14 +57,14 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},
-     * {@link NumericNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is {@code null} or an instance of
+     * either {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
      * NumericNode}, or {@link NullNode}; {@code false} otherwise.
      */
     @AssertTrue//(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
-    private boolean isIdEitherTextNodeNumericNodeOrNullNode() {
+    protected boolean isIdEitherTextNodeNumericNodeOrNullNode() {
         final ValueNode id = getId();
         return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
     }

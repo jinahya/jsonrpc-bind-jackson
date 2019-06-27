@@ -48,9 +48,6 @@ public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdTyp
      */
     @Override
     protected boolean isResultSemanticallyNull() {
-        if (super.isResultSemanticallyNull()) {
-            return true;
-        }
-        return getResult() instanceof NullNode;
+        return super.isResultSemanticallyNull() || getResult() instanceof NullNode;
     }
 }

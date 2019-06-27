@@ -56,11 +56,12 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Checks whether the current value of {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link
-     * ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@link #PROPERTY_NAME_PARAMS} property is {@code null} or an instance of
+     * either {@link ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
      *
-     * @return {@code true} if {@link #PROPERTY_NAME_PARAMS} property is an instance of either {@link ArrayNode}, {@link
-     * * ObjectNode}, or {@link NullNode}; {@code false} otherwise.
+     * @return {@code true} if {@link #getParams()} returns {@code null} or an instance of either {@link ArrayNode},
+     * {@link * ObjectNode}, or {@link NullNode}; {@code false} otherwise.
+     * @see #getParams()
      */
     @AssertTrue//(message = "a non-null params must be an instance of either ArrayNode, ObjectNode, or NullNode")
     private boolean isParamsEitherArrayObjectOrNull() {
@@ -72,11 +73,12 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Check whether the current value of {@value #PROPERTY_NAME_ID} property is an instance of either {@link TextNode},
-     * {@link NumericNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is {@code null} or an instance of
+     * either {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
-     * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
+     * @return {@code true} if {@link #getId()} returns {@code null} or an instance of either {@link TextNode}, {@link
      * NumericNode}, or {@link NullNode}; {@code false} otherwise.
+     * @see #getId()
      */
     @AssertTrue//(message = "a non-null id must be an instance of either TextNode, NumericNode, or NullNode")
     private boolean isIdEitherTextNodeNumericNodeOrNullNode() {
@@ -107,6 +109,17 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         return objectMapper.treeToValue(params, paramsClass);
     }
 
+    /**
+     * Returns the value of {@value #PROPERTY_NAME_PARAMS} property as a positioned parameters which each element mapped
+     * as specified element class.
+     *
+     * @param objectMapper an object mapper.
+     * @param elementClass the element class.
+     * @param <T>          element type parameter
+     * @return a list of specified element class; {@code null} if {@link #getParams()} returns {@code null} or an
+     * instance of {@link NullNode}.
+     * @throws IOException if an I/O error occurs.
+     */
     public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<? extends T> elementClass)
             throws IOException {
         final JsonNode params = getParams();
@@ -178,7 +191,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     public void setParams(final ObjectMapper objectMapper, final Object paramsValue) {
         if (paramsValue == null) {
             setParams(NullNode.getInstance());
-            setParams(null);
             return;
         }
         if (paramsValue.getClass().isArray()) {
