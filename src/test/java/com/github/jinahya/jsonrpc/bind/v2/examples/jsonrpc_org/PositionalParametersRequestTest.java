@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
@@ -33,7 +34,7 @@ class PositionalParametersRequestTest extends JacksonRequestTest<PositionalParam
         {
             final JacksonServerRequest request = JacksonTests.readValueFromResource(
                     "positional_parameters_01_request.json", JacksonServerRequest.class, getClass());
-            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
+            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class, new ArrayList<>());
             assertIterableEquals(asList(42, 23), params);
             assertEquals(1, request.getId().asInt());
         }
@@ -49,7 +50,7 @@ class PositionalParametersRequestTest extends JacksonRequestTest<PositionalParam
         {
             final JacksonServerRequest request = JacksonTests.readValueFromResource(
                     "positional_parameters_02_request.json", JacksonServerRequest.class, getClass());
-            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
+            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class, new ArrayList<>());
             assertIterableEquals(asList(23, 42), params);
             assertEquals(2, request.getId().asInt());
         }

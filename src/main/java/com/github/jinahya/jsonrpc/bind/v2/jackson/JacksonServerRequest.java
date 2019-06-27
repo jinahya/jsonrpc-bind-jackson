@@ -20,6 +20,9 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -32,13 +35,15 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 /**
- * A base class for server-side request objects.
+ * A class for lazily mappable request objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -89,50 +94,99 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Returns current value of {@link #getParams()} translated to specified type.
+     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a named parameters of specified params
+     * class.
      *
      * @param objectMapper an object mapper.
      * @param paramsClass  the class to parse the {@value #PROPERTY_NAME_PARAMS} property.
      * @param <T>          value type parameter.
-     * @return the value of {@value #PROPERTY_NAME_PARAMS} property mapped to specified params class.
-     * @throws IOException if an I/O error occurs.
+     * @return an instance of specified params class; {@code null} if {@link #getParams()} method returns {@code null}
+     * or an instance of {@link NullNode}.
+     * @throws IllegalArgumentException if {@code paramsClass.isArray()} returns {@code true}.
+     * @throws IllegalStateException    if {@code getParams().isObject()} returns {@code false}.
+     * @throws IOException              if an I/O error occurs.
+     * @see Class#isArray()
+     * @see JsonNode#isObject()
+     * @see ObjectMapper#treeToValue(TreeNode, Class)
      */
     public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final Class<? extends T> paramsClass)
             throws IOException {
+        if (objectMapper == null) {
+            throw new NullPointerException("objectMapper is null");
+        }
+        if (paramsClass == null) {
+            throw new NullPointerException("paramsClass is null");
+        }
+        if (paramsClass.isArray()) {
+            throw new IllegalArgumentException("paramsClass is array");
+        }
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
             return null;
         }
-        if (!(params instanceof ObjectNode)) {
-            throw new IllegalStateException("params(" + params + ") is not an instance of " + ObjectNode.class);
+        if (!params.isObject()) {
+            throw new IllegalStateException("params(" + params + ") is not an object node");
         }
         return objectMapper.treeToValue(params, paramsClass);
     }
 
     /**
-     * Returns the value of {@value #PROPERTY_NAME_PARAMS} property as a positioned parameters which each element mapped
-     * as specified element class.
+     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a positioned parameters which each parameter
+     * is an instance of specified element class and add them to specified collection.
+     *
+     * @param mapper     an object mapper.
+     * @param clazz      the element class.
+     * @param collection the collection to which positioned parameters are added.
+     * @param <T>        element type parameter
+     * @return the specified collection
+     * @throws IllegalArgumentException if {@code getParams().isArray()} returns {@code false}.
+     * @throws IOException              if an I/O error occurs.
+     * @see ObjectMapper#treeAsTokens(TreeNode)
+     * @see ObjectMapper#readValue(JsonParser, JavaType)
+     */
+    public <T extends Collection<? super U>, U> T getParamsAsPositioned(
+            final ObjectMapper mapper, final Class<? extends U> clazz, final T collection)
+            throws IOException {
+        if (mapper == null) {
+            throw new NullPointerException("objectMapper is null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
+        if (collection == null) {
+            throw new NullPointerException("collection is null");
+        }
+        final JsonNode params = getParams();
+        if (params == null || params instanceof NullNode) {
+            return collection;
+        }
+        if (!params.isArray()) {
+            throw new IllegalStateException("params(" + params + ") is not an array node");
+        }
+        final JsonParser tokens = mapper.treeAsTokens(params);
+        final CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+        collection.addAll(mapper.readValue(tokens, type));
+        return collection;
+    }
+
+    /**
+     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a positioned parameters which each parameter
+     * is an instance of specified element class.
      *
      * @param objectMapper an object mapper.
      * @param elementClass the element class.
      * @param <T>          element type parameter
      * @return a list of specified element class; {@code null} if {@link #getParams()} returns {@code null} or an
      * instance of {@link NullNode}.
-     * @throws IOException if an I/O error occurs.
+     * @throws IllegalArgumentException if {@code getParams().isArray()} returns {@code false}.
+     * @throws IOException              if an I/O error occurs.
+     * @see ObjectMapper#treeAsTokens(TreeNode)
+     * @see ObjectMapper#readValue(JsonParser, JavaType)
+     * @see #getParamsAsPositioned(ObjectMapper, Class, Collection)
      */
     public <T> List<T> getParamsAsPositioned(final ObjectMapper objectMapper, final Class<? extends T> elementClass)
             throws IOException {
-        final JsonNode params = getParams();
-        if (params == null || params instanceof NullNode) {
-            return null;
-        }
-        if (!(params instanceof ArrayNode)) {
-            throw new IllegalStateException("params(" + params + ") is not an instance of " + ArrayNode.class);
-        }
-        final String valueString = objectMapper.writeValueAsString(params);
-        final CollectionType collectionType
-                = objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass);
-        return objectMapper.readValue(valueString, collectionType);
+        return getParamsAsPositioned(objectMapper, elementClass, new ArrayList<>());
     }
 
     @Deprecated
