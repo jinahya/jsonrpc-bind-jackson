@@ -30,7 +30,7 @@ import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
  * @param <IdType>     id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) // for notification
 public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {
 
 }

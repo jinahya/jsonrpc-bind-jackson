@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
@@ -33,7 +32,7 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <IdType>     id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 

@@ -27,7 +27,9 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 public abstract class JacksonServerResponseTest<ObjectType extends JacksonServerResponse>
         extends JacksonResponseTest<ObjectType, JsonNode, ErrorObject<JsonNode>, ValueNode> {
 
+    @SuppressWarnings({"unchecked"})
     public JacksonServerResponseTest(final Class<? extends ObjectType> objectClass) {
-        super(objectClass, JsonNode.class, JacksonServerResponse.JacksonServerError.class, ValueNode.class);
+        super(objectClass, JsonNode.class, (Class<ErrorObject<JsonNode>>) (Class<?>) ErrorObject.class,
+              ValueNode.class);
     }
 }

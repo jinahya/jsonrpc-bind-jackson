@@ -39,15 +39,6 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * A class for lazily mappable error objects.
-     */
-    public static class JacksonServerError extends ErrorObject<JsonNode> {
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
      * Creates a new instance.
      */
     public JacksonServerResponse() {

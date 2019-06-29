@@ -137,7 +137,8 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param mapper     an object mapper.
      * @param clazz      the element class.
      * @param collection the collection to which positioned parameters are added.
-     * @param <T>        element type parameter
+     * @param <T>        collection type parameter
+     * @param <U>        element type parameter
      * @return the specified collection
      * @throws IllegalArgumentException if {@code getParams().isArray()} returns {@code false}.
      * @throws IOException              if an I/O error occurs.
