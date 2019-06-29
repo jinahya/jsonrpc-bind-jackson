@@ -21,13 +21,8 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
-
-import javax.validation.constraints.AssertTrue;
 
 /**
  * A class for lazily mappable response objects.
@@ -43,20 +38,5 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject
      */
     public JacksonServerResponse() {
         super();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is {@code null} or an instance of
-     * either {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
-     *
-     * @return {@code true} if {@link #getId()} is {@code null} or is an instance of either {@link TextNode}, {@link
-     * NumericNode}, or {@link NullNode}; {@code false} otherwise.
-     */
-    @AssertTrue//(message = "a non-null id must be either TextNode, NumericNode, or NullNode")
-    protected boolean isIdEitherTextNodeNumericNodeOrNullNode() {
-        final ValueNode id = getId();
-        return id == null || id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
     }
 }

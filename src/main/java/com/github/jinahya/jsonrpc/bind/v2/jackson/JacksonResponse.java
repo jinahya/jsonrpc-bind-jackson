@@ -20,9 +20,20 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+
+import javax.validation.constraints.AssertTrue;
+
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_JSONRPC;
+import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
+import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 
 /**
  * An base class for response objects.
@@ -32,11 +43,12 @@ import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
  * @param <IdType>     id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({PROPERTY_NAME_JSONRPC, PROPERTY_NAME_RESULT, PROPERTY_NAME_ERROR, PROPERTY_NAME_ID})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------------------- result
 
     /**
      * Indicates whether the current value of {@value #PROPERTY_NAME_RESULT} property is <i>semantically</i> {@code
@@ -48,5 +60,15 @@ public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdTyp
     @Override
     protected boolean isResultSemanticallyNull() {
         return super.isResultSemanticallyNull() || getResult() instanceof NullNode;
+    }
+
+    // -------------------------------------------------------------------------------------------------------------- id
+    @Override
+    protected @AssertTrue boolean isIdEitherStringNumberOfNull() {
+        if (super.isIdEitherStringNumberOfNull()) {
+            return true;
+        }
+        final IdType id = getId();
+        return id instanceof TextNode || id instanceof NumericNode || id instanceof NullNode;
     }
 }
