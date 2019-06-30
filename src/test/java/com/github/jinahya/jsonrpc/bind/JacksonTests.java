@@ -71,70 +71,82 @@ public final class JacksonTests {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static JsonNode readTreeFromResource(final String resourceName, final Class<?> clientClass)
+    public static <R> R applyResourceStream(final String name,
+                                            final Function<? super InputStream, ? extends R> function)
             throws IOException {
-        try (InputStream resourceStream = clientClass.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            return OBJECT_MAPPER.readTree(resourceStream);
+        try (InputStream resourceStream = JacksonTests.class.getResourceAsStream(name)) {
+            assertNotNull(resourceStream, "null resource stream for " + name);
+            return function.apply(resourceStream);
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @Deprecated
-    public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass,
-                                              final Class<?> resourceLoader)
-            throws IOException {
-        try (InputStream resourceStream = resourceLoader.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            final T value = requireValid(OBJECT_MAPPER.readValue(resourceStream, valueClass));
-            final String string = OBJECT_MAPPER.writeValueAsString(value);
-            log.debug("jackson: {}", value);
-            log.debug("jackson: {}", string);
-            return value;
-        }
+    public static JsonNode readTreeFromResource(final String resourceName) throws IOException {
+        return applyResourceStream(
+                resourceName,
+                s -> applyObjectMapper(m -> {
+                    try {
+                        return m.readTree(s);
+                    } catch (final IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                })
+        );
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass)
             throws IOException {
-        return readValueFromResource(resourceName, valueClass, valueClass);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static <T> T readValueFromResource(final String resourceName, final JavaType javaType,
-                                              final Class<?> resourceLoader)
-            throws IOException {
-        try (InputStream resourceStream = resourceLoader.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            final T value = requireValid(OBJECT_MAPPER.readValue(resourceStream, javaType));
-            final String string = OBJECT_MAPPER.writeValueAsString(value);
-            log.debug("jackson: {}", value);
-            log.debug("jackson: {}", string);
-            return value;
-        }
+        return applyResourceStream(
+                resourceName,
+                s -> applyObjectMapper(m -> {
+                    try {
+                        final T value = requireValid(m.readValue(s, valueClass));
+                        final String string = m.writeValueAsString(value);
+                        log.debug("jackson: {}", value);
+                        log.debug("jackson: {}", string);
+                        return value;
+                    } catch (final IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                })
+        );
     }
 
     public static <T> T readValueFromResource(final String resourceName, final JavaType javaType)
             throws IOException {
-        return readValueFromResource(resourceName, javaType, JacksonTests.class);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static <T> T readValueFromResource(final String resourceName, final TypeReference<T> typeReference,
-                                              final Class<?> resourceLoader)
-            throws IOException {
-        try (InputStream resourceStream = resourceLoader.getResourceAsStream(resourceName)) {
-            assertNotNull(resourceStream, "null resource stream for " + resourceName);
-            final T value = requireValid(OBJECT_MAPPER.readValue(resourceStream, typeReference));
-            final String string = OBJECT_MAPPER.writeValueAsString(value);
-            log.debug("jackson: {}", value);
-            log.debug("jackson: {}", string);
-            return value;
-        }
+        return applyResourceStream(
+                resourceName,
+                s -> applyObjectMapper(m -> {
+                    try {
+                        final T value = requireValid(OBJECT_MAPPER.readValue(s, javaType));
+                        final String string = OBJECT_MAPPER.writeValueAsString(value);
+                        log.debug("jackson: {}", value);
+                        log.debug("jackson: {}", string);
+                        return value;
+                    } catch (final IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                })
+        );
     }
 
     public static <T> T readValueFromResource(final String resourceName, final TypeReference<T> typeReference)
             throws IOException {
-        return readValueFromResource(resourceName, typeReference, JacksonTests.class);
+        return applyResourceStream(
+                resourceName,
+                s -> applyObjectMapper(m -> {
+                    try {
+                        final T value = requireValid(m.readValue(s, typeReference));
+                        final String string = m.writeValueAsString(value);
+                        log.debug("jackson: {}", value);
+                        log.debug("jackson: {}", string);
+                        return value;
+                    } catch (final IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                })
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------------------

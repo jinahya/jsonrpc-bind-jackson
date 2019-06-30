@@ -49,12 +49,11 @@ public abstract class JacksonResponseTest<
     // -----------------------------------------------------------------------------------------------------------------
     protected ObjectType readValueFromResource(final String name) throws IOException {
         {
-            @SuppressWarnings({"unchecked"})
-            final JacksonResponse<ResultType, ErrorType, IdType> response =
-                    JacksonTests.readValueFromResource(name, JacksonResponse.class, getClass());
+            @SuppressWarnings({"unchecked"}) final JacksonResponse<ResultType, ErrorType, IdType> response =
+                    JacksonTests.readValueFromResource(name, JacksonResponse.class);
             log.debug("response: {}", response);
         }
-        return JacksonTests.readValueFromResource(name, objectClass, getClass());
+        return JacksonTests.readValueFromResource(name, objectClass);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

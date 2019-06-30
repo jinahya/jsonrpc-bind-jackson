@@ -45,7 +45,8 @@ class BatchTest {
 
     @Test
     void batch_01_request() throws IOException {
-        final JsonNode array = readTreeFromResource("batch_01_request.json", getClass());
+        final JsonNode array = readTreeFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/batch_01_request.json");
         {
             final JsonNode element = array.get(0);
             final JacksonServerRequest request
@@ -101,7 +102,8 @@ class BatchTest {
 
     @Test
     void batch_01_response() throws IOException {
-        final JsonNode array = readTreeFromResource("batch_01_response.json", getClass());
+        final JsonNode array = readTreeFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/batch_01_response.json");
         {
             final JsonNode element = array.get(0);
             final JacksonServerResponse response

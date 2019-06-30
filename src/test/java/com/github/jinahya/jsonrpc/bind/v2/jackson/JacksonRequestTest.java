@@ -47,7 +47,7 @@ public abstract class JacksonRequestTest<ObjectType extends JacksonRequest<Param
 
     // -----------------------------------------------------------------------------------------------------------------
     protected ObjectType readValueFromResource(final String name) throws IOException {
-        return JacksonTests.readValueFromResource(name, objectClass, getClass());
+        return JacksonTests.readValueFromResource(name, objectClass);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
