@@ -80,6 +80,7 @@ public final class JacksonTests {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    @Deprecated
     public static <T> T readValueFromResource(final String resourceName, final Class<? extends T> valueClass,
                                               final Class<?> resourceLoader)
             throws IOException {
@@ -99,7 +100,7 @@ public final class JacksonTests {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static <T> T readValueFromResource2(final String resourceName, final JavaType javaType,
+    public static <T> T readValueFromResource(final String resourceName, final JavaType javaType,
                                               final Class<?> resourceLoader)
             throws IOException {
         try (InputStream resourceStream = resourceLoader.getResourceAsStream(resourceName)) {
@@ -112,9 +113,9 @@ public final class JacksonTests {
         }
     }
 
-    public static <T> T readValueFromResource2(final String resourceName, final JavaType javaType)
+    public static <T> T readValueFromResource(final String resourceName, final JavaType javaType)
             throws IOException {
-        return readValueFromResource2(resourceName, javaType, JacksonTests.class);
+        return readValueFromResource(resourceName, javaType, JacksonTests.class);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

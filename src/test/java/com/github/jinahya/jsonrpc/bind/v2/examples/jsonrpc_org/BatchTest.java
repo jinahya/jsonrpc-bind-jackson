@@ -51,7 +51,7 @@ class BatchTest {
             final JacksonServerRequest request
                     = requireValid(OBJECT_MAPPER.treeToValue(element, JacksonServerRequest.class));
             assertEquals("sum", request.getMethod());
-            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
+            final List<Integer> params = request.getParamsAsPositional(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(asList(1, 2, 4), params);
             assertEquals("1", request.getId().asText());
         }
@@ -60,7 +60,7 @@ class BatchTest {
             final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.class));
             assertEquals("notify_hello", request.getMethod());
-            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
+            final List<Integer> params = request.getParamsAsPositional(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(singletonList(7), params);
             assertNull(request.getId());
         }
@@ -69,7 +69,7 @@ class BatchTest {
             final JacksonServerRequest request = requireValid(OBJECT_MAPPER.treeToValue(
                     element, JacksonServerRequest.class));
             assertEquals("subtract", request.getMethod());
-            final List<Integer> params = request.getParamsAsPositioned(OBJECT_MAPPER, Integer.class);
+            final List<Integer> params = request.getParamsAsPositional(OBJECT_MAPPER, Integer.class);
             assertIterableEquals(asList(42, 23), params);
             assertEquals("2", request.getId().asText());
         }

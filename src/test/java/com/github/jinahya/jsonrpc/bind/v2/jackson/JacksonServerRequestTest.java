@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 public abstract class JacksonServerRequestTest<ObjectType extends JacksonServerRequest>
         extends JacksonRequestTest<ObjectType, JsonNode, ValueNode> {
 
+    // -----------------------------------------------------------------------------------------------------------------
     public JacksonServerRequestTest(final Class<? extends ObjectType> objectClass) {
         super(objectClass, JsonNode.class, ValueNode.class);
     }

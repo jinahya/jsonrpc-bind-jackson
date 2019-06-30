@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,14 +65,13 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @see JsonNode#isObject()
      * @see ObjectMapper#treeToValue(TreeNode, Class)
      */
-    public <T> T getParamsAsNamed(final ObjectMapper mapper, final Class<? extends T> clazz)
-            throws IOException {
-        if (mapper == null) {
-            throw new NullPointerException("mapper is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
+    public <T> T getParamsAsNamed(final ObjectMapper mapper, final Class<? extends T> clazz) throws IOException {
+//        if (mapper == null) {
+//            throw new NullPointerException("mapper is null");
+//        }
+//        if (clazz == null) {
+//            throw new NullPointerException("clazz is null");
+//        }
         if (clazz.isArray()) {
             throw new IllegalArgumentException("clazz(" + clazz + ") represents an array class");
         }
@@ -87,14 +85,14 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         return mapper.treeToValue(params, clazz);
     }
 
-    public <U> List<U> getParamsAsPositioned(final ObjectMapper mapper, final Class<? extends U> clazz)
+    public <U> List<U> getParamsAsPositional(final ObjectMapper mapper, final Class<? extends U> clazz)
             throws IOException {
-        if (mapper == null) {
-            throw new NullPointerException("mapper is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
+//        if (mapper == null) {
+//            throw new NullPointerException("mapper is null");
+//        }
+//        if (clazz == null) {
+//            throw new NullPointerException("clazz is null");
+//        }
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
             return null;
@@ -105,14 +103,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final JsonParser tokens = mapper.treeAsTokens(params);
         final CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
         return mapper.readValue(tokens, type);
-    }
-
-    public <T extends Collection<? super U>, U> T getParamsAsPositioned(final ObjectMapper mapper,
-                                                                        final Class<? extends U> clazz,
-                                                                        final T collection)
-            throws IOException {
-        collection.addAll(getParamsAsPositioned(mapper, clazz));
-        return collection;
     }
 
 //    @Deprecated
@@ -130,7 +120,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 //            return getParamsAsNamed(objectMapper, namedObjectClass);
 //        }
 //        if (params instanceof ArrayNode) {
-//            return getParamsAsPositioned(objectMapper, positionedElementClass);
+//            return getParamsAsPositional(objectMapper, positionedElementClass);
 //        }
 //        throw new IllegalStateException("unknown param type: " + params);
 //    }
