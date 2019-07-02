@@ -21,8 +21,12 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.JacksonServerError;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * A class for lazily mappable response objects.
@@ -30,6 +34,52 @@ import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.J
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServerError, ValueNode> {
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static <T extends JacksonServerResponse> T of(final Class<? extends T> clazz, final ObjectNode node) {
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
+        final JsonNode result = node.get(PROPERTY_NAME_RESULT);
+        final JacksonServerError error
+                = ofNullable(node.get(PROPERTY_NAME_ERROR)).map(JacksonServerError::of).orElse(null);
+        final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
+        return of(clazz, jsonrpc, result, error, id);
+    }
+
+    public static <T extends JacksonServerResponse> T of(final Class<? extends T> clazz, final JsonNode node) {
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        final JsonNodeType type = node.getNodeType();
+        if (type != JsonNodeType.OBJECT) {
+            throw new IllegalArgumentException("node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
+        }
+        return of(clazz, (ObjectNode) node);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static JacksonServerResponse of(final ObjectNode node) {
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        return of(JacksonServerResponse.class, node);
+    }
+
+    public static JacksonServerResponse of(final JsonNode node) {
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        final JsonNodeType type = node.getNodeType();
+        if (type != JsonNodeType.OBJECT) {
+            throw new IllegalArgumentException("node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
+        }
+        return of((ObjectNode) node);
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 

@@ -23,8 +23,10 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 
@@ -49,12 +51,17 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
  */
 @JsonPropertyOrder({PROPERTY_NAME_JSONRPC, PROPERTY_NAME_RESULT, PROPERTY_NAME_ERROR, PROPERTY_NAME_ID})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-//public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
-//        extends ResponseObject<ResultType, ErrorType, IdType> {
 public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.JacksonError<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * A base class for error objects.
+     *
+     * @param <DataType> {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA} type
+     *                   parameter.
+     */
     @JsonPropertyOrder({PROPERTY_NAME_CODE, PROPERTY_NAME_MESSAGE, PROPERTY_NAME_DATA})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
@@ -67,6 +74,52 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
          */
         public static class JacksonServerError extends JacksonError<JsonNode> {
 
+            // ---------------------------------------------------------------------------------------------------------
+            public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final ObjectNode node) {
+                if (clazz == null) {
+                    throw new NullPointerException("clazz is null");
+                }
+                if (node == null) {
+                    throw new NullPointerException("node is null");
+                }
+                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
+                          node.get(PROPERTY_NAME_DATA));
+            }
+
+            public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final JsonNode node) {
+                if (clazz == null) {
+                    throw new NullPointerException("clazz is null");
+                }
+                if (node == null) {
+                    throw new NullPointerException("node is null");
+                }
+                final JsonNodeType type = node.getNodeType();
+                if (type != JsonNodeType.OBJECT) {
+                    throw new IllegalArgumentException(
+                            "node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
+                }
+                return of(clazz, (ObjectNode) node);
+            }
+
+            // ---------------------------------------------------------------------------------------------------------
+            public static JacksonServerError of(final ObjectNode node) {
+                if (node == null) {
+                    throw new NullPointerException("node is null");
+                }
+                return of(JacksonServerError.class, node);
+            }
+
+            public static JacksonServerError of(final JsonNode node) {
+                if (node == null) {
+                    throw new NullPointerException("node is null");
+                }
+                final JsonNodeType type = node.getNodeType();
+                if (type != JsonNodeType.OBJECT) {
+                    throw new IllegalArgumentException(
+                            "node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
+                }
+                return of((ObjectNode) node);
+            }
         }
     }
 

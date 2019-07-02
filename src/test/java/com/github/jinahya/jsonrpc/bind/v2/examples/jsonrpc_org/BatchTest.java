@@ -29,12 +29,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationTests.requireValid;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.readTreeFromResource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -104,6 +106,9 @@ class BatchTest {
     void batch_01_response() throws IOException {
         final JsonNode array = readTreeFromResource(
                 "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/batch_01_response.json");
+        final List<JacksonServerResponse> responses = StreamSupport.stream(array.spliterator(), false)
+                .map(JacksonServerResponse::of)
+                .collect(toList());
         {
             final JsonNode element = array.get(0);
             final JacksonServerResponse response

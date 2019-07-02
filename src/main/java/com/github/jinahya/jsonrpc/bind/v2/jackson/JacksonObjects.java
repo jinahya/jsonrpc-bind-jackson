@@ -24,14 +24,35 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+/**
+ * Constants and utilities for Jackson objects.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 final class JacksonObjects {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Checks whether specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
+     * NullNode}.
+     *
+     * @param object the object to to check
+     * @return {@true} is specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
+     *         NullNode}; {@code false} otherwise.
+     */
     static boolean isEitherStringNumberOfNull(final Object object) {
+        if (object == null) {
+            throw new NullPointerException("object is null");
+        }
         return object instanceof TextNode || object instanceof NumericNode || object instanceof NullNode;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
     private JacksonObjects() {
         super();
     }

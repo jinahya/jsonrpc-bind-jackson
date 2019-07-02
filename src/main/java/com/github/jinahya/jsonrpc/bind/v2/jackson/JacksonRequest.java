@@ -51,9 +51,9 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
     // ---------------------------------------------------------------------------------------------------------- params
 
     /**
-     * Indicates whether {@value #PROPERTY_NAME_PARAMS} property is a structured value. The {@code isParamsStructured()}
-     * method of {@code JacksonRequest} class is overridden to further check if the value is either an instance of
-     * {@link ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value #PROPERTY_NAME_PARAMS} property is a structured value. The {@code
+     * isParamsStructured()} method of {@code JacksonRequest} class is overridden to further check if the value is
+     * either an instance of {@link ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
@@ -70,10 +70,10 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
     // -------------------------------------------------------------------------------------------------------------- id
 
     /**
-     * Indicate the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code number},
-     * {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonRequest} class is overridden to
-     * further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an instance of {@link
-     * TextNode}, {@link NumericNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code
+     * number}, {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonRequest} class is
+     * overridden to further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an
+     * instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
