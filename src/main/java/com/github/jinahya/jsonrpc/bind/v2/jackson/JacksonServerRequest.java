@@ -66,12 +66,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @see ObjectMapper#treeToValue(TreeNode, Class)
      */
     public <T> T getParamsAsNamed(final ObjectMapper mapper, final Class<? extends T> clazz) throws IOException {
-//        if (mapper == null) {
-//            throw new NullPointerException("mapper is null");
-//        }
-//        if (clazz == null) {
-//            throw new NullPointerException("clazz is null");
-//        }
         if (clazz.isArray()) {
             throw new IllegalArgumentException("clazz(" + clazz + ") represents an array class");
         }
@@ -87,12 +81,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 
     public <U> List<U> getParamsAsPositional(final ObjectMapper mapper, final Class<? extends U> clazz)
             throws IOException {
-//        if (mapper == null) {
-//            throw new NullPointerException("mapper is null");
-//        }
-//        if (clazz == null) {
-//            throw new NullPointerException("clazz is null");
-//        }
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
             return null;
@@ -104,68 +92,4 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
         return mapper.readValue(tokens, type);
     }
-
-//    @Deprecated
-//    public Object getParams(final ObjectMapper objectMapper, final Class<?> namedObjectClass,
-//                            final Class<?> positionedElementClass)
-//            throws IOException {
-//        final JsonNode params = getParams();
-//        if (params == null) {
-//            throw new IllegalStateException("params property is currently null");
-//        }
-//        if (params instanceof NullNode) {
-//            return null;
-//        }
-//        if (params instanceof ObjectNode) {
-//            return getParamsAsNamed(objectMapper, namedObjectClass);
-//        }
-//        if (params instanceof ArrayNode) {
-//            return getParamsAsPositional(objectMapper, positionedElementClass);
-//        }
-//        throw new IllegalStateException("unknown param type: " + params);
-//    }
-//
-//    public void setParamsAsPositioned(final ObjectMapper objectMapper, final List<?> paramsValue) {
-//        if (paramsValue == null) {
-//            setParams(NullNode.getInstance());
-//            return;
-//        }
-//        final ArrayNode params = objectMapper.createArrayNode();
-//        for (final Object paramsElement : paramsValue) {
-//            params.add(objectMapper.valueToTree(paramsElement));
-//        }
-//        setParams(params);
-//    }
-//
-//    public void setParamsAsNamed(final ObjectMapper objectMapper, final Map<String, ?> paramsValue) {
-//        if (paramsValue == null) {
-//            setParams(NullNode.getInstance());
-//            return;
-//        }
-//        final ObjectNode params = objectMapper.createObjectNode();
-//        for (final Map.Entry<String, ?> e : paramsValue.entrySet()) {
-//            params.set(e.getKey(), objectMapper.valueToTree(e.getValue()));
-//        }
-//        setParams(params);
-//    }
-//
-//    public void setParamsAsNamed(final ObjectMapper objectMapper, final Object paramsValue) {
-//        if (paramsValue == null) {
-//            setParams(NullNode.getInstance());
-//            return;
-//        }
-//        setParams(objectMapper.valueToTree(paramsValue));
-//    }
-
-//    @Deprecated
-//    public void setParams(final ObjectMapper objectMapper, final Object paramsValue) {
-//        if (paramsValue == null) {
-//            setParams(NullNode.getInstance());
-//            return;
-//        }
-//        if (paramsValue.getClass().isArray()) {
-//            setParamsAsPositioned(objectMapper, asList((Object[]) paramsValue));
-//            return;
-//        }
-//    }
 }

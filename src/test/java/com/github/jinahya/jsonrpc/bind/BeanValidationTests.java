@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind;
  * #L%
  */
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.validation.ConstraintViolation;
@@ -35,9 +34,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@Slf4j
 public final class BeanValidationTests {
 
+    // -----------------------------------------------------------------------------------------------------------------
 //    public static final ValidatorFactory VALIDATION_FACTORY = Validation.buildDefaultValidatorFactory();
 
     // https://stackoverflow.com/a/54750045/330457
@@ -51,6 +50,7 @@ public final class BeanValidationTests {
         return function.apply(VALIDATION_FACTORY.getValidator());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     public static <U, R> R applyValidator(final Supplier<? extends U> supplier,
                                           final BiFunction<? super Validator, ? super U, ? extends R> function) {
         return applyValidator(v -> function.apply(v, supplier.get()));
@@ -68,11 +68,18 @@ public final class BeanValidationTests {
         acceptValidator(v -> consumer.accept(v, supplier.get()));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     public static <T> Set<ConstraintViolation<T>> validate(final T object) {
+        if (object == null) {
+            throw new NullPointerException("object is null");
+        }
         return applyValidator(v -> v.validate(object));
     }
 
     public static <T> T requireValid(final T object) {
+        if (object == null) {
+            throw new NullPointerException("object is null");
+        }
         final Set<ConstraintViolation<T>> violations = validate(object);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
@@ -80,6 +87,7 @@ public final class BeanValidationTests {
         return object;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     private BeanValidationTests() {
         super();
     }

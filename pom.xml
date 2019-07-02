@@ -49,8 +49,8 @@
     <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
-    <version.org.junit.jupiter>5.4.2</version.org.junit.jupiter>
-    <version.jsonrpc-bind>0.4.2-SNAPSHOT</version.jsonrpc-bind>
+    <version.org.junit.jupiter>5.5.0</version.org.junit.jupiter>
+    <version.jsonrpc-bind>0.5.2-SNAPSHOT</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>

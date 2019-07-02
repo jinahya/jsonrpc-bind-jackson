@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jinahya.jsonrpc.bind.JacksonTests;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse;
-import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonServerError;
+import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.JacksonServerError;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

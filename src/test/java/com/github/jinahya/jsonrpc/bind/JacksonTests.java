@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -36,7 +35,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.jsonrpc.bind.BeanValidationTests.requireValid;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static com.github.jinahya.jsonrpc.bind.JsonrpcTests.applyResourceStream;
 
 @Slf4j
 public final class JacksonTests {
@@ -68,16 +67,6 @@ public final class JacksonTests {
     public static <U> void acceptObjectMapper(final Supplier<? extends U> supplier,
                                               final BiConsumer<? super ObjectMapper, ? super U> consumer) {
         acceptObjectMapper(v -> consumer.accept(v, supplier.get()));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static <R> R applyResourceStream(final String name,
-                                            final Function<? super InputStream, ? extends R> function)
-            throws IOException {
-        try (InputStream resourceStream = JacksonTests.class.getResourceAsStream(name)) {
-            assertNotNull(resourceStream, "null resource stream for " + name);
-            return function.apply(resourceStream);
-        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

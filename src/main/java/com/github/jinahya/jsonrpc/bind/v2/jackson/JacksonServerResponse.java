@@ -22,14 +22,14 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.JacksonServerError;
 
 /**
  * A class for lazily mappable response objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class JacksonServerResponse extends JacksonResponse<JsonNode, ErrorObject<JsonNode>, ValueNode> {
+public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServerError, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
 

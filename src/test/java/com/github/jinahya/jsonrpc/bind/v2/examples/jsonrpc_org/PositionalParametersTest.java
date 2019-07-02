@@ -20,6 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  * #L%
  */
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonRequest;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,6 @@ import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.readValueFromResource;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonRequest.javaTypeForPositional;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -40,9 +40,12 @@ class PositionalParametersTest {
     @Test
     void positional_parameters_01_request() throws IOException {
         {
+            final TypeReference<JacksonRequest<List<Integer>, Integer>> typeReference
+                    = new TypeReference<JacksonRequest<List<Integer>, Integer>>() {
+            };
             final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
                     "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
-                    javaTypeForPositional(OBJECT_MAPPER.getTypeFactory(), List.class, Integer.class, Integer.class));
+                    typeReference);
             assertIterableEquals(asList(42, 23), request.getParams());
             assertEquals(1, request.getId().intValue());
         }
@@ -58,9 +61,12 @@ class PositionalParametersTest {
     @Test
     void positional_parameters_02_request() throws IOException {
         {
+            final TypeReference<JacksonRequest<List<Integer>, Integer>> typeReference
+                    = new TypeReference<JacksonRequest<List<Integer>, Integer>>() {
+            };
             final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
                     "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
-                    javaTypeForPositional(OBJECT_MAPPER.getTypeFactory(), List.class, Integer.class, Integer.class));
+                    typeReference);
             assertIterableEquals(asList(23, 42), request.getParams());
             assertEquals(2, request.getId().intValue());
         }
