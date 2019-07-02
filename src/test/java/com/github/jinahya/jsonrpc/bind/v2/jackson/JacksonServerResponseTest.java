@@ -22,14 +22,12 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 public abstract class JacksonServerResponseTest<ObjectType extends JacksonServerResponse>
-        extends JacksonResponseTest<ObjectType, JsonNode, ErrorObject<JsonNode>, ValueNode> {
+        extends JacksonResponseTest<ObjectType, JsonNode, JacksonResponse.JacksonError.JacksonServerError, ValueNode> {
 
-    @SuppressWarnings({"unchecked"})
+    //@SuppressWarnings({"unchecked"})
     public JacksonServerResponseTest(final Class<? extends ObjectType> objectClass) {
-        super(objectClass, JsonNode.class, (Class<ErrorObject<JsonNode>>) (Class<?>) ErrorObject.class,
-              ValueNode.class);
+        super(objectClass, JsonNode.class, JacksonResponse.JacksonError.JacksonServerError.class, ValueNode.class);
     }
 }
