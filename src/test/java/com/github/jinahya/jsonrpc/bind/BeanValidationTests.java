@@ -76,6 +76,10 @@ public final class BeanValidationTests {
         return applyValidator(v -> v.validate(object));
     }
 
+    public static boolean isValid(final Object object) {
+        return validate(object).isEmpty();
+    }
+
     public static <T> T requireValid(final T object) {
         if (object == null) {
             throw new NullPointerException("object is null");

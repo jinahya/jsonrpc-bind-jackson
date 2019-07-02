@@ -103,7 +103,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param clazz  the class to parse the {@value #PROPERTY_NAME_PARAMS} property.
      * @param <T>    value type parameter.
      * @return an instance of specified params class; {@code null} if {@link #getParams()} method returns {@code null}
-     *         or an instance of {@link NullNode}.
+     * or an instance of {@link NullNode}.
      * @throws IllegalArgumentException if {@code paramsClass.isArray()} returns {@code true}.
      * @throws IllegalStateException    if {@code getParams().isObject()} returns {@code false}.
      * @throws IOException              if an I/O error occurs.
