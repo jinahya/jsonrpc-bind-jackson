@@ -27,7 +27,7 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class for testing subclsses of {@link JacksonRequest}.
+ * An abstract class for testing subclass of {@link JacksonRequest}.
  *
  * @param <ObjectType> subclass type parameter
  * @param <ParamsType> params type parameter

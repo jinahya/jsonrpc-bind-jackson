@@ -40,6 +40,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROP
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEitherStringNumberOfNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * An base class for response objects.
@@ -82,8 +83,9 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
                 if (node == null) {
                     throw new NullPointerException("node is null");
                 }
-                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
-                          node.get(PROPERTY_NAME_DATA));
+                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
+                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
+                return of(clazz, code, message, node.get(PROPERTY_NAME_DATA));
             }
 
             public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final JsonNode node) {
