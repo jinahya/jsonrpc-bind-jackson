@@ -21,7 +21,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.github.jinahya.jsonrpc.bind.JacksonTests;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class JacksonResponseTest<
         ObjectType extends JacksonResponse<ResultType, ErrorType, IdType>,
         ResultType,
-        ErrorType extends ErrorObject<?>,
+        ErrorType extends JacksonResponse.JacksonError<?>,
         IdType> {
 
     // -----------------------------------------------------------------------------------------------------------------

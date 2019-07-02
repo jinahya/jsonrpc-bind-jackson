@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 
 import javax.validation.constraints.AssertTrue;
 
@@ -50,7 +49,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
  */
 @JsonPropertyOrder({PROPERTY_NAME_JSONRPC, PROPERTY_NAME_RESULT, PROPERTY_NAME_ERROR, PROPERTY_NAME_ID})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
+//public class JacksonResponse<ResultType, ErrorType extends ErrorObject<?>, IdType>
+//        extends ResponseObject<ResultType, ErrorType, IdType> {
+public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.JacksonError<?>, IdType>
         extends ResponseObject<ResultType, ErrorType, IdType> {
 
     // -----------------------------------------------------------------------------------------------------------------

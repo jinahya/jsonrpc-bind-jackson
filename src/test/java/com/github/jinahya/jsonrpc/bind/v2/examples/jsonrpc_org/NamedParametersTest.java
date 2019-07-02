@@ -21,8 +21,6 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  */
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
-import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonRequest;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
@@ -74,10 +72,10 @@ class NamedParametersTest {
     @Test
     void named_parameters_01_response() throws IOException {
         {
-            final TypeReference<JacksonResponse<Integer, ErrorObject<?>, Integer>> typeReference
-                    = new TypeReference<JacksonResponse<Integer, ErrorObject<?>, Integer>>() {
+            final TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>> typeReference
+                    = new TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>() {
             };
-            final JacksonResponse<Integer, ResponseObject.ErrorObject<?>, Integer> response = readValueFromResource(
+            final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
                     "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
                     typeReference);
             assertEquals(19, response.getResult().intValue());
@@ -124,10 +122,10 @@ class NamedParametersTest {
     @Test
     void named_parameters_02_response() throws IOException {
         {
-            final TypeReference<JacksonResponse<Integer, ErrorObject<?>, Integer>> typeReference
-                    = new TypeReference<JacksonResponse<Integer, ErrorObject<?>, Integer>>() {
+            final TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>> typeReference
+                    = new TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>() {
             };
-            final JacksonResponse<Integer, ResponseObject.ErrorObject<?>, Integer> response = readValueFromResource(
+            final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
                     "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
                     typeReference);
             assertEquals(19, response.getResult().intValue());

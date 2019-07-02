@@ -40,7 +40,7 @@ class InvalidRequestTest {
         {
             final JavaType paramsType = OBJECT_MAPPER.getTypeFactory().constructParametricType(
                     JacksonResponse.class, JsonNode.class, JacksonServerError.class, JsonNode.class);
-            final JacksonResponse<JsonNode, ErrorObject<JsonNode>, JsonNode> response
+            final JacksonResponse<JsonNode, JacksonServerError, JsonNode> response
                     = JacksonTests.readValueFromResource(
                     "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/invalid_request_object_01_response.json",
                     paramsType);
