@@ -30,6 +30,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
 
 import javax.validation.constraints.AssertTrue;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_JSONRPC;
@@ -47,6 +50,37 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
 @JsonPropertyOrder({PROPERTY_NAME_JSONRPC, PROPERTY_NAME_METHOD, PROPERTY_NAME_PARAMS, PROPERTY_NAME_ID})
 @JsonInclude(JsonInclude.Include.NON_NULL) // for notification
 public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {
+
+    // -------------------------------------------------------------------------------------------------------------
+    private static Method OF_METHOD;
+
+    static Method ofMethod() {
+        if (OF_METHOD == null) {
+            try {
+                OF_METHOD = RequestObject.class.getDeclaredMethod(
+                        "of", Class.class, String.class, String.class, Object.class, Object.class);
+                if (!OF_METHOD.isAccessible()) {
+                    OF_METHOD.setAccessible(true);
+                }
+            } catch (final NoSuchMethodException nsme) {
+                throw new RuntimeException(nsme);
+            }
+        }
+        return OF_METHOD;
+    }
+
+    private static MethodHandle OF_HANDLE;
+
+    static MethodHandle ofHandle() {
+        if (OF_HANDLE == null) {
+            try {
+                OF_HANDLE = MethodHandles.lookup().unreflect(ofMethod());
+            } catch (final ReflectiveOperationException roe) {
+                throw new RuntimeException(roe);
+            }
+        }
+        return OF_HANDLE;
+    }
 
     // ---------------------------------------------------------------------------------------------------------- params
 

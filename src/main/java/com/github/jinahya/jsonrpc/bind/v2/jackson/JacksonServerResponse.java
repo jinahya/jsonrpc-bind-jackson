@@ -48,7 +48,12 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServ
         final JacksonServerError error
                 = ofNullable(node.get(PROPERTY_NAME_ERROR)).map(JacksonServerError::of).orElse(null);
         final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
-        return of(clazz, jsonrpc, result, error, id);
+//        return of(clazz, jsonrpc, result, error, id);
+        try {
+            return clazz.cast(ofHandle().invokeWithArguments(jsonrpc, result, error, id));
+        } catch (final Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
     }
 
     public static <T extends JacksonServerResponse> T of(final Class<? extends T> clazz, final JsonNode node) {

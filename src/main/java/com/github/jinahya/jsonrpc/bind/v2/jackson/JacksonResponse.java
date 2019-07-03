@@ -31,6 +31,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 
 import javax.validation.constraints.AssertTrue;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_JSONRPC;
@@ -40,6 +43,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROP
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEitherStringNumberOfNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * An base class for response objects.
@@ -67,6 +71,37 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
         // -------------------------------------------------------------------------------------------------------------
+        private static Method OF_METHOD;
+
+        private static Method ofMethod() {
+            if (OF_METHOD == null) {
+                try {
+                    OF_METHOD = ErrorObject.class.getDeclaredMethod(
+                            "of", Class.class, Integer.class, String.class, Object.class);
+                    if (!OF_METHOD.isAccessible()) {
+                        OF_METHOD.setAccessible(true);
+                    }
+                } catch (final NoSuchMethodException nsme) {
+                    throw new RuntimeException(nsme);
+                }
+            }
+            return OF_METHOD;
+        }
+
+        private static MethodHandle OF_HANDLE;
+
+        private static MethodHandle ofHandle() {
+            if (OF_HANDLE == null) {
+                try {
+                    OF_HANDLE = MethodHandles.lookup().unreflect(ofMethod());
+                } catch (final ReflectiveOperationException roe) {
+                    throw new RuntimeException(roe);
+                }
+            }
+            return OF_HANDLE;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
 
         /**
          * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
@@ -82,8 +117,16 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
                 if (node == null) {
                     throw new NullPointerException("node is null");
                 }
-                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
-                          node.get(PROPERTY_NAME_DATA));
+                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
+                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
+                final JsonNode data = node.get(PROPERTY_NAME_DATA);
+//                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
+//                          node.get(PROPERTY_NAME_DATA));
+                try {
+                    return clazz.cast(JacksonError.ofHandle().invokeWithArguments(code, message, data));
+                } catch (final Throwable thrown) {
+                    throw new RuntimeException(thrown);
+                }
             }
 
             public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final JsonNode node) {
@@ -121,6 +164,37 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
                 return of((ObjectNode) node);
             }
         }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private static Method OF_METHOD;
+
+    static Method ofMethod() {
+        if (OF_METHOD == null) {
+            try {
+                OF_METHOD = ResponseObject.class.getDeclaredMethod(
+                        "of", Class.class, String.class, Object.class, ErrorObject.class, Object.class);
+                if (!OF_METHOD.isAccessible()) {
+                    OF_METHOD.setAccessible(true);
+                }
+            } catch (final NoSuchMethodException nsme) {
+                throw new RuntimeException(nsme);
+            }
+        }
+        return OF_METHOD;
+    }
+
+    private static MethodHandle OF_HANDLE;
+
+    static MethodHandle ofHandle() {
+        if (OF_HANDLE == null) {
+            try {
+                OF_HANDLE = MethodHandles.lookup().unreflect(ofMethod());
+            } catch (final ReflectiveOperationException roe) {
+                throw new RuntimeException(roe);
+            }
+        }
+        return OF_HANDLE;
     }
 
     // ---------------------------------------------------------------------------------------------------------- result

@@ -58,7 +58,12 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final String method = ofNullable(objectNode.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = objectNode.get(PROPERTY_NAME_PARAMS);
         final ValueNode id = (ValueNode) objectNode.get(PROPERTY_NAME_ID);
-        return of(JacksonServerRequest.class, jsonrpc, method, params, id);
+//        return of(JacksonServerRequest.class, jsonrpc, method, params, id);
+        try {
+            return (JacksonServerRequest) ofHandle().invokeWithArguments(jsonrpc, method, params, id);
+        } catch (final Throwable thrown) {
+            throw new RuntimeException(thrown);
+        }
     }
 
     /**
