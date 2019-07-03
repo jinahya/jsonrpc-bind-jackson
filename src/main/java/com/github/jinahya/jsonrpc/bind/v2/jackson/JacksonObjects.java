@@ -58,6 +58,23 @@ final class JacksonObjects {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    static <T> T readObject(final ObjectMapper objectMapper, final ObjectNode objectNode, final JavaType valueType)
+            throws IOException {
+        if (objectMapper == null) {
+            throw new NullPointerException("objectMapper is null");
+        }
+        if (objectNode == null) {
+            throw new NullPointerException("objectNode is null");
+        }
+        if (valueType == null) {
+            throw new NullPointerException("valueClass is null");
+        }
+        if (valueType.isArrayType()) {
+            throw new IllegalArgumentException("valueType(" + valueType + ") represents an array type");
+        }
+        return objectMapper.readValue(objectMapper.treeAsTokens(objectNode), valueType);
+    }
+
     static <T> T readObject(final ObjectMapper objectMapper, final ObjectNode objectNode,
                             final Class<? extends T> valueClass)
             throws IOException {
@@ -72,6 +89,10 @@ final class JacksonObjects {
         }
         if (valueClass.isArray()) {
             throw new IllegalArgumentException("valueClass(" + valueClass + ") represents an array class");
+        }
+        if (true) {
+            final JavaType valueType = objectMapper.getTypeFactory().constructType(valueClass);
+            return readObject(objectMapper, objectNode, valueType);
         }
         return objectMapper.treeToValue(objectNode, valueClass);
     }
@@ -89,8 +110,9 @@ final class JacksonObjects {
             throw new NullPointerException("elementType is null");
         }
         final JsonParser paramsTokens = objectMapper.treeAsTokens(arrayNode);
-        final CollectionType valueType = objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
-        return objectMapper.readValue(paramsTokens, valueType);
+        final CollectionType collectionType
+                = objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
+        return objectMapper.readValue(paramsTokens, collectionType);
     }
 
     static <U> List<U> readArray(final ObjectMapper objectMapper, final ArrayNode arrayNode,
@@ -104,6 +126,10 @@ final class JacksonObjects {
         }
         if (elementClass == null) {
             throw new NullPointerException("elementClass is null");
+        }
+        if (true) {
+            final JavaType elementType = objectMapper.getTypeFactory().constructType(elementClass);
+            return readArray(objectMapper, arrayNode, elementType);
         }
         final JsonParser arrayTokens = objectMapper.treeAsTokens(arrayNode);
         final CollectionType collectionType
@@ -152,6 +178,10 @@ final class JacksonObjects {
         }
         if (elementClass == null) {
             throw new NullPointerException("elementClass is null");
+        }
+        if (true) {
+            final JavaType elementType = objectMapper.getTypeFactory().constructType(elementClass);
+            return readArrayElementAt(objectMapper, arrayNode, arrayIndex, elementType);
         }
         final JsonParser paramTokens = objectMapper.treeAsTokens(arrayNode.get(arrayIndex));
         return objectMapper.readValue(paramTokens, elementClass);
