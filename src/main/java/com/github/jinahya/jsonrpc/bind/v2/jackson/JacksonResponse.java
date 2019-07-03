@@ -122,8 +122,9 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
                 final JsonNode data = node.get(PROPERTY_NAME_DATA);
 //                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
 //                          node.get(PROPERTY_NAME_DATA));
+//                return of(clazz, code, message, node.get(PROPERTY_NAME_DATA));
                 try {
-                    return clazz.cast(JacksonError.ofHandle().invokeWithArguments(code, message, data));
+                    return clazz.cast(JacksonError.ofHandle().invokeWithArguments(clazz, code, message, data));
                 } catch (final Throwable thrown) {
                     throw new RuntimeException(thrown);
                 }

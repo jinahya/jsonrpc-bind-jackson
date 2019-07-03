@@ -38,8 +38,8 @@ final class JacksonObjects {
      * NullNode}.
      *
      * @param object the object to to check
-     * @return {@true} is specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
-     *         NullNode}; {@code false} otherwise.
+     * @return {@code true} if specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
+     * NullNode}; {@code false} otherwise.
      */
     static boolean isEitherStringNumberOfNull(final Object object) {
         if (object == null) {

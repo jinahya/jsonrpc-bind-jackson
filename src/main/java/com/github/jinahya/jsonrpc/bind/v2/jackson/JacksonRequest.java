@@ -32,6 +32,7 @@ import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
 import javax.validation.constraints.AssertTrue;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
@@ -73,8 +74,12 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
 
     static MethodHandle ofHandle() {
         if (OF_HANDLE == null) {
+            final MethodType methodType = MethodType.methodType(
+                    Object.class, Class.class, String.class, String.class, Object.class, Object.class)
+                    .generic();
             try {
                 OF_HANDLE = MethodHandles.lookup().unreflect(ofMethod());
+//                OF_HANDLE = MethodHandles.lookup().findStatic(RequestObject.class, "of", methodType);
             } catch (final ReflectiveOperationException roe) {
                 throw new RuntimeException(roe);
             }

@@ -60,7 +60,8 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final ValueNode id = (ValueNode) objectNode.get(PROPERTY_NAME_ID);
 //        return of(JacksonServerRequest.class, jsonrpc, method, params, id);
         try {
-            return (JacksonServerRequest) ofHandle().invokeWithArguments(jsonrpc, method, params, id);
+            return (JacksonServerRequest) ofHandle().invokeWithArguments(
+                    JacksonServerRequest.class, jsonrpc, method, params, id);
         } catch (final Throwable thrown) {
             throw new RuntimeException(thrown);
         }
@@ -108,7 +109,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param clazz  the class to parse the {@value #PROPERTY_NAME_PARAMS} property.
      * @param <T>    value type parameter.
      * @return an instance of specified params class; {@code null} if {@link #getParams()} method returns {@code null}
-     *         or an instance of {@link NullNode}.
+     * or an instance of {@link NullNode}.
      * @throws IllegalArgumentException if {@code paramsClass.isArray()} returns {@code true}.
      * @throws IllegalStateException    if {@code getParams().isObject()} returns {@code false}.
      * @throws IOException              if an I/O error occurs.

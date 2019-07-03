@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 public abstract class JacksonServerResponseTest<ObjectType extends JacksonServerResponse>
         extends JacksonResponseTest<ObjectType, JsonNode, JacksonResponse.JacksonError.JacksonServerError, ValueNode> {
 
-    //@SuppressWarnings({"unchecked"})
     public JacksonServerResponseTest(final Class<? extends ObjectType> objectClass) {
         super(objectClass, JsonNode.class, JacksonResponse.JacksonError.JacksonServerError.class, ValueNode.class);
     }
