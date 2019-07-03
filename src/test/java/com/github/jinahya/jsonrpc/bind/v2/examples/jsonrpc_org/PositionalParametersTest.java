@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  */
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonRequest;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
 import org.junit.jupiter.api.Test;
@@ -37,45 +38,90 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 class PositionalParametersTest {
 
     // -----------------------------------------------------------------------------------------------------------------
+    private static final JavaType REQUEST_JAVA_TYPE;
+
+    static {
+        final JavaType paramsType = OBJECT_MAPPER.getTypeFactory().constructParametricType(List.class, Integer.TYPE);
+        final JavaType idType = OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE);
+        REQUEST_JAVA_TYPE = OBJECT_MAPPER.getTypeFactory().constructParametricType(
+                JacksonRequest.class, paramsType, idType);
+    }
+
+    private static final TypeReference<JacksonRequest<List<Integer>, Integer>> REQUEST_TYPE_REFERENCE
+            = new TypeReference<JacksonRequest<List<Integer>, Integer>>() {
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void positional_parameters_01_request_java_type() throws IOException {
+        final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
+                REQUEST_JAVA_TYPE);
+        assertIterableEquals(asList(42, 23), request.getParams());
+        assertEquals(1, request.getId().intValue());
+    }
+
+    @Test
+    void positional_parameters_01_request_type_reference() throws IOException {
+        final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
+                REQUEST_TYPE_REFERENCE);
+        assertIterableEquals(asList(42, 23), request.getParams());
+        assertEquals(1, request.getId().intValue());
+    }
+
     @Test
     void positional_parameters_01_request() throws IOException {
-        {
-            final TypeReference<JacksonRequest<List<Integer>, Integer>> typeReference
-                    = new TypeReference<JacksonRequest<List<Integer>, Integer>>() {
-            };
-            final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
-                    typeReference);
-            assertIterableEquals(asList(42, 23), request.getParams());
-            assertEquals(1, request.getId().intValue());
-        }
-        {
-            final JacksonServerRequest request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
-                    JacksonServerRequest.class);
-            assertIterableEquals(asList(42, 23), request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
-            assertEquals(1, request.getId().asInt());
-        }
+        final JacksonServerRequest request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
+                JacksonServerRequest.class);
+        assertIterableEquals(asList(42, 23), request.getParamsAsPositional(OBJECT_MAPPER, Integer.TYPE));
+        assertIterableEquals(asList(42, 23),
+                             request.getParamsAsPositional(OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(
+                                     Integer.TYPE)));
+        assertEquals(42, request.getParamAt(OBJECT_MAPPER, 0, Integer.TYPE));
+        assertEquals(42, (int) request.getParamAt(
+                OBJECT_MAPPER, 0, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(23, request.getParamAt(OBJECT_MAPPER, 1, Integer.TYPE));
+        assertEquals(23, (int) request.getParamAt(
+                OBJECT_MAPPER, 1, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(1, request.getId().asInt());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void positional_parameters_02_request_java_type() throws IOException {
+        final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
+                REQUEST_JAVA_TYPE);
+        assertIterableEquals(asList(23, 42), request.getParams());
+        assertEquals(2, request.getId().intValue());
+    }
+
+    @Test
+    void positional_parameters_02_request_type_reference() throws IOException {
+        final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
+                REQUEST_TYPE_REFERENCE);
+        assertIterableEquals(asList(23, 42), request.getParams());
+        assertEquals(2, request.getId().intValue());
     }
 
     @Test
     void positional_parameters_02_request() throws IOException {
-        {
-            final TypeReference<JacksonRequest<List<Integer>, Integer>> typeReference
-                    = new TypeReference<JacksonRequest<List<Integer>, Integer>>() {
-            };
-            final JacksonRequest<List<Integer>, Integer> request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
-                    typeReference);
-            assertIterableEquals(asList(23, 42), request.getParams());
-            assertEquals(2, request.getId().intValue());
-        }
-        {
-            final JacksonServerRequest request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
-                    JacksonServerRequest.class);
-            assertIterableEquals(asList(23, 42), request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
-            assertEquals(2, request.getId().asInt());
-        }
+        final JacksonServerRequest request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
+                JacksonServerRequest.class);
+        assertIterableEquals(asList(23, 42), request.getParamsAsPositional(OBJECT_MAPPER, Integer.TYPE));
+        assertIterableEquals(asList(23, 42),
+                             request.getParamsAsPositional(OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(
+                                     Integer.TYPE)));
+        assertEquals(23, request.getParamAt(OBJECT_MAPPER, 0, Integer.TYPE));
+        assertEquals(23, (int) request.getParamAt(
+                OBJECT_MAPPER, 0, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(42, request.getParamAt(OBJECT_MAPPER, 1, Integer.TYPE));
+        assertEquals(42, (int) request.getParamAt(
+                OBJECT_MAPPER, 1, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(2, request.getId().asInt());
     }
 }

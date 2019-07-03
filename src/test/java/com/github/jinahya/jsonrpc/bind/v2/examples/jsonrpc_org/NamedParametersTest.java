@@ -21,6 +21,9 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  */
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject;
+import com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org.NamedParametersRequest.SubtractParams;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonRequest;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonServerRequest;
@@ -40,103 +43,159 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class NamedParametersTest {
 
     // -----------------------------------------------------------------------------------------------------------------
+    private static final JavaType REQUEST_JAVA_TYPE = OBJECT_MAPPER.getTypeFactory().constructParametricType(
+            JacksonRequest.class, SubtractParams.class, Integer.TYPE);
+
+    private static final TypeReference<JacksonRequest<SubtractParams, Integer>> REQUEST_TYPE_REFERENCE
+            = new TypeReference<JacksonRequest<SubtractParams, Integer>>() {
+    };
+
+    private static final JavaType RESPONSE_JAVA_TYPE;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    static {
+        final JavaType resultType = OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE);
+        final JavaType errorType
+                = OBJECT_MAPPER.getTypeFactory().constructParametricType(ErrorObject.class, Void.class);
+        final JavaType idType = OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE);
+        RESPONSE_JAVA_TYPE = OBJECT_MAPPER.getTypeFactory().constructParametricType(
+                JacksonResponse.class, resultType, errorType, idType);
+    }
+
+    private static final TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>
+            RESPONSE_TYPE_REFERENCE
+            = new TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>() {
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void named_parameters_01_request_java_type() throws IOException {
+        final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_request.json",
+                REQUEST_JAVA_TYPE);
+        final SubtractParams params = request.getParams();
+        assertNotNull(params);
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(42, params.getMinuend());
+        assertEquals(3, (int) request.getId());
+    }
+
+    @Test
+    void named_parameters_01_request_type_reference() throws IOException {
+        final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_request.json",
+                REQUEST_TYPE_REFERENCE);
+        final SubtractParams params = request.getParams();
+        assertNotNull(params);
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(42, params.getMinuend());
+        assertEquals(3, (int) request.getId());
+    }
+
     @Test
     void named_parameters_01_request() throws IOException {
-        {
-            final TypeReference<JacksonRequest<SubtractParams, Integer>> typeReference
-                    = new TypeReference<JacksonRequest<SubtractParams, Integer>>() {
-            };
-            final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_request.json",
-                    typeReference);
-            final SubtractParams params = request.getParams();
-            assertNotNull(params);
-            assertEquals(23, params.getSubtrahend());
-            assertEquals(42, params.getMinuend());
-            assertEquals(3, (int) request.getId());
-        }
-        {
-            final JacksonServerRequest request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_request.json",
-                    JacksonServerRequest.class);
-            final SubtractParams params = request.getParamsAsNamed(OBJECT_MAPPER, SubtractParams.class);
-            assertNotNull(params);
-            assertEquals(23, params.getSubtrahend());
-            assertEquals(42, params.getMinuend());
-            assertEquals(3, request.getId().asInt());
-            assertThrows(IllegalStateException.class,
-                         () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
-        }
+        final JacksonServerRequest request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_request.json",
+                JacksonServerRequest.class);
+        final SubtractParams params = request.getParamsAsNamed(OBJECT_MAPPER, SubtractParams.class);
+        assertNotNull(params);
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(42, params.getMinuend());
+        assertEquals(3, request.getId().asInt());
+        assertThrows(IllegalStateException.class, () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void named_parameters_01_response_java_type() throws IOException {
+        final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
+                RESPONSE_JAVA_TYPE);
+        assertEquals(19, response.getResult().intValue());
+        assertEquals(3, response.getId().intValue());
+    }
+
+    @Test
+    void named_parameters_01_response_type_reference() throws IOException {
+        final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
+                RESPONSE_TYPE_REFERENCE);
+        assertEquals(19, response.getResult().intValue());
+        assertEquals(3, response.getId().intValue());
     }
 
     @Test
     void named_parameters_01_response() throws IOException {
-        {
-            final TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>> typeReference
-                    = new TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>() {
-            };
-            final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
-                    typeReference);
-            assertEquals(19, response.getResult().intValue());
-            assertEquals(3, response.getId().intValue());
-        }
-        {
-            final JacksonServerResponse response = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
-                    JacksonServerResponse.class);
-            assertEquals(19, response.getResult().asInt());
-            assertEquals(3, response.getId().asInt());
-        }
+        final JacksonServerResponse response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_01_response.json",
+                JacksonServerResponse.class);
+        assertEquals(19, response.getResult().asInt());
+        assertEquals(3, response.getId().asInt());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void named_parameters_02_request_java_type() throws IOException {
+        final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_request.json",
+                REQUEST_JAVA_TYPE);
+        final SubtractParams params = request.getParams();
+        assertNotNull(params);
+        assertEquals(42, params.getMinuend());
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(4, (int) request.getId());
+    }
+
+    @Test
+    void named_parameters_02_request_type_reference() throws IOException {
+        final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_request.json",
+                REQUEST_TYPE_REFERENCE);
+        final SubtractParams params = request.getParams();
+        assertNotNull(params);
+        assertEquals(42, params.getMinuend());
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(4, (int) request.getId());
     }
 
     @Test
     void named_parameters_02_request() throws IOException {
-        {
-            final TypeReference<JacksonRequest<SubtractParams, Integer>> typeReference
-                    = new TypeReference<JacksonRequest<SubtractParams, Integer>>() {
-            };
-            final JacksonRequest<SubtractParams, Integer> request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_request.json",
-                    typeReference);
-            final SubtractParams params = request.getParams();
-            assertNotNull(params);
-            assertEquals(42, params.getMinuend());
-            assertEquals(23, params.getSubtrahend());
-            assertEquals(4, (int) request.getId());
-        }
-        {
-            final JacksonServerRequest request = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_request.json",
-                    JacksonServerRequest.class);
-            final SubtractParams params = request.getParamsAsNamed(OBJECT_MAPPER, SubtractParams.class);
-            assertNotNull(params);
-            assertEquals(42, params.getMinuend());
-            assertEquals(23, params.getSubtrahend());
-            assertEquals(4, request.getId().asInt());
-            assertThrows(IllegalStateException.class,
-                         () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
-        }
+        final JacksonServerRequest request = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_request.json",
+                JacksonServerRequest.class);
+        final SubtractParams params = request.getParamsAsNamed(OBJECT_MAPPER, SubtractParams.class);
+        assertNotNull(params);
+        assertEquals(42, params.getMinuend());
+        assertEquals(23, params.getSubtrahend());
+        assertEquals(4, request.getId().asInt());
+        assertThrows(IllegalStateException.class, () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @Test
+    void named_parameters_02_response_java_type() throws IOException {
+        final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
+                RESPONSE_JAVA_TYPE);
+        assertEquals(19, response.getResult().intValue());
+        assertEquals(4, response.getId().intValue());
+    }
+
+    @Test
+    void named_parameters_02_response_type_reference() throws IOException {
+        final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
+                RESPONSE_TYPE_REFERENCE);
+        assertEquals(19, response.getResult().intValue());
+        assertEquals(4, response.getId().intValue());
     }
 
     @Test
     void named_parameters_02_response() throws IOException {
-        {
-            final TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>> typeReference
-                    = new TypeReference<JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer>>() {
-            };
-            final JacksonResponse<Integer, JacksonResponse.JacksonError<?>, Integer> response = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
-                    typeReference);
-            assertEquals(19, response.getResult().intValue());
-            assertEquals(4, response.getId().intValue());
-        }
-        {
-            final JacksonServerResponse response = readValueFromResource(
-                    "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
-                    JacksonServerResponse.class);
-            assertEquals(19, response.getResult().asInt());
-            assertEquals(4, response.getId().asInt());
-        }
+        final JacksonServerResponse response = readValueFromResource(
+                "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/named_parameters_02_response.json",
+                JacksonServerResponse.class);
+        assertEquals(19, response.getResult().asInt());
+        assertEquals(4, response.getId().asInt());
     }
 }

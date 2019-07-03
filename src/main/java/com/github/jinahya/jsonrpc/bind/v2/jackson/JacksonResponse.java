@@ -73,7 +73,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
         // -------------------------------------------------------------------------------------------------------------
         private static Method OF_METHOD;
 
-        private static Method ofMethod() {
+        static Method ofMethod() {
             if (OF_METHOD == null) {
                 try {
                     OF_METHOD = ErrorObject.class.getDeclaredMethod(
@@ -90,7 +90,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
 
         private static MethodHandle OF_HANDLE;
 
-        private static MethodHandle ofHandle() {
+        static MethodHandle ofHandle() {
             if (OF_HANDLE == null) {
                 try {
                     OF_HANDLE = MethodHandles.lookup().unreflect(ofMethod());
@@ -120,11 +120,8 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
                 final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
                 final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
                 final JsonNode data = node.get(PROPERTY_NAME_DATA);
-//                return of(clazz, node.get(PROPERTY_NAME_CODE).asInt(), node.get(PROPERTY_NAME_MESSAGE).asText(),
-//                          node.get(PROPERTY_NAME_DATA));
-//                return of(clazz, code, message, node.get(PROPERTY_NAME_DATA));
                 try {
-                    return clazz.cast(JacksonError.ofHandle().invokeWithArguments(clazz, code, message, data));
+                    return clazz.cast(ofHandle().invokeWithArguments(clazz, code, message, data));
                 } catch (final Throwable thrown) {
                     throw new RuntimeException(thrown);
                 }

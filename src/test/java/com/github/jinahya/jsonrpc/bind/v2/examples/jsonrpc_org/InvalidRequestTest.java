@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InvalidRequestTest {
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Test
     void invalid_request_object_01_response() throws IOException {
         {
