@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
@@ -43,29 +42,14 @@ import static java.util.Optional.ofNullable;
 public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static <T extends JacksonServerRequest> T of(final Class<? extends T> clazz, final ObjectNode node) {
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
+    static <T extends JacksonServerRequest> T of(final Class<? extends T> clazz,
+                                                 @RequireInstanceOf(ObjectNode.class) final JsonNode node) {
+        //requireObjectNode(node);
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final String method = ofNullable(node.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = node.get(PROPERTY_NAME_PARAMS);
         final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
-        try {
-            return clazz.cast(ofHandle().invokeWithArguments(clazz, jsonrpc, method, params, id));
-        } catch (final Throwable thrown) {
-            throw new RuntimeException(thrown);
-        }
-    }
-
-    /**
-     * Creates a new instance from specified object node.
-     *
-     * @param node the object node from which a new instance is created.
-     * @return a new instance.
-     */
-    public static JacksonServerRequest of(final ObjectNode node) {
-        return of(JacksonServerRequest.class, node);
+        return of(clazz, jsonrpc, method, params, id);
     }
 
     /**
@@ -74,20 +58,9 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      *
      * @param node the json node from which a new instance is created.
      * @return a new instance.
-     * @see JsonNode#getNodeType()
-     * @see JsonNodeType#OBJECT
-     * @see #of(ObjectNode)
      */
-    public static JacksonServerRequest of(final JsonNode node) {
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        final JsonNodeType type = node.getNodeType();
-        if (type != JsonNodeType.OBJECT) {
-            throw new IllegalArgumentException("node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
-        }
-        assert node instanceof ObjectNode;
-        return of((ObjectNode) node);
+    public static JacksonServerRequest of(@RequireInstanceOf(ObjectNode.class) final JsonNode node) {
+        return of(JacksonServerRequest.class, node);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -100,6 +73,20 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     // ---------------------------------------------------------------------------------------------------------- params
+    public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final JavaType paramsType)
+            throws IOException {
+        if (paramsType == null) {
+            throw new NullPointerException("paramsClass is null");
+        }
+        final JsonNode params = getParams();
+        if (params == null || params instanceof NullNode) {
+            return null;
+        }
+        if (!params.isObject()) {
+            throw new IllegalStateException("params(" + params + ") is not an object node");
+        }
+        return JacksonObjects.readObject(objectMapper, (ObjectNode) params, paramsType);
+    }
 
     /**
      * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a named parameters of specified params
@@ -132,8 +119,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isObject()) {
             throw new IllegalStateException("params(" + params + ") is not an object node");
         }
-        return JacksonObjects.readObject(objectMapper, (ObjectNode) params, paramsClass);
-//        return objectMapper.treeToValue(params, paramsClass);
+        return JacksonObjects.readObject(objectMapper, params, paramsClass);
     }
 
     /**
@@ -155,9 +141,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isArray()) {
             throw new IllegalStateException("params(" + params + ") is not an array node");
         }
-//        final JsonParser paramsTokens = objectMapper.treeAsTokens(params);
-//        final CollectionType valueType = objectMapper.getTypeFactory().constructCollectionType(List.class, paramType);
-//        return objectMapper.readValue(paramsTokens, valueType);
         return JacksonObjects.readArray(objectMapper, (ArrayNode) params, paramType);
     }
 
@@ -180,10 +163,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isArray()) {
             throw new IllegalStateException("params(" + params + ") is not an array node");
         }
-//        final JsonParser paramsTokens = objectMapper.treeAsTokens(params);
-//        final CollectionType collectionType
-//                = objectMapper.getTypeFactory().constructCollectionType(List.class, paramClass);
-//        return objectMapper.readValue(paramsTokens, collectionType);
         return JacksonObjects.readArray(objectMapper, (ArrayNode) params, paramClass);
     }
 
@@ -196,8 +175,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isArray()) {
             throw new IllegalStateException("params(" + params + ") is not an array node");
         }
-//        final JsonParser paramTokens = objectMapper.treeAsTokens(params.get(paramIndex));
-//        return objectMapper.readValue(paramTokens, paramType);
         return JacksonObjects.readArrayElementAt(objectMapper, (ArrayNode) params, paramIndex, paramType);
     }
 
@@ -210,8 +187,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isArray()) {
             throw new IllegalStateException("params(" + params + ") is not an array node");
         }
-//        final JsonParser paramTokens = objectMapper.treeAsTokens(params.get(paramIndex));
-//        return objectMapper.readValue(paramTokens, paramClass);
         return JacksonObjects.readArrayElementAt(objectMapper, (ArrayNode) params, paramIndex, paramClass);
     }
 }

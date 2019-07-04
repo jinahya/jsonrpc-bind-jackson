@@ -20,3 +20,6 @@ buildNumber.properties
 *.iml
 .idea/
 !.idea/codeStyles
+
+
+ajcore.*.txt

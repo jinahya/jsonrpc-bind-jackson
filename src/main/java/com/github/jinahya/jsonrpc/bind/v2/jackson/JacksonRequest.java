@@ -22,22 +22,17 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.v2.RequestObject;
 
 import javax.validation.constraints.AssertTrue;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_JSONRPC;
@@ -57,60 +52,23 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
 public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    private static Map<Class<?>, TypeReference> TYPE_REFERENCES;
-
-    private static Map<Class<?>, TypeReference> typeReferences() {
-        if (TYPE_REFERENCES == null) {
-            TYPE_REFERENCES = new WeakHashMap<>();
-        }
-        return TYPE_REFERENCES;
-    }
-
-    @Deprecated
-    @SuppressWarnings({"unchecked"})
-    public static <T extends JacksonRequest<? super U, ? super V>, U, V> TypeReference<T> typeReference(
-            final Class<? extends T> objectClass) {
-        return typeReferences().computeIfAbsent(objectClass, k ->
-                new TypeReference<T>() {
-                }
-        );
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    private static Map<Class<?>, JavaType> JAVA_TYPES;
-
-    private static Map<Class<?>, JavaType> javaTypes() {
-        if (JAVA_TYPES == null) {
-            JAVA_TYPES = new WeakHashMap<>();
-        }
-        return JAVA_TYPES;
-    }
-
-    @Deprecated
-    public static <T extends JacksonRequest<? super U, ? super V>, U, V> JavaType javaType(
-            final TypeFactory typeFactory, final Class<? extends T> objectClass, final Class<? extends U> paramsClass,
-            final Class<? extends V> idClass) {
-        return javaTypes().computeIfAbsent(objectClass, k ->
-                typeFactory.constructParametricType(objectClass, paramsClass, idClass)
-        );
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    private static Method OF_METHOD;
-
     static Method ofMethod() {
-        if (OF_METHOD == null) {
-            try {
-                OF_METHOD = RequestObject.class.getDeclaredMethod(
-                        "of", Class.class, String.class, String.class, Object.class, Object.class);
-                if (!OF_METHOD.isAccessible()) {
-                    OF_METHOD.setAccessible(true);
-                }
-            } catch (final NoSuchMethodException nsme) {
-                throw new RuntimeException(nsme);
+        try {
+            final Method ofMethod = RequestObject.class.getDeclaredMethod(
+                    "of",
+                    Class.class,  // clazz
+                    String.class, // jsonrpc
+                    String.class, // method
+                    Object.class, // params
+                    Object.class  // id
+            );
+            if (!ofMethod.isAccessible()) {
+                ofMethod.setAccessible(true);
             }
+            return ofMethod;
+        } catch (final NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
         }
-        return OF_METHOD;
     }
 
     private static MethodHandle OF_HANDLE;
@@ -124,6 +82,15 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
             }
         }
         return OF_HANDLE;
+    }
+
+    static <T extends JacksonRequest<U, V>, U, V> T of(
+            final Class<? extends T> clazz, final String jsonrpc, final String method, final U params, final V id) {
+        try {
+            return clazz.cast(ofHandle().invokeWithArguments(clazz, jsonrpc, method, params, id));
+        } catch (final Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------- params

@@ -23,7 +23,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -71,21 +70,22 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
         // -------------------------------------------------------------------------------------------------------------
-        private static Method OF_METHOD;
-
         static Method ofMethod() {
-            if (OF_METHOD == null) {
-                try {
-                    OF_METHOD = ErrorObject.class.getDeclaredMethod(
-                            "of", Class.class, Integer.class, String.class, Object.class);
-                    if (!OF_METHOD.isAccessible()) {
-                        OF_METHOD.setAccessible(true);
-                    }
-                } catch (final NoSuchMethodException nsme) {
-                    throw new RuntimeException(nsme);
+            try {
+                final Method ofMethod = ErrorObject.class.getDeclaredMethod(
+                        "of",
+                        Class.class,   // clazz
+                        Integer.class, // code
+                        String.class,  // message
+                        Object.class   // data
+                );
+                if (!ofMethod.isAccessible()) {
+                    ofMethod.setAccessible(true);
                 }
+                return ofMethod;
+            } catch (final NoSuchMethodException nsme) {
+                throw new RuntimeException(nsme);
             }
-            return OF_METHOD;
         }
 
         private static MethodHandle OF_HANDLE;
@@ -101,6 +101,24 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             return OF_HANDLE;
         }
 
+        static <T extends JacksonError<? super U>, U> T of(final Class<? extends T> clazz, final Integer code,
+                                                           final String message, final U data) {
+            try {
+                return clazz.cast(ofHandle().invokeWithArguments(clazz, code, message, data));
+            } catch (final Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        }
+
+        // -----------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Creates a new instance.
+         */
+        public JacksonError() {
+            super();
+        }
+
         // -------------------------------------------------------------------------------------------------------------
 
         /**
@@ -110,80 +128,65 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
         public static class JacksonServerError extends JacksonError<JsonNode> {
 
             // ---------------------------------------------------------------------------------------------------------
-            public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final ObjectNode node) {
-                if (clazz == null) {
-                    throw new NullPointerException("clazz is null");
-                }
-                if (node == null) {
-                    throw new NullPointerException("node is null");
-                }
+
+            /**
+             * Creates a new instance whose properties are set from specified json node.
+             *
+             * @param node the json node from which property values are set.
+             * @return a new instance.
+             */
+            public static JacksonServerError of(@RequireInstanceOf(ObjectNode.class) final JsonNode node) {
+                //requireObjectNode(node);
                 final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
                 final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
                 final JsonNode data = node.get(PROPERTY_NAME_DATA);
-                try {
-                    return clazz.cast(ofHandle().invokeWithArguments(clazz, code, message, data));
-                } catch (final Throwable thrown) {
-                    throw new RuntimeException(thrown);
-                }
-            }
-
-            public static <T extends JacksonServerError> T of(final Class<? extends T> clazz, final JsonNode node) {
-                if (clazz == null) {
-                    throw new NullPointerException("clazz is null");
-                }
-                if (node == null) {
-                    throw new NullPointerException("node is null");
-                }
-                final JsonNodeType type = node.getNodeType();
-                if (type != JsonNodeType.OBJECT) {
-                    throw new IllegalArgumentException(
-                            "node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
-                }
-                return of(clazz, (ObjectNode) node);
+                return of(JacksonServerError.class, code, message, data);
             }
 
             // ---------------------------------------------------------------------------------------------------------
-            public static JacksonServerError of(final ObjectNode node) {
-                if (node == null) {
-                    throw new NullPointerException("node is null");
-                }
-                return of(JacksonServerError.class, node);
-            }
 
-            public static JacksonServerError of(final JsonNode node) {
-                if (node == null) {
-                    throw new NullPointerException("node is null");
-                }
-                final JsonNodeType type = node.getNodeType();
-                if (type != JsonNodeType.OBJECT) {
-                    throw new IllegalArgumentException(
-                            "node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
-                }
-                return of((ObjectNode) node);
+            /**
+             * Creates a new instance.
+             */
+            public JacksonServerError() {
+                super();
             }
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private static Method OF_METHOD;
 
+    /**
+     * Returns a method of {@code of(clazz, jsonrpc, result, error, id}.
+     *
+     * @return a method of {@code of(clazz, jsonrpc, result, error, id}.
+     */
     static Method ofMethod() {
-        if (OF_METHOD == null) {
-            try {
-                OF_METHOD = ResponseObject.class.getDeclaredMethod(
-                        "of", Class.class, String.class, Object.class, ErrorObject.class, Object.class);
-                if (!OF_METHOD.isAccessible()) {
-                    OF_METHOD.setAccessible(true);
-                }
-            } catch (final NoSuchMethodException nsme) {
-                throw new RuntimeException(nsme);
+        try {
+            final Method ofMethod = ResponseObject.class.getDeclaredMethod(
+                    "of",
+                    Class.class,       // clazz
+                    String.class,      // jsonrpc
+                    Object.class,      // result
+                    ErrorObject.class, // error
+                    Object.class       // id
+            );
+            if (!ofMethod.isAccessible()) {
+                ofMethod.setAccessible(true);
             }
+            return ofMethod;
+        } catch (final NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
         }
-        return OF_METHOD;
     }
 
     private static MethodHandle OF_HANDLE;
 
+    /**
+     * Returns a method handle of unreflected value of {@link #ofMethod()}.
+     *
+     * @return a method handle of unreflected value of {@link #ofMethod()}.
+     */
     static MethodHandle ofHandle() {
         if (OF_HANDLE == null) {
             try {
@@ -193,6 +196,38 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             }
         }
         return OF_HANDLE;
+    }
+
+    /**
+     * Creates a new instance of specified class whose properties are set with specified values.
+     *
+     * @param clazz   the class of the new instance.
+     * @param jsonrpc a value for {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property.
+     * @param result  a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_RESULT}.
+     * @param error   a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_ERROR}.
+     * @param id      a value for {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID}.
+     * @param <T>     instance type parameter
+     * @param <U>     {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_RESULT} type parameter
+     * @param <V>     {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_ERROR} type parameter
+     * @param <W>     {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} type parameter
+     * @return a new instance of specified class with specified values for properties.
+     */
+    static <T extends JacksonResponse<? super U, ? super V, ? super W>, U, V extends JacksonError<?>, W> T of(
+            final Class<? extends T> clazz, final String jsonrpc, final U result, final V error, final W id) {
+        try {
+            return clazz.cast(ofHandle().invokeWithArguments(clazz, jsonrpc, result, error, id));
+        } catch (final Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    public JacksonResponse() {
+        super();
     }
 
     // ---------------------------------------------------------------------------------------------------------- result
