@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
@@ -91,8 +90,7 @@ final class JacksonObjects {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static <T> T readObject(final ObjectMapper objectMapper,
-                            final JsonNode jsonNode, final JavaType valueType)
+    static <T> T readObject(final ObjectMapper objectMapper, final JsonNode jsonNode, final JavaType valueType)
             throws IOException {
         if (objectMapper == null) {
             throw new NullPointerException("objectMapper is null");
@@ -109,8 +107,7 @@ final class JacksonObjects {
         return objectMapper.readValue(objectMapper.treeAsTokens(jsonNode), valueType);
     }
 
-    static <T> T readObject(final ObjectMapper objectMapper,
-                            final JsonNode jsonNode,
+    static <T> T readObject(final ObjectMapper objectMapper, final JsonNode jsonNode,
                             final Class<? extends T> valueClass)
             throws IOException {
         if (objectMapper == null) {
@@ -124,41 +121,6 @@ final class JacksonObjects {
         }
         final JavaType valueType = javaType(objectMapper, valueClass);
         return readObject(objectMapper, jsonNode, valueType);
-    }
-
-    @Deprecated
-    static <T> T readObject(final ObjectMapper objectMapper, final ObjectNode objectNode, final JavaType valueType)
-            throws IOException {
-        if (objectMapper == null) {
-            throw new NullPointerException("objectMapper is null");
-        }
-        if (objectNode == null) {
-            throw new NullPointerException("objectNode is null");
-        }
-        if (valueType == null) {
-            throw new NullPointerException("valueClass is null");
-        }
-        if (valueType.isArrayType()) {
-            throw new IllegalArgumentException("valueType(" + valueType + ") represents an array type");
-        }
-        return objectMapper.readValue(objectMapper.treeAsTokens(objectNode), valueType);
-    }
-
-    @Deprecated
-    static <T> T readObject(final ObjectMapper objectMapper, final ObjectNode objectNode,
-                            final Class<? extends T> valueClass)
-            throws IOException {
-        if (objectMapper == null) {
-            throw new NullPointerException("objectMapper is null");
-        }
-        if (valueClass == null) {
-            throw new NullPointerException("valueClass is null");
-        }
-        if (valueClass.isArray()) {
-            throw new IllegalArgumentException("valueClass(" + valueClass + ") represents an array class");
-        }
-        final JavaType valueType = javaType(objectMapper, valueClass);
-        return readObject(objectMapper, objectNode, valueType);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
