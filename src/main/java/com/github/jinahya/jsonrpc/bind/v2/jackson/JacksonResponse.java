@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.v2.ResponseObject;
 
@@ -135,7 +134,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
              * @param node the json node from which property values are set.
              * @return a new instance.
              */
-            public static JacksonServerError of(@RequireInstanceOf(ObjectNode.class) final JsonNode node) {
+            public static JacksonServerError of(final JsonNode node) {
                 //requireObjectNode(node);
                 final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
                 final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);

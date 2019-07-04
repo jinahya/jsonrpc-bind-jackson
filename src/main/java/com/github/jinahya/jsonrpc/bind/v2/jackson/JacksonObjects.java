@@ -92,7 +92,7 @@ final class JacksonObjects {
 
     // -----------------------------------------------------------------------------------------------------------------
     static <T> T readObject(final ObjectMapper objectMapper,
-                            @RequireInstanceOf(ObjectNode.class) final JsonNode jsonNode, final JavaType valueType)
+                            final JsonNode jsonNode, final JavaType valueType)
             throws IOException {
         if (objectMapper == null) {
             throw new NullPointerException("objectMapper is null");
@@ -110,7 +110,7 @@ final class JacksonObjects {
     }
 
     static <T> T readObject(final ObjectMapper objectMapper,
-                            @RequireInstanceOf(ObjectNode.class) final JsonNode jsonNode,
+                            final JsonNode jsonNode,
                             final Class<? extends T> valueClass)
             throws IOException {
         if (objectMapper == null) {

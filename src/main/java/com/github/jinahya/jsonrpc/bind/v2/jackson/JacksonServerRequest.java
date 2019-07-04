@@ -26,12 +26,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireObjectNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -42,9 +42,8 @@ import static java.util.Optional.ofNullable;
 public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    static <T extends JacksonServerRequest> T of(final Class<? extends T> clazz,
-                                                 @RequireInstanceOf(ObjectNode.class) final JsonNode node) {
-        //requireObjectNode(node);
+    static <T extends JacksonServerRequest> T of(final Class<? extends T> clazz, final JsonNode node) {
+        requireObjectNode(node);
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final String method = ofNullable(node.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = node.get(PROPERTY_NAME_PARAMS);
@@ -59,7 +58,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param node the json node from which a new instance is created.
      * @return a new instance.
      */
-    public static JacksonServerRequest of(@RequireInstanceOf(ObjectNode.class) final JsonNode node) {
+    public static JacksonServerRequest of(final JsonNode node) {
         return of(JacksonServerRequest.class, node);
     }
 
@@ -85,7 +84,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (!params.isObject()) {
             throw new IllegalStateException("params(" + params + ") is not an object node");
         }
-        return JacksonObjects.readObject(objectMapper, (ObjectNode) params, paramsType);
+        return JacksonObjects.readObject(objectMapper, params, paramsType);
     }
 
     /**
