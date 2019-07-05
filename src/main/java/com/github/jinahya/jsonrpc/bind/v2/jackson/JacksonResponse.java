@@ -246,15 +246,16 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     // -------------------------------------------------------------------------------------------------------------- id
 
     /**
-     * Indicate the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code number},
-     * {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is overridden to
-     * further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an instance of {@link
-     * TextNode}, {@link NumericNode}, or {@link NullNode}.
+     * Indicate the current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property
+     * is, <i>semantically</i>, either {@code string}, {@code number}, {@code null}. The {@code
+     * isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is overridden to further check whether the
+     * current value of {@value #PROPERTY_NAME_ID} property is either an instance of {@link TextNode}, {@link
+     * NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
     @Override
-    protected @AssertTrue boolean isIdEitherStringNumberOfNull() {
-        return super.isIdEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
+    protected @AssertTrue boolean isIdSemanticallyEitherStringNumberOfNull() {
+        return super.isIdSemanticallyEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
     }
 }

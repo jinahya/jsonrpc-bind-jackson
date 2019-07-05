@@ -72,7 +72,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.5.2</version>
+      <version>0.5.4-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -121,7 +121,11 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${version.maven-javadoc-plugin}</version>
           <configuration>
+            <additionalJOptions>
+              <additionalJOption>-Xdoclint:all</additionalJOption>
+            </additionalJOptions>
             <links>
+              <link>https://javaee.github.io/javaee-spec/javadocs/</link>
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
           </configuration>

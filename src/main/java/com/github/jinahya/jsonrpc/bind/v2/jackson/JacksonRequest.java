@@ -115,15 +115,15 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
     // -------------------------------------------------------------------------------------------------------------- id
 
     /**
-     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code
-     * number}, {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonRequest} class is
-     * overridden to further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an
-     * instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value #PROPERTY_NAME_ID} property is, <i>semantically</i>, either {@code
+     * string}, {@code number}, {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonRequest}
+     * class is overridden to further check whether the current value of {@value #PROPERTY_NAME_ID} property is either
+     * an instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
     @Override
-    protected @AssertTrue boolean isIdEitherStringNumberOfNull() {
-        return super.isIdEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
+    protected @AssertTrue boolean isIdSemanticallyEitherStringNumberOfNull() {
+        return super.isIdSemanticallyEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
     }
 }
