@@ -50,6 +50,7 @@
     <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.org.junit.jupiter>5.5.0</version.org.junit.jupiter>
+    <version.jsonrpc-bind>0.5.3</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>
@@ -72,7 +73,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.5.3</version>
+      <version>${version.jsonrpc-bind}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -125,9 +126,16 @@
               <additionalJOption>-Xdoclint:all</additionalJOption>
             </additionalJOptions>
             <links>
+              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>
               <link>https://javaee.github.io/javaee-spec/javadocs/</link>
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
+            <offlineLinks>
+              <offlineLink>
+                <url>http://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</url>
+                <location>${project.build.directory}/jsonrpc-bind-javadoc</location>
+              </offlineLink>
+            </offlineLinks>
           </configuration>
         </plugin>
         <plugin>
@@ -167,6 +175,33 @@
             <arg>-Xlint</arg>
           </compilerArgs>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>unpack-jsonrpc-bind-javadoc</id>
+<!--            <phase>package</phase>-->
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.github.jinahya</groupId>
+                  <artifactId>jsonrpc-bind</artifactId>
+                  <classifier>javadoc</classifier>
+                  <version>${version.jsonrpc-bind}</version>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/jsonrpc-bind-javadoc</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

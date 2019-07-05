@@ -255,7 +255,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     // ---------------------------------------------------------------------------------------------------------- result
 
     /**
-     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject##PROPERTY_NAME_RESULT}
+     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_RESULT}
      * property is <i>semantically</i> {@code null}. Overridden to further check whether the current value of {@value
      * com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_RESULT} property is an instance of
      * {@link NullNode}.
@@ -271,10 +271,10 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
 
     /**
      * Indicate the current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property
-     * is, <i>semantically</i>, either {@code string}, {@code number}, {@code null}. The {@code
+     * is, <i>semantically</i>, either {@code string}, {@code number}, or {@code null}. The {@code
      * isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is overridden to further check whether the
-     * current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject##PROPERTY_NAME_ID} property is either
-     * an instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
+     * current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property is either an
+     * instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
