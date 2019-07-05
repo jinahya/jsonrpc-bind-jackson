@@ -72,7 +72,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.5.4-SNAPSHOT</version>
+      <version>0.5.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
