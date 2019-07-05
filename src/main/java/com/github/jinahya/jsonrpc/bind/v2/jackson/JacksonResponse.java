@@ -41,6 +41,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROP
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEitherStringNumberOfNull;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireObjectNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -68,7 +69,47 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
+        // -----------------------------------------------------------------------------------------------------------------a
+
+        /**
+         * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
+         * property.
+         */
+        public static class JacksonServerError extends JacksonError<JsonNode> {
+
+            // ---------------------------------------------------------------------------------------------------------
+
+            /**
+             * Creates a new instance whose properties are set from specified json node.
+             *
+             * @param node the json node from which property values are set.
+             * @return a new instance.
+             */
+            public static JacksonServerError of(final JsonNode node) {
+                requireObjectNode(node);
+                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
+                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
+                final JsonNode data = node.get(PROPERTY_NAME_DATA);
+                return of(JacksonServerError.class, code, message, data);
+            }
+
+            // ---------------------------------------------------------------------------------------------------------
+
+            /**
+             * Creates a new instance.
+             */
+            public JacksonServerError() {
+                super();
+            }
+        }
+
         // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Returns the method of {@code of(clazz, code, message, data)}.
+         *
+         * @return the method of {@code of(clazz, code, message, data)}.
+         */
         static Method ofMethod() {
             try {
                 final Method ofMethod = ErrorObject.class.getDeclaredMethod(
@@ -89,6 +130,11 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
 
         private static MethodHandle OF_HANDLE;
 
+        /**
+         * Returns a method handle for {@link #ofMethod()}.
+         *
+         * @return a method handle for {@link #ofMethod()}.
+         */
         static MethodHandle ofHandle() {
             if (OF_HANDLE == null) {
                 try {
@@ -100,6 +146,17 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             return OF_HANDLE;
         }
 
+        /**
+         * Creates a new instance of specified class whose properties are set with specified values.
+         *
+         * @param clazz   the class of the new instance.
+         * @param code    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_CODE}.
+         * @param message a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_MESSAGE}.
+         * @param data    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}.
+         * @param <T>     object type parameter
+         * @param <U>     data type parameter
+         * @return a new instance.
+         */
         static <T extends JacksonError<? super U>, U> T of(final Class<? extends T> clazz, final Integer code,
                                                            final String message, final U data) {
             try {
@@ -109,47 +166,13 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             }
         }
 
-        // -----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
         /**
          * Creates a new instance.
          */
         public JacksonError() {
             super();
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        /**
-         * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
-         * property.
-         */
-        public static class JacksonServerError extends JacksonError<JsonNode> {
-
-            // ---------------------------------------------------------------------------------------------------------
-
-            /**
-             * Creates a new instance whose properties are set from specified json node.
-             *
-             * @param node the json node from which property values are set.
-             * @return a new instance.
-             */
-            public static JacksonServerError of(final JsonNode node) {
-                //requireObjectNode(node);
-                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
-                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
-                final JsonNode data = node.get(PROPERTY_NAME_DATA);
-                return of(JacksonServerError.class, code, message, data);
-            }
-
-            // ---------------------------------------------------------------------------------------------------------
-
-            /**
-             * Creates a new instance.
-             */
-            public JacksonServerError() {
-                super();
-            }
         }
     }
 
@@ -232,9 +255,10 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     // ---------------------------------------------------------------------------------------------------------- result
 
     /**
-     * Indicates whether the current value of {@value #PROPERTY_NAME_RESULT} property is <i>semantically</i> {@code
-     * null}. Overridden to further check whether the current value of {@value #PROPERTY_NAME_RESULT} property is an
-     * instance of {@link NullNode}.
+     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject##PROPERTY_NAME_RESULT}
+     * property is <i>semantically</i> {@code null}. Overridden to further check whether the current value of {@value
+     * com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_RESULT} property is an instance of
+     * {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
@@ -249,8 +273,8 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
      * Indicate the current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property
      * is, <i>semantically</i>, either {@code string}, {@code number}, {@code null}. The {@code
      * isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is overridden to further check whether the
-     * current value of {@value #PROPERTY_NAME_ID} property is either an instance of {@link TextNode}, {@link
-     * NumericNode}, or {@link NullNode}.
+     * current value of {@value com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject##PROPERTY_NAME_ID} property is either
+     * an instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */

@@ -76,14 +76,13 @@ class PositionalParametersTest {
                 "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_01_request.json",
                 JacksonServerRequest.class);
         assertIterableEquals(asList(42, 23), request.getParamsAsPositional(OBJECT_MAPPER, Integer.TYPE));
-        assertIterableEquals(asList(42, 23),
-                             request.getParamsAsPositional(OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(
-                                     Integer.TYPE)));
-        assertEquals(42, request.getParamAt(OBJECT_MAPPER, 0, Integer.TYPE));
-        assertEquals(42, (int) request.getParamAt(
+        assertIterableEquals(asList(42, 23), request.getParamsAsPositional(
+                OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(42, request.getParamPositionedAt(OBJECT_MAPPER, 0, Integer.TYPE).intValue());
+        assertEquals(42, (int) request.getParamPositionedAt(
                 OBJECT_MAPPER, 0, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
-        assertEquals(23, request.getParamAt(OBJECT_MAPPER, 1, Integer.TYPE));
-        assertEquals(23, (int) request.getParamAt(
+        assertEquals(23, request.getParamPositionedAt(OBJECT_MAPPER, 1, Integer.TYPE).intValue());
+        assertEquals(23, (int) request.getParamPositionedAt(
                 OBJECT_MAPPER, 1, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
         assertEquals(1, request.getId().asInt());
     }
@@ -113,14 +112,13 @@ class PositionalParametersTest {
                 "/com/github/jinahya/jsonrpc/bind/v2/examples/jsonrpc_org/positional_parameters_02_request.json",
                 JacksonServerRequest.class);
         assertIterableEquals(asList(23, 42), request.getParamsAsPositional(OBJECT_MAPPER, Integer.TYPE));
-        assertIterableEquals(asList(23, 42),
-                             request.getParamsAsPositional(OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(
-                                     Integer.TYPE)));
-        assertEquals(23, request.getParamAt(OBJECT_MAPPER, 0, Integer.TYPE));
-        assertEquals(23, (int) request.getParamAt(
+        assertIterableEquals(asList(23, 42), request.getParamsAsPositional(
+                OBJECT_MAPPER, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
+        assertEquals(23, request.getParamPositionedAt(OBJECT_MAPPER, 0, Integer.TYPE).intValue());
+        assertEquals(23, (int) request.getParamPositionedAt(
                 OBJECT_MAPPER, 0, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
-        assertEquals(42, request.getParamAt(OBJECT_MAPPER, 1, Integer.TYPE));
-        assertEquals(42, (int) request.getParamAt(
+        assertEquals(42, request.getParamPositionedAt(OBJECT_MAPPER, 1, Integer.TYPE).intValue());
+        assertEquals(42, (int) request.getParamPositionedAt(
                 OBJECT_MAPPER, 1, OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE)));
         assertEquals(2, request.getId().asInt());
     }

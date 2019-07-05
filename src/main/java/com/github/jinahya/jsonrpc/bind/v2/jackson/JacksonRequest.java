@@ -43,8 +43,8 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
 /**
  * An base class for request objects.
  *
- * @param <ParamsType> params type parameter
- * @param <IdType>     id type parameter
+ * @param <ParamsType> {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS} type parameter
+ * @param <IdType>     {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_ID} type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @JsonPropertyOrder({PROPERTY_NAME_JSONRPC, PROPERTY_NAME_METHOD, PROPERTY_NAME_PARAMS, PROPERTY_NAME_ID})
@@ -52,6 +52,12 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEither
 public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType, IdType> {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns a method of {@code of(clazz, jsonrpc, method, params, id)}.
+     *
+     * @return a method of {@code of(clazz, jsonrpc, method, params, id)}.
+     */
     static Method ofMethod() {
         try {
             final Method ofMethod = RequestObject.class.getDeclaredMethod(
@@ -73,6 +79,11 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
 
     private static MethodHandle OF_HANDLE;
 
+    /**
+     * Returns a method handle unreflected from {@link #ofMethod()}.
+     *
+     * @return a method handle unreflected from {@link #ofMethod()}.
+     */
     static MethodHandle ofHandle() {
         if (OF_HANDLE == null) {
             try {
@@ -84,6 +95,22 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
         return OF_HANDLE;
     }
 
+    /**
+     * Creates a new instance of specified class whose properties are set with give values.
+     *
+     * @param clazz   the class of the object to create.
+     * @param jsonrpc a value for {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_JSONRPC}
+     *                property.
+     * @param method  a value for {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_METHOD}
+     *                property.
+     * @param params  a value for {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_ID} property.
+     * @param id      a value for {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_VALUE_JSONRPC}
+     *                property.
+     * @param <T>     object type parameter
+     * @param <U>     {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS} type parameter
+     * @param <V>     {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS} type parameter
+     * @return a new instance.
+     */
     static <T extends JacksonRequest<U, V>, U, V> T of(
             final Class<? extends T> clazz, final String jsonrpc, final String method, final U params, final V id) {
         try {
@@ -93,6 +120,14 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    public JacksonRequest() {
+        super();
+    }
     // ---------------------------------------------------------------------------------------------------------- params
 
     /**
