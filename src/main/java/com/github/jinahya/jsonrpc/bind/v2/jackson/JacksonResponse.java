@@ -41,6 +41,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROP
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.isEitherStringNumberOfNull;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireObjectNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -69,6 +70,12 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
         // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Returns the method of {@code of(clazz, code, message, data)}.
+         *
+         * @return the method of {@code of(clazz, code, message, data)}.
+         */
         static Method ofMethod() {
             try {
                 final Method ofMethod = ErrorObject.class.getDeclaredMethod(
@@ -89,6 +96,11 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
 
         private static MethodHandle OF_HANDLE;
 
+        /**
+         * Returns a method handle for {@link #ofMethod()}.
+         *
+         * @return a method handle for {@link #ofMethod()}.
+         */
         static MethodHandle ofHandle() {
             if (OF_HANDLE == null) {
                 try {
@@ -100,6 +112,17 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             return OF_HANDLE;
         }
 
+        /**
+         * Creates a new instance of specified class whose properties are set with specified values.
+         *
+         * @param clazz   the class of the new instance.
+         * @param code    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_CODE}.
+         * @param message a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_MESSAGE}.
+         * @param data    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}.
+         * @param <T>     object type parameter
+         * @param <U>     data type parameter
+         * @return a new instance.
+         */
         static <T extends JacksonError<? super U>, U> T of(final Class<? extends T> clazz, final Integer code,
                                                            final String message, final U data) {
             try {
@@ -109,7 +132,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             }
         }
 
-        // -----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
         /**
          * Creates a new instance.
@@ -135,7 +158,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
              * @return a new instance.
              */
             public static JacksonServerError of(final JsonNode node) {
-                //requireObjectNode(node);
+                requireObjectNode(node);
                 final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
                 final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
                 final JsonNode data = node.get(PROPERTY_NAME_DATA);
@@ -246,10 +269,10 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     // -------------------------------------------------------------------------------------------------------------- id
 
     /**
-     * Indicate the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code number},
-     * {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is overridden to
-     * further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an instance of {@link
-     * TextNode}, {@link NumericNode}, or {@link NullNode}.
+     * Indicate whether the current value of {@value #PROPERTY_NAME_ID} property is either {@code string}, {@code
+     * number}, {@code null}. The {@code isEitherStringNumberOfNull()} method of {@code JacksonResponse} class is
+     * overridden to further check whether the current value of {@value #PROPERTY_NAME_ID} property is either an
+     * instance of {@link TextNode}, {@link NumericNode}, or {@link NullNode}.
      *
      * @return {@inheritDoc}
      */

@@ -35,7 +35,19 @@ import static java.util.Optional.ofNullable;
 public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServerError, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance of specified class whose properties are set from specified node.
+     *
+     * @param clazz the class of the new object.
+     * @param node  the node from which properties are set.
+     * @param <T>   object type parameter
+     * @return a new instance.
+     */
     static <T extends JacksonServerResponse> T of(final Class<? extends T> clazz, final JsonNode node) {
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
         if (node == null) {
             throw new NullPointerException("node is null");
         }
@@ -52,6 +64,9 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServ
     }
 
     public static JacksonServerResponse of(final JsonNode node) {
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
         return of(JacksonServerResponse.class, node);
     }
 

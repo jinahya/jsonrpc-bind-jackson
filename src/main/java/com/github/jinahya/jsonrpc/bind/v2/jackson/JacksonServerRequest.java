@@ -24,13 +24,16 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.javaType;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArray;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArrayElementAt;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readObject;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireObjectNode;
 import static java.util.Optional.ofNullable;
 
@@ -72,19 +75,12 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     // ---------------------------------------------------------------------------------------------------------- params
-    public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final JavaType paramsType)
-            throws IOException {
-        if (paramsType == null) {
-            throw new NullPointerException("paramsClass is null");
-        }
+    public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final JavaType paramsType) throws IOException {
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
             return null;
         }
-        if (!params.isObject()) {
-            throw new IllegalStateException("params(" + params + ") is not an object node");
-        }
-        return JacksonObjects.readObject(objectMapper, params, paramsType);
+        return readObject(objectMapper, params, paramsType);
     }
 
     /**
@@ -105,20 +101,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      */
     public <T> T getParamsAsNamed(final ObjectMapper objectMapper, final Class<? extends T> paramsClass)
             throws IOException {
-        if (paramsClass == null) {
-            throw new NullPointerException("paramsClass is null");
-        }
-        if (paramsClass.isArray()) {
-            throw new IllegalArgumentException("paramsClass(" + paramsClass + ") represents an array class");
-        }
-        final JsonNode params = getParams();
-        if (params == null || params instanceof NullNode) {
-            return null;
-        }
-        if (!params.isObject()) {
-            throw new IllegalStateException("params(" + params + ") is not an object node");
-        }
-        return JacksonObjects.readObject(objectMapper, params, paramsClass);
+        return getParamsAsNamed(objectMapper, javaType(objectMapper.getTypeFactory(), paramsClass));
     }
 
     /**
@@ -137,10 +120,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         if (params == null || params instanceof NullNode) {
             return null;
         }
-        if (!params.isArray()) {
-            throw new IllegalStateException("params(" + params + ") is not an array node");
-        }
-        return JacksonObjects.readArray(objectMapper, (ArrayNode) params, paramType);
+        return readArray(objectMapper, params, paramType);
     }
 
     /**
@@ -155,37 +135,22 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      */
     public <U> List<U> getParamsAsPositional(final ObjectMapper objectMapper, final Class<? extends U> paramClass)
             throws IOException {
-        final JsonNode params = getParams();
-        if (params == null || params instanceof NullNode) {
-            return null;
-        }
-        if (!params.isArray()) {
-            throw new IllegalStateException("params(" + params + ") is not an array node");
-        }
-        return JacksonObjects.readArray(objectMapper, (ArrayNode) params, paramClass);
+        return getParamsAsPositional(objectMapper, javaType(objectMapper.getTypeFactory(), paramClass));
     }
 
-    public <U> U getParamAt(final ObjectMapper objectMapper, final int paramIndex, final JavaType paramType)
+    public <U> U getParamPositionedAt(final ObjectMapper objectMapper, final int paramPosition,
+                                      final JavaType paramType)
             throws IOException {
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
             return null;
         }
-        if (!params.isArray()) {
-            throw new IllegalStateException("params(" + params + ") is not an array node");
-        }
-        return JacksonObjects.readArrayElementAt(objectMapper, (ArrayNode) params, paramIndex, paramType);
+        return readArrayElementAt(objectMapper, params, paramPosition, paramType);
     }
 
-    public <U> U getParamAt(final ObjectMapper objectMapper, final int paramIndex, final Class<? extends U> paramClass)
+    public <U> U getParamPositionedAt(final ObjectMapper objectMapper, final int paramPosition,
+                                      final Class<? extends U> paramClass)
             throws IOException {
-        final JsonNode params = getParams();
-        if (params == null || params instanceof NullNode) {
-            return null;
-        }
-        if (!params.isArray()) {
-            throw new IllegalStateException("params(" + params + ") is not an array node");
-        }
-        return JacksonObjects.readArrayElementAt(objectMapper, (ArrayNode) params, paramIndex, paramClass);
+        return getParamPositionedAt(objectMapper, paramPosition, javaType(objectMapper.getTypeFactory(), paramClass));
     }
 }

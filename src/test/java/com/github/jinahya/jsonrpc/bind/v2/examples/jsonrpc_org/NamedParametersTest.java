@@ -37,7 +37,6 @@ import static com.github.jinahya.jsonrpc.bind.JacksonTests.OBJECT_MAPPER;
 import static com.github.jinahya.jsonrpc.bind.JacksonTests.readValueFromResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 class NamedParametersTest {
@@ -50,9 +49,9 @@ class NamedParametersTest {
             = new TypeReference<JacksonRequest<SubtractParams, Integer>>() {
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
     private static final JavaType RESPONSE_JAVA_TYPE;
 
-    // -----------------------------------------------------------------------------------------------------------------
     static {
         final JavaType resultType = OBJECT_MAPPER.getTypeFactory().constructType(Integer.TYPE);
         final JavaType errorType
@@ -102,7 +101,6 @@ class NamedParametersTest {
         assertEquals(23, params.getSubtrahend());
         assertEquals(42, params.getMinuend());
         assertEquals(3, request.getId().asInt());
-        assertThrows(IllegalStateException.class, () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -168,7 +166,6 @@ class NamedParametersTest {
         assertEquals(42, params.getMinuend());
         assertEquals(23, params.getSubtrahend());
         assertEquals(4, request.getId().asInt());
-        assertThrows(IllegalStateException.class, () -> request.getParamsAsPositional(OBJECT_MAPPER, Integer.class));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
