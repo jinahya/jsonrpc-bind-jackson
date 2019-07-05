@@ -106,7 +106,7 @@ final class JacksonObjects {
     static Object requireEitherStringNumberOfNull(final Object object) {
         if (!isEitherStringNumberOfNull(object)) {
             throw new IllegalArgumentException(
-                    "object(" + object + ") is not either " + TextNode.class + ", " + NumericNode.class + " nor "
+                    "object(" + object + ") is neither " + TextNode.class + ", " + NumericNode.class + " nor "
                     + NullNode.class);
         }
         return object;

@@ -46,7 +46,6 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
 
     // -----------------------------------------------------------------------------------------------------------------
     static <T extends JacksonServerRequest> T of(final Class<? extends T> clazz, final JsonNode node) {
-        requireObjectNode(node);
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final String method = ofNullable(node.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = node.get(PROPERTY_NAME_PARAMS);
@@ -62,7 +61,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @return a new instance.
      */
     public static JacksonServerRequest of(final JsonNode node) {
-        return of(JacksonServerRequest.class, node);
+        return of(JacksonServerRequest.class, requireObjectNode(node));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

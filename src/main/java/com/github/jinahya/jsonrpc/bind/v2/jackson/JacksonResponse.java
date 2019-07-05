@@ -69,6 +69,40 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
+        // -----------------------------------------------------------------------------------------------------------------a
+
+        /**
+         * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
+         * property.
+         */
+        public static class JacksonServerError extends JacksonError<JsonNode> {
+
+            // ---------------------------------------------------------------------------------------------------------
+
+            /**
+             * Creates a new instance whose properties are set from specified json node.
+             *
+             * @param node the json node from which property values are set.
+             * @return a new instance.
+             */
+            public static JacksonServerError of(final JsonNode node) {
+                requireObjectNode(node);
+                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
+                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
+                final JsonNode data = node.get(PROPERTY_NAME_DATA);
+                return of(JacksonServerError.class, code, message, data);
+            }
+
+            // ---------------------------------------------------------------------------------------------------------
+
+            /**
+             * Creates a new instance.
+             */
+            public JacksonServerError() {
+                super();
+            }
+        }
+
         // -------------------------------------------------------------------------------------------------------------
 
         /**
@@ -139,40 +173,6 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
          */
         public JacksonError() {
             super();
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        /**
-         * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
-         * property.
-         */
-        public static class JacksonServerError extends JacksonError<JsonNode> {
-
-            // ---------------------------------------------------------------------------------------------------------
-
-            /**
-             * Creates a new instance whose properties are set from specified json node.
-             *
-             * @param node the json node from which property values are set.
-             * @return a new instance.
-             */
-            public static JacksonServerError of(final JsonNode node) {
-                requireObjectNode(node);
-                final Integer code = ofNullable(node.get(PROPERTY_NAME_CODE)).map(JsonNode::asInt).orElse(null);
-                final String message = ofNullable(node.get(PROPERTY_NAME_MESSAGE)).map(JsonNode::asText).orElse(null);
-                final JsonNode data = node.get(PROPERTY_NAME_DATA);
-                return of(JacksonServerError.class, code, message, data);
-            }
-
-            // ---------------------------------------------------------------------------------------------------------
-
-            /**
-             * Creates a new instance.
-             */
-            public JacksonServerError() {
-                super();
-            }
         }
     }
 
