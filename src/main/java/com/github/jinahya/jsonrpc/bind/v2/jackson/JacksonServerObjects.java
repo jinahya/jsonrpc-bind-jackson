@@ -25,14 +25,14 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class JacksonServerUtils {
+final class JacksonServerObjects {
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Creates a new instance.
      */
-    private JacksonServerUtils() {
+    private JacksonServerObjects() {
         super();
     }
 }
