@@ -183,7 +183,7 @@
         <executions>
           <execution>
             <id>unpack-jsonrpc-bind-javadoc</id>
-<!--            <phase>package</phase>-->
+            <!--            <phase>package</phase>-->
             <phase>generate-sources</phase>
             <goals>
               <goal>unpack</goal>
@@ -241,8 +241,7 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <!--                  <version>[3.3.9,)</version>-->
-                  <version>[3.5.4,)</version>
+                  <version>[3.3.9,)</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
