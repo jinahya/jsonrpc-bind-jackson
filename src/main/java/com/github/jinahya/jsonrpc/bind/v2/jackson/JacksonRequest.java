@@ -128,12 +128,27 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
     public JacksonRequest() {
         super();
     }
+
     // ---------------------------------------------------------------------------------------------------------- params
+//
+//    /**
+//     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS}
+//     * property is <i>semantically</i> {@code null}. The {@code isParamsNull()} method of {@code JacksonRequest} class
+//     * is overridden to further check if the current value of {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS}
+//     * property is an instance of {@link NullNode}.
+//     *
+//     * @return {@inheritDoc}
+//     */
+//    @Override
+//    protected boolean isParamsNull() {
+//        return super.isParamsNull() || getParams() instanceof NullNode;
+//    }
 
     /**
-     * Indicates whether the current value of {@value #PROPERTY_NAME_PARAMS} property is a structured value. The {@code
-     * isParamsStructured()} method of {@code JacksonRequest} class is overridden to further check if the value is
-     * either an instance of {@link ArrayNode}, {@link ObjectNode}, or {@link NullNode}.
+     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS}
+     * property is a structured value. The {@code isParamsStructured()} method of {@code JacksonRequest} class is
+     * overridden to further check if the value is either an instance of {@link ArrayNode}, {@link ObjectNode}, or
+     * {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
@@ -143,7 +158,6 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
             return true;
         }
         final ParamsType params = getParams();
-        assert params != null;
         return params instanceof ArrayNode || params instanceof ObjectNode || params instanceof NullNode;
     }
 

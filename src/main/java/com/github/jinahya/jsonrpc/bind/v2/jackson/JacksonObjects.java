@@ -34,12 +34,15 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 /**
- * Constants and utilities for Jackson objects.
+ * Constants and utilities for jackson objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -55,14 +58,14 @@ final class JacksonObjects {
         return JAVA_TYPES;
     }
 
-    static JavaType javaType(final TypeFactory factory, final Class<?> clazz) {
-        if (factory == null) {
-            throw new NullPointerException("factory is null");
+    static JavaType javaType(final TypeFactory typeFactory, final Class<?> valueClass) {
+        if (typeFactory == null) {
+            throw new NullPointerException("typeFactory is null");
         }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
+        if (valueClass == null) {
+            throw new NullPointerException("valueClazz is null");
         }
-        return javaTypes().computeIfAbsent(clazz, factory::constructType);
+        return javaTypes().computeIfAbsent(valueClass, typeFactory::constructType);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -75,14 +78,14 @@ final class JacksonObjects {
         return COLLECTION_TYPES;
     }
 
-    static CollectionType collectionType(final TypeFactory factory, final JavaType type) {
-        if (factory == null) {
-            throw new NullPointerException("factory is null");
+    static CollectionType collectionType(final TypeFactory typeFactory, final JavaType elementType) {
+        if (typeFactory == null) {
+            throw new NullPointerException("typeFactory is null");
         }
-        if (type == null) {
-            throw new NullPointerException("type is null");
+        if (elementType == null) {
+            throw new NullPointerException("elementType is null");
         }
-        return collectionTypes().computeIfAbsent(type, t -> factory.constructCollectionType(List.class, t));
+        return collectionTypes().computeIfAbsent(elementType, t -> typeFactory.constructCollectionType(List.class, t));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -91,7 +94,7 @@ final class JacksonObjects {
      * Checks whether specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
      * NullNode}.
      *
-     * @param object the object to to check
+     * @param object the object to check.
      * @return {@code true} if specified object is either an instance of {@link TextNode}, {@link NumericNode}, {@link
      * NullNode}; {@code false} otherwise.
      * @throws NullPointerException if {@code object} is {@code null}.
@@ -110,6 +113,16 @@ final class JacksonObjects {
                     + NullNode.class);
         }
         return object;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    static <T extends JsonNode> Optional<T> ofNullableNode(final T jsonNode) {
+        return ofNullable(jsonNode).filter(v -> v instanceof NullNode);
+    }
+
+    static <T extends JsonNode, R> Optional<R> ofNullableNodeMap(
+            final T jsonNode, final Function<? super T, R> function) {
+        return ofNullableNode(jsonNode).map(function);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -139,22 +152,59 @@ final class JacksonObjects {
     // -----------------------------------------------------------------------------------------------------------------
     public static <T> T readObject(final ObjectMapper mapper, final JsonNode node, final JavaType type)
             throws IOException {
-        return mapper.readValue(mapper.treeAsTokens(node), type);
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
+        return mapper.readValue(mapper.treeAsTokens(requireObjectNode(node)), type);
     }
 
     public static <T> T readObject(final ObjectMapper mapper, final JsonNode node, final Class<? extends T> clazz)
             throws IOException {
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
         return readObject(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     public static <U> List<U> readArray(final ObjectMapper mapper, final JsonNode node, final JavaType type)
             throws IOException {
-        return mapper.readValue(mapper.treeAsTokens(node), collectionType(mapper.getTypeFactory(), type));
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
+        return mapper.readValue(mapper.treeAsTokens(requireArrayNode(node)),
+                                collectionType(mapper.getTypeFactory(), type));
     }
 
     public static <U> List<U> readArray(final ObjectMapper mapper, final JsonNode node, final Class<? extends U> clazz)
             throws IOException {
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
         return readArray(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 
@@ -162,23 +212,59 @@ final class JacksonObjects {
     public static <U> U readArrayElementAt(final ObjectMapper mapper, final JsonNode node, final int index,
                                            final JavaType type)
             throws IOException {
-        return mapper.readValue(mapper.treeAsTokens(node.get(index)), type);
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
+        return mapper.readValue(mapper.treeAsTokens(requireArrayNode(node).get(index)), type);
     }
 
     public static <U> U readArrayElementAt(final ObjectMapper mapper, final JsonNode node, final int index,
                                            final Class<? extends U> clazz)
             throws IOException {
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
         return readArrayElementAt(mapper, node, index, javaType(mapper.getTypeFactory(), clazz));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     public static <T> T readId(final ObjectMapper mapper, final JsonNode node, final JavaType type)
             throws IOException {
-        return mapper.readValue(mapper.treeAsTokens(requireValueNode(requireNonNull(node))), type);
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
+        return mapper.readValue(mapper.treeAsTokens(requireValueNode(node)), type);
     }
 
     public static <T> T readId(final ObjectMapper mapper, final JsonNode node, final Class<? extends T> clazz)
             throws IOException {
+        if (mapper == null) {
+            throw new NullPointerException("mapper is null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node is null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
         return readId(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 

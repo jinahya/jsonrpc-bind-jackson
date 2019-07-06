@@ -21,11 +21,9 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.JacksonServerError;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireObjectNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -38,35 +36,12 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServ
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Creates a new instance of specified class whose properties are set from specified node.
+     * Creates a new instance whose properties are set from specified node.
      *
-     * @param clazz the class of the new object.
-     * @param node  the node from which properties are set.
-     * @param <T>   object type parameter
+     * @param node the node from which properties are set.
      * @return a new instance.
      */
-    static <T extends JacksonServerResponse> T of(final Class<? extends T> clazz, final JsonNode node) {
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        final JsonNodeType type = node.getNodeType();
-        if (type != JsonNodeType.OBJECT) {
-            throw new IllegalArgumentException("node(" + node + ").type(" + type + ") != " + JsonNodeType.OBJECT);
-        }
-        final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
-        final JsonNode result = node.get(PROPERTY_NAME_RESULT);
-        final JacksonServerError error
-                = ofNullable(node.get(PROPERTY_NAME_ERROR)).map(JacksonServerError::of).orElse(null);
-        final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
-        return of(clazz, jsonrpc, result, error, id);
-    }
-
     public static JacksonServerResponse of(final JsonNode node) {
-//        return of(JacksonServerResponse.class, requireObjectNode(requireNonNull(node, "node is null")));
-        requireObjectNode(node);
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final JsonNode result = node.get(PROPERTY_NAME_RESULT);
         final JacksonServerError error
