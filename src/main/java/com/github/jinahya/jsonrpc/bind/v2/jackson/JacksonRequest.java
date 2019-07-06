@@ -158,7 +158,7 @@ public class JacksonRequest<ParamsType, IdType> extends RequestObject<ParamsType
      * @return {@inheritDoc}
      */
     @Override
-    protected @AssertTrue boolean isIdSemanticallyEitherStringNumberOfNull() {
-        return super.isIdSemanticallyEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
+    protected @AssertTrue boolean isIdEitherStringNumberOfNull() {
+        return super.isIdEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
     }
 }

@@ -263,8 +263,8 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
      * @return {@inheritDoc}
      */
     @Override
-    protected boolean isResultSemanticallyNull() {
-        return super.isResultSemanticallyNull() || getResult() instanceof NullNode;
+    protected boolean isResultNull() {
+        return super.isResultNull() || getResult() instanceof NullNode;
     }
 
     // -------------------------------------------------------------------------------------------------------------- id
@@ -279,7 +279,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
      * @return {@inheritDoc}
      */
     @Override
-    protected @AssertTrue boolean isIdSemanticallyEitherStringNumberOfNull() {
-        return super.isIdSemanticallyEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
+    protected @AssertTrue boolean isIdEitherStringNumberOfNull() {
+        return super.isIdEitherStringNumberOfNull() || isEitherStringNumberOfNull(getId());
     }
 }
