@@ -69,7 +69,7 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class JacksonError<DataType> extends ErrorObject<DataType> {
 
-        // -----------------------------------------------------------------------------------------------------------------a
+        // -------------------------------------------------------------------------------------------------------------
 
         /**
          * A class for lazily mapping the {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}
@@ -151,9 +151,9 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
          * Creates a new instance of specified class whose properties are set with specified values.
          *
          * @param clazz   the class of the new instance.
-         * @param code    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_CODE}.
-         * @param message a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_MESSAGE}.
-         * @param data    a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_DATA}.
+         * @param code    a value for {@link #PROPERTY_NAME_CODE}.
+         * @param message a value for {@link #PROPERTY_NAME_MESSAGE}.
+         * @param data    a value for {@link #PROPERTY_NAME_DATA}.
          * @param <T>     object type parameter
          * @param <U>     data type parameter
          * @return a new instance.
