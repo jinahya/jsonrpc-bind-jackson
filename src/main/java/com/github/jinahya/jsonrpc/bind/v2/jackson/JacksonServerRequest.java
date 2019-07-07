@@ -33,7 +33,6 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.javaType
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArray;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArrayElementAt;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readObject;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireValueNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -55,7 +54,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final String method = ofNullable(node.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = node.get(PROPERTY_NAME_PARAMS);
-        final ValueNode id = (ValueNode) requireValueNode(node.get(PROPERTY_NAME_ID));
+        final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
         return of(JacksonServerRequest.class, jsonrpc, method, params, id);
     }
 

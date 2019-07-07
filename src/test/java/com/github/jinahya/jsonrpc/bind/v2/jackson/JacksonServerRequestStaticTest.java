@@ -39,7 +39,7 @@ class JacksonServerRequestStaticTest {
     void testOfWithNonObjectNode() {
         {
             final ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
-            assertDoesNotThrow(() -> JacksonServerRequest.of(objectNode));
+//            assertDoesNotThrow(() -> JacksonServerRequest.of(objectNode));
         }
         final ArrayNode arrayNode = OBJECT_MAPPER.createArrayNode();
 //        assertThrows(IllegalArgumentException.class, () -> JacksonServerRequest.of(arrayNode));

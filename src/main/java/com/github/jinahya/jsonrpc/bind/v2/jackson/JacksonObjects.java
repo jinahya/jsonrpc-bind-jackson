@@ -130,7 +130,7 @@ public final class JacksonObjects {
     }
 
     static JsonNode requireValueNode(final JsonNode node) {
-        if (!(node instanceof ValueNode)) {
+        if (!(requireNonNull(node, "node is null") instanceof ValueNode)) {
             throw new IllegalArgumentException("node(" + node + ") is not an instance of " + ValueNode.class);
         }
         return node;
