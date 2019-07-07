@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonResponse.JacksonError.JacksonServerError;
 
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireValueNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -46,7 +47,7 @@ public class JacksonServerResponse extends JacksonResponse<JsonNode, JacksonServ
         final JsonNode result = node.get(PROPERTY_NAME_RESULT);
         final JacksonServerError error
                 = ofNullable(node.get(PROPERTY_NAME_ERROR)).map(JacksonServerError::of).orElse(null);
-        final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
+        final ValueNode id = (ValueNode) requireValueNode(node.get(PROPERTY_NAME_ID));
         return of(JacksonServerResponse.class, jsonrpc, result, error, id);
     }
 

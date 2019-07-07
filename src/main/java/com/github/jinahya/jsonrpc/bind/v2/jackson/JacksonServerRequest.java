@@ -33,6 +33,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.javaType
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArray;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readArrayElementAt;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.readObject;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonObjects.requireValueNode;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -54,7 +55,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
         final String jsonrpc = ofNullable(node.get(PROPERTY_NAME_JSONRPC)).map(JsonNode::asText).orElse(null);
         final String method = ofNullable(node.get(PROPERTY_NAME_METHOD)).map(JsonNode::asText).orElse(null);
         final JsonNode params = node.get(PROPERTY_NAME_PARAMS);
-        final ValueNode id = (ValueNode) node.get(PROPERTY_NAME_ID);
+        final ValueNode id = (ValueNode) requireValueNode(node.get(PROPERTY_NAME_ID));
         return of(JacksonServerRequest.class, jsonrpc, method, params, id);
     }
 
@@ -68,6 +69,18 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     // ---------------------------------------------------------------------------------------------------------- params
+
+    /**
+     * Maps the current value of {@link #PROPERTY_NAME_PARAMS} property as a named parameters of specified type.
+     *
+     * @param mapper an object mapper.
+     * @param type   the type to map the value.
+     * @param <T>    value type parameter.
+     * @return an instance of specified params class; {@code null} if {@link #getParams()} method returns {@code null}
+     * or an instance of {@link NullNode}.
+     * @throws IOException if an I/O error occurs.
+     * @see #getParamsAsNamed(ObjectMapper, Class)
+     */
     public <T> T getParamsAsNamed(final ObjectMapper mapper, final JavaType type) throws IOException {
         final JsonNode params = getParams();
         if (params == null || params instanceof NullNode) {
@@ -77,24 +90,22 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     /**
-     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a named parameters of specified params
-     * class.
+     * Maps the current value of {@link #PROPERTY_NAME_PARAMS} property as a named parameters of specified class.
      *
      * @param mapper an object mapper.
-     * @param clazz  the class to map the {@value #PROPERTY_NAME_PARAMS} property.
+     * @param clazz  the class to map the value.
      * @param <T>    value type parameter.
      * @return an instance of specified params class; {@code null} if {@link #getParams()} method returns {@code null}
      * or an instance of {@link NullNode}.
-     * @throws IllegalArgumentException if {@code paramsClass.isArray()} returns {@code true}.
-     * @throws IllegalStateException    if {@code getParams().isObject()} returns {@code false}.
-     * @throws IOException              if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
+     * @see #getParamsAsNamed(ObjectMapper, JavaType)
      */
     public <T> T getParamsAsNamed(final ObjectMapper mapper, final Class<? extends T> clazz) throws IOException {
         return getParamsAsNamed(mapper, javaType(mapper.getTypeFactory(), clazz));
     }
 
     /**
-     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a positional parameters of specified element
+     * Maps the current value of {@link #PROPERTY_NAME_PARAMS} property as a positional parameters of specified element
      * type.
      *
      * @param mapper an object mapper.
@@ -112,7 +123,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     /**
-     * Maps the current value of {@value #PROPERTY_NAME_PARAMS} property as a positional parameters of specified element
+     * Maps the current value of {@link #PROPERTY_NAME_PARAMS} property as a positional parameters of specified element
      * class.
      *
      * @param mapper an object mapper.
@@ -127,8 +138,8 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     /**
-     * Maps a single element in {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS} property
-     * positioned at specified index as specified type.
+     * Maps the single element in the current value of {@link #PROPERTY_NAME_PARAMS} property positioned at specified
+     * index as specified type.
      *
      * @param mapper   an object mapper.
      * @param position the position of the element.
@@ -136,6 +147,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param <U>      element type parameter
      * @return the mapped value of the param.
      * @throws IOException if an I/O error occurs.
+     * @see #getParamPositionedAt(ObjectMapper, int, Class)
      */
     public <U> U getParamPositionedAt(final ObjectMapper mapper, final int position, final JavaType type)
             throws IOException {
@@ -147,8 +159,8 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
     }
 
     /**
-     * Maps a single element in {@value com.github.jinahya.jsonrpc.bind.v2.RequestObject#PROPERTY_NAME_PARAMS} property
-     * positioned at specified index as specified class.
+     * Maps the element in the current value of {@link #PROPERTY_NAME_PARAMS} property positioned at specified index as
+     * specified class.
      *
      * @param mapper   an object mapper.
      * @param position the position of the element.
@@ -156,6 +168,7 @@ public class JacksonServerRequest extends JacksonRequest<JsonNode, ValueNode> {
      * @param <U>      element type parameter
      * @return the mapped value of the param.
      * @throws IOException if an I/O error occurs.
+     * @see #getParamPositionedAt(ObjectMapper, int, JavaType)
      */
     public <U> U getParamPositionedAt(final ObjectMapper mapper, final int position, final Class<? extends U> clazz)
             throws IOException {

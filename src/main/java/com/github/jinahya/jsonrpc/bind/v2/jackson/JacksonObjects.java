@@ -34,19 +34,16 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.WeakHashMap;
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 
 /**
  * Constants and utilities for jackson objects.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class JacksonObjects {
+public final class JacksonObjects {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static Map<Class<?>, JavaType> JAVA_TYPES;
@@ -116,16 +113,6 @@ final class JacksonObjects {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static <T extends JsonNode> Optional<T> ofNullableNode(final T jsonNode) {
-        return ofNullable(jsonNode).filter(v -> v instanceof NullNode);
-    }
-
-    static <T extends JsonNode, R> Optional<R> ofNullableNodeMap(
-            final T jsonNode, final Function<? super T, R> function) {
-        return ofNullableNode(jsonNode).map(function);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     static JsonNode requireObjectNode(final JsonNode node) {
         final JsonNodeType type = requireNonNull(node, "node is null").getNodeType();
         if (type != JsonNodeType.OBJECT) {
@@ -150,6 +137,17 @@ final class JacksonObjects {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Reads an object value of specified type from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the node form the object is read; must be an instance of {@link com.fasterxml.jackson.databind.node.ObjectNode}.
+     * @param type   the type of object.
+     * @param <T>    value type parameter
+     * @return the value.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <T> T readObject(final ObjectMapper mapper, final JsonNode node, final JavaType type)
             throws IOException {
         if (mapper == null) {
@@ -164,21 +162,37 @@ final class JacksonObjects {
         return mapper.readValue(mapper.treeAsTokens(requireObjectNode(node)), type);
     }
 
+    /**
+     * Reads an object value of specified class from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the json node form which the value is read; must be an instance of {@link
+     *               com.fasterxml.jackson.databind.node.ObjectNode}.
+     * @param clazz  the class of the value.
+     * @param <T>    value type parameter
+     * @return the value.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <T> T readObject(final ObjectMapper mapper, final JsonNode node, final Class<? extends T> clazz)
             throws IOException {
         if (mapper == null) {
             throw new NullPointerException("mapper is null");
         }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
         return readObject(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Reads elements of specified type from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the node to read elements; must be an instance of {@link com.fasterxml.jackson.databind.node.ArrayNode}.
+     * @param type   the type of elements.
+     * @param <U>    element type parameter
+     * @return a list of array elements.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <U> List<U> readArray(final ObjectMapper mapper, final JsonNode node, final JavaType type)
             throws IOException {
         if (mapper == null) {
@@ -194,21 +208,38 @@ final class JacksonObjects {
                                 collectionType(mapper.getTypeFactory(), type));
     }
 
+    /**
+     * Reads elements of specified class from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the node to read elements; must be an instance of {@link com.fasterxml.jackson.databind.node.ArrayNode}.
+     * @param clazz  the class of elements.
+     * @param <U>    element type parameter
+     * @return a list of array elements.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <U> List<U> readArray(final ObjectMapper mapper, final JsonNode node, final Class<? extends U> clazz)
             throws IOException {
         if (mapper == null) {
             throw new NullPointerException("mapper is null");
         }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
         return readArray(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Reads a single element of specified type at specified index from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the node from which the element is read; must be an instance of {@link
+     *               com.fasterxml.jackson.databind.node.ArrayNode}.
+     * @param index  the index of the element.
+     * @param type   the type of the element.
+     * @param <U>    element type parameter
+     * @return the element at specified index.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <U> U readArrayElementAt(final ObjectMapper mapper, final JsonNode node, final int index,
                                            final JavaType type)
             throws IOException {
@@ -218,54 +249,38 @@ final class JacksonObjects {
         if (node == null) {
             throw new NullPointerException("node is null");
         }
+        if (index < 0) {
+            throw new IllegalArgumentException("index(" + index + ") < 0");
+        }
+        final int size = requireArrayNode(node).size();
+        if (index >= size) {
+            throw new IllegalArgumentException("index(" + index + ") >= node.size(" + size + ")");
+        }
         if (type == null) {
             throw new NullPointerException("type is null");
         }
         return mapper.readValue(mapper.treeAsTokens(requireArrayNode(node).get(index)), type);
     }
 
+    /**
+     * Reads a single element of specified class at specified index from specified node.
+     *
+     * @param mapper an object mapper.
+     * @param node   the node from which the element is read; must be an instance of {@link
+     *               com.fasterxml.jackson.databind.node.ArrayNode}.
+     * @param index  the index of the element.
+     * @param clazz  the class of the element.
+     * @param <U>    element type parameter
+     * @return the element at specified index.
+     * @throws IOException if an I/O error occurs.
+     */
     public static <U> U readArrayElementAt(final ObjectMapper mapper, final JsonNode node, final int index,
                                            final Class<? extends U> clazz)
             throws IOException {
         if (mapper == null) {
             throw new NullPointerException("mapper is null");
         }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
         return readArrayElementAt(mapper, node, index, javaType(mapper.getTypeFactory(), clazz));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static <T> T readId(final ObjectMapper mapper, final JsonNode node, final JavaType type)
-            throws IOException {
-        if (mapper == null) {
-            throw new NullPointerException("mapper is null");
-        }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        if (type == null) {
-            throw new NullPointerException("type is null");
-        }
-        return mapper.readValue(mapper.treeAsTokens(requireValueNode(node)), type);
-    }
-
-    public static <T> T readId(final ObjectMapper mapper, final JsonNode node, final Class<? extends T> clazz)
-            throws IOException {
-        if (mapper == null) {
-            throw new NullPointerException("mapper is null");
-        }
-        if (node == null) {
-            throw new NullPointerException("node is null");
-        }
-        if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
-        return readId(mapper, node, javaType(mapper.getTypeFactory(), clazz));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

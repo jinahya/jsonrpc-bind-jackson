@@ -82,7 +82,8 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
             /**
              * Creates a new instance whose properties are set from specified json node.
              *
-             * @param node the json node from which property values are set.
+             * @param node the json node from which property values are set; must be an instance of {@link
+             *             com.fasterxml.jackson.databind.node.ObjectNode}.
              * @return a new instance.
              */
             public static JacksonServerError of(final JsonNode node) {
@@ -224,10 +225,10 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
      * Creates a new instance of specified class whose properties are set with specified values.
      *
      * @param clazz   the class of the new instance.
-     * @param jsonrpc a value for {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID} property.
-     * @param result  a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_RESULT}.
-     * @param error   a value for {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_ERROR}.
-     * @param id      a value for {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject#PROPERTY_NAME_ID}.
+     * @param jsonrpc a value for {@link #PROPERTY_NAME_ID} property.
+     * @param result  a value for {@link #PROPERTY_NAME_RESULT}.
+     * @param error   a value for {@link #PROPERTY_NAME_ERROR}.
+     * @param id      a value for {@link #PROPERTY_NAME_ID}.
      * @param <T>     instance type parameter
      * @param <U>     {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_RESULT} type parameter
      * @param <V>     {@link com.github.jinahya.jsonrpc.bind.v2.ResponseObject#PROPERTY_NAME_ERROR} type parameter
@@ -255,10 +256,8 @@ public class JacksonResponse<ResultType, ErrorType extends JacksonResponse.Jacks
     // ---------------------------------------------------------------------------------------------------------- result
 
     /**
-     * Indicates whether the current value of {@value com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_RESULT}
-     * property is <i>semantically</i> {@code null}. Overridden to further check whether the current value of {@value
-     * com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject#PROPERTY_NAME_RESULT} property is an instance of
-     * {@link NullNode}.
+     * Indicates whether the current value of {@link #PROPERTY_NAME_RESULT} property is <i>semantically</i> {@code
+     * null}. Overridden to further check whether the the value is an instance of {@link NullNode}.
      *
      * @return {@inheritDoc}
      */
