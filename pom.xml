@@ -49,7 +49,7 @@
     <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
-    <version.org.junit.jupiter>5.5.0</version.org.junit.jupiter>
+    <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
   </properties>
 
   <dependencyManagement>
@@ -72,7 +72,13 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.5.2</version>
+      <version>0.6.3-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jinahya</groupId>
+      <artifactId>jsonrpc-glue</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
