@@ -116,7 +116,8 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
 
     @Override
     default void setResultAsList(final List<?> result) {
-        result(getClass(), this, (BaseJsonNode) ofNullable(result).map(getObjectMapper()::valueToTree).orElse(null));
+        final ObjectMapper mapper = getObjectMapper();
+        result(getClass(), this, (BaseJsonNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }
 
     @Override
@@ -135,7 +136,8 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
 
     @Override
     default void setResultAsObject(final Object result) {
-        result(getClass(), this, (BaseJsonNode) ofNullable(result).map(getObjectMapper()::valueToTree).orElse(null));
+        final ObjectMapper mapper = getObjectMapper();
+        result(getClass(), this, (BaseJsonNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }
 
     // ----------------------------------------------------------------------------------------------------------- error
@@ -166,6 +168,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
 
     @Override
     default void setErrorAs(final JsonrpcResponseMessageError error) {
-        error(getClass(), this, (ObjectNode) ofNullable(error).map(getObjectMapper()::valueToTree).orElse(null));
+        final ObjectMapper mapper = getObjectMapper();
+        error(getClass(), this, (ObjectNode) ofNullable(error).map(mapper::valueToTree).orElse(null));
     }
 }
