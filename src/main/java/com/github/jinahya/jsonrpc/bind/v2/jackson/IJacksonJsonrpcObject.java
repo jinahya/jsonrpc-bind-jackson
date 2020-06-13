@@ -1,7 +1,7 @@
 package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
-import com.github.jinahya.jsonrpc.bind.v2a.IJsonrpcObject;
+import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcObject;
 
-public interface IJacksonJsonrpcObject extends IJsonrpcObject {
+interface IJacksonJsonrpcObject extends JsonrpcObject {
 
 }

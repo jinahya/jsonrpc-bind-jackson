@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -41,19 +42,16 @@
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.testSource>1.8</maven.compiler.testSource>
-    <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+    <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
+    <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
+    <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M3</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.9.9.3</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
-<<<<<<< HEAD
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
-=======
-    <version.org.junit.jupiter>5.5.0</version.org.junit.jupiter>
     <version.jsonrpc-bind>0.5.5</version.jsonrpc-bind>
->>>>>>> 3af6c22046d53337d2769a0d806c07968eedc266
   </properties>
 
   <dependencyManagement>
@@ -76,17 +74,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-<<<<<<< HEAD
       <version>0.6.3-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.jinahya</groupId>
-      <artifactId>jsonrpc-glue</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-=======
-      <version>${version.jsonrpc-bind}</version>
->>>>>>> 3af6c22046d53337d2769a0d806c07968eedc266
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -94,6 +82,12 @@
       <artifactId>validation-api</artifactId>
       <version>2.0.1.Final</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.16.1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate.validator</groupId>
@@ -140,7 +134,7 @@
             </additionalJOptions>
             <links>
               <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>
-<!--              <link>https://javaee.github.io/javaee-spec/javadocs/</link>-->
+              <!--              <link>https://javaee.github.io/javaee-spec/javadocs/</link>-->
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
             <offlineLinks>
@@ -229,7 +223,7 @@
             <configuration>
               <skip>true</skip>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
@@ -280,7 +274,7 @@
             <id>check-signature-java18:1.0</id>
             <phase>process-classes</phase>
             <goals>
-              <goal>check</goal>
+              <!--              <goal>check</goal>-->
             </goals>
             <configuration>
               <signature>

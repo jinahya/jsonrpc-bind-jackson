@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
@@ -31,6 +32,16 @@ public class JsonrpcTests {
             assertNotNull(resource, "null resource stream loaded from '" + name + "'");
             return function.apply(resource);
         }
+    }
+
+    public static void acceptResourceStream(final String name, final Consumer<? super InputStream> consumer)
+            throws IOException {
+        requireNonNull(name, "name is null");
+        requireNonNull(consumer, "consumer is null");
+        applyResourceStream(name, s -> {
+            consumer.accept(s);
+            return null;
+        });
     }
 
     private JsonrpcTests() {

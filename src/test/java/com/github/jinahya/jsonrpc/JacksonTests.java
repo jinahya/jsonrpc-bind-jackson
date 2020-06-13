@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -45,7 +46,7 @@ public final class JacksonTests {
                     try {
                         return m.readTree(s);
                     } catch (final IOException ioe) {
-                        throw new RuntimeException(ioe);
+                        throw new UncheckedIOException(ioe);
                     }
                 })
         );
