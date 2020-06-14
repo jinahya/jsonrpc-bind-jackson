@@ -1,45 +1,34 @@
 package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.databind.node.ContainerNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2b.AbstractJsonrpcRequestMessage;
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
+import com.github.jinahya.jsonrpc.bind.v2b.AbstractJsonrpcResponseMessageError;
+import jdk.nashorn.internal.ir.ObjectNode;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class JacksonJsonrpcRequestMessage
-        extends AbstractJsonrpcRequestMessage
-        implements IJacksonJsonrpcRequestMessage {
+public class JacksonJsonrpcResponseMessageError
+        extends AbstractJsonrpcResponseMessageError
+        implements IJacksonJsonrpcResponseMessageError {
 
     @Override
     public String toString() {
         return super.toString() + "{"
-               + "id=" + id
-               + ",params=" + params
+               + "data=" + data
                + ",unrecognizedFields=" + unrecognizedFields
                + "}";
     }
 
-    protected ValueNode getId() {
-        return id;
+    protected BaseJsonNode getData() {
+        return data;
     }
 
-    protected void setId(final ValueNode id) {
-        this.id = id;
+    protected void setData(final BaseJsonNode data) {
+        this.data = data;
     }
 
-    protected ContainerNode<?> getParams() {
-        return params;
-    }
-
-    protected void setParams(final ContainerNode<?> params) {
-        this.params = params;
-    }
-
-    private ValueNode id;
-
-    private ContainerNode<?> params;
+    private BaseJsonNode data;
 
     @JsonAnySetter
     protected Object unrecognizedField(final String name, final Object value) {

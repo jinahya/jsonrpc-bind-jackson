@@ -12,7 +12,6 @@ import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.params;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -25,7 +24,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
     }
 
     @Override
-    default <T> List<T> getParamsAsArray(final Class<T> elementClass, final boolean lenient) {
+    default <T> List<T> getParamsAsArray(final Class<T> elementClass) {
         requireNonNull(elementClass, "elementClass is null");
         if (!hasParams()) {
             return null;
@@ -37,12 +36,9 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
                     params, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
         }
         assert params.isObject();
-        if (lenient) {
-            final T object = getParamsAsObject(elementClass);
-            assert object != null;
-            return new ArrayList<>(singletonList(object));
-        }
-        throw new JsonrpcBindException("unable to bind params as an array");
+        final List<T> list = new ArrayList<>(1);
+        list.add(mapper.convertValue(params, elementClass));
+        return list;
     }
 
     @Override
@@ -52,7 +48,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
     }
 
     @Override
-    default <T> T getParamsAsObject(final Class<T> objectClass, final boolean lenient) {
+    default <T> T getParamsAsObject(final Class<T> objectClass) {
         requireNonNull(objectClass, "objectClass is null");
         if (!hasParams()) {
             return null;
@@ -63,12 +59,8 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
             return mapper.convertValue(params, objectClass);
         }
         assert params.isArray();
-        if (lenient && objectClass.isArray()) {
-            try {
-                return mapper.treeToValue(params, objectClass);
-            } catch (final JsonProcessingException jpe) {
-                throw new JsonrpcBindException(jpe);
-            }
+        if (objectClass.isArray()) {
+            return mapper.convertValue(params, objectClass);
         }
         throw new JsonrpcBindException("unable to bind params as an object");
     }

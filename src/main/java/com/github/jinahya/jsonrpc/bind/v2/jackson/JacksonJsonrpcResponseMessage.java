@@ -21,6 +21,7 @@ public class JacksonJsonrpcResponseMessage
                + "id=" + id
                + ",result=" + result
                + ",error=" + error
+               + ",unrecognizedFields=" + unrecognizedFields
                + "}";
     }
 
@@ -48,23 +49,23 @@ public class JacksonJsonrpcResponseMessage
         this.error = error;
     }
 
-    @JsonAnySetter
-    protected Object unrecognizedField(final String name, final Object value) {
-        return unrecognizedFields().put(name, value);
-    }
-
-    protected Map<String, Object> unrecognizedFields() {
-        if (unrecognizedFields == null) {
-            unrecognizedFields = new HashMap<>();
-        }
-        return unrecognizedFields;
-    }
-
     private ValueNode id;
 
     private BaseJsonNode result;
 
     private ObjectNode error;
+
+    @JsonAnySetter
+    protected Object unrecognizedField(final String name, final Object value) {
+        return unrecognizedFields().put(name, value);
+    }
+
+    public Map<String, Object> unrecognizedFields() {
+        if (unrecognizedFields == null) {
+            unrecognizedFields = new HashMap<>();
+        }
+        return unrecognizedFields;
+    }
 
     private Map<String, Object> unrecognizedFields;
 }
