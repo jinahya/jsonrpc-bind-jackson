@@ -1,6 +1,5 @@
 package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -109,14 +108,14 @@ class IJacksonJsonrpcObjectHelper {
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    static ObjectMapper mapper(final Class<?> clazz, final Object object) {
-        requireNonNull(clazz, "clazz is null");
-        requireNonNull(object, "object is null");
-        final ObjectMapper mapper = (ObjectMapper) get(clazz, "mapper", object);
-        assert mapper != null;
-        return mapper;
-    }
+//    // -----------------------------------------------------------------------------------------------------------------
+//    static ObjectMapper mapper(final Class<?> clazz, final Object object) {
+//        requireNonNull(clazz, "clazz is null");
+//        requireNonNull(object, "object is null");
+//        final ObjectMapper mapper = (ObjectMapper) get(clazz, "mapper", object);
+//        assert mapper != null;
+//        return mapper;
+//    }
 
     // -----------------------------------------------------------------------------------------------------------------
     static ValueNode id(final Class<?> clazz, final Object object) {

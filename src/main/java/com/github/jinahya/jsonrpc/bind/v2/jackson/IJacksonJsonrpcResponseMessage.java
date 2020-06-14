@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DecimalNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
@@ -18,6 +20,7 @@ import java.util.List;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.error;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.result;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static java.util.Collections.list;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -92,7 +95,47 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default <T> List<T> getResultAsList(final Class<T> elementClass, final boolean lenient) {
+    default Long getResultAsLong(final boolean lenient) {
+        if (!hasResult()) {
+            return null;
+        }
+        final BaseJsonNode result = result(getClass(), this);
+        if (!lenient && result.isLong()) {
+            return result.longValue();
+        }
+        if (lenient && result.canConvertToLong()) {
+            return result.asLong();
+        }
+        return JsonrpcResponseMessage.super.getResultAsLong(lenient);
+    }
+
+    @Override
+    default void setResultAsLong(final Long result) {
+        result(getClass(), this, ofNullable(result).map(LongNode::new).orElse(null));
+    }
+
+    @Override
+    default Integer getResultAsInteger(final boolean lenient) {
+        if (!hasResult()) {
+            return null;
+        }
+        final BaseJsonNode result = result(getClass(), this);
+        if (!lenient && result.isInt()) {
+            return result.intValue();
+        }
+        if (lenient && result.canConvertToInt()) {
+            return result.asInt();
+        }
+        return JsonrpcResponseMessage.super.getResultAsInteger(lenient);
+    }
+
+    @Override
+    default void setResultAsInteger(final Integer result) {
+        result(getClass(), this, ofNullable(result).map(IntNode::new).orElse(null));
+    }
+
+    @Override
+    default <T> List<T> getResultAsArray(final Class<T> elementClass, final boolean lenient) {
         requireNonNull(elementClass, "elementClass is null");
         if (!hasResult()) {
             return null;
@@ -112,7 +155,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default void setResultAsList(final List<?> result) {
+    default void setResultAsArray(final List<?> result) {
         final ObjectMapper mapper = getObjectMapper();
         result(getClass(), this, (BaseJsonNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }

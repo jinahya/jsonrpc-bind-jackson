@@ -49,7 +49,7 @@ public class JacksonJsonrpcResponseMessage
     }
 
     @JsonAnySetter
-    private Object unrecognizedField(final String name, final Object value) {
+    protected Object unrecognizedField(final String name, final Object value) {
         return unrecognizedFields().put(name, value);
     }
 

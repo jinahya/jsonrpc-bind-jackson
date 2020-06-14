@@ -10,8 +10,8 @@ import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcRequestMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.mapper;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.params;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -31,7 +31,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
             return null;
         }
         final ContainerNode<?> params = params(getClass(), this);
-        final ObjectMapper mapper = mapper(getClass(), this);
+        final ObjectMapper mapper = getObjectMapper();
         if (params.isArray()) {
             return mapper.convertValue(
                     params, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
@@ -47,7 +47,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
 
     @Override
     default void setParamsAsArray(final List<?> params) {
-        final ObjectMapper mapper = mapper(getClass(), this);
+        final ObjectMapper mapper = getObjectMapper();
         params(getClass(), this, (ArrayNode) ofNullable(params).map(mapper::valueToTree).orElse(null));
     }
 
@@ -58,7 +58,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
             return null;
         }
         final ContainerNode<?> params = params(getClass(), this);
-        final ObjectMapper mapper = mapper(getClass(), this);
+        final ObjectMapper mapper = getObjectMapper();
         if (params.isObject()) {
             return mapper.convertValue(params, objectClass);
         }
@@ -75,7 +75,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
 
     @Override
     default void setParamsAsObject(final Object params) {
-        final ObjectMapper mapper = mapper(getClass(), this);
+        final ObjectMapper mapper = getObjectMapper();
         params(getClass(), this, (ContainerNode<?>) ofNullable(params).map(mapper.valueToTree(params)).orElse(null));
     }
 }
