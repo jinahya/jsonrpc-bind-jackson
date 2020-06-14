@@ -41,15 +41,33 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                         }
                         log.debug("message: {}", message);
                         requireValid(message);
-                        assertEquals("subtract", message.getMethod());
-                        final NamedParams namedParams = message.getParamsAsObject(NamedParams.class);
-                        assertEquals(23, namedParams.subtrahend);
-                        assertEquals(42, namedParams.minuend);
-                        assertTrue(message.hasId());
-                        assertThat(message.getIdAsString()).isNotNull().isEqualTo("3");
-                        assertThat(message.getIdAsNumber()).isNotNull().isEqualByComparingTo(BigInteger.valueOf(3L));
-                        assertThat(message.getIdAsLong()).isNotNull().isEqualTo(3L);
-                        assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(3);
+                        {
+                            assertEquals("subtract", message.getMethod());
+                        }
+                        {
+                            assertTrue(message.hasParams());
+                            final NamedParams params = message.getParamsAsObject(NamedParams.class);
+                            assertEquals(23, params.subtrahend);
+                            assertEquals(42, params.minuend);
+                            {
+                                final List<NamedParams> array = message.getParamsAsArray(NamedParams.class, true);
+                                assertThat(array)
+                                        .isNotNull()
+                                        .hasSize(1)
+                                        .allSatisfy(e -> {
+                                            assertEquals(23, e.subtrahend);
+                                            assertEquals(42, e.minuend);
+                                        });
+                            }
+                        }
+                        {
+                            assertTrue(message.hasId());
+                            assertThat(message.getIdAsString(true)).isNotNull().isEqualTo("3");
+                            assertThat(message.getIdAsNumber(true)).isNotNull()
+                                    .isEqualByComparingTo(BigInteger.valueOf(3L));
+                            assertThat(message.getIdAsLong(true)).isNotNull().isEqualTo(3L);
+                            assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(3);
+                        }
                     });
                 }
         );
@@ -69,15 +87,33 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                         }
                         log.debug("message: {}", message);
                         requireValid(message);
-                        assertEquals("subtract", message.getMethod());
-                        final NamedParams namedParams = message.getParamsAsObject(NamedParams.class);
-                        assertEquals(42, namedParams.minuend);
-                        assertEquals(23, namedParams.subtrahend);
-                        assertTrue(message.hasId());
-                        assertThat(message.getIdAsString()).isNotNull().isEqualTo("4");
-                        assertThat(message.getIdAsNumber()).isNotNull().isEqualByComparingTo(BigInteger.valueOf(4L));
-                        assertThat(message.getIdAsLong()).isNotNull().isEqualTo(4L);
-                        assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(4);
+                        {
+                            assertEquals("subtract", message.getMethod());
+                        }
+                        {
+                            assertTrue(message.hasParams());
+                            final NamedParams params = message.getParamsAsObject(NamedParams.class);
+                            assertEquals(42, params.minuend);
+                            assertEquals(23, params.subtrahend);
+                            {
+                                final List<NamedParams> array = message.getParamsAsArray(NamedParams.class, true);
+                                assertThat(array)
+                                        .isNotNull()
+                                        .hasSize(1)
+                                        .allSatisfy(e -> {
+                                            assertEquals(42, e.minuend);
+                                            assertEquals(23, e.subtrahend);
+                                        });
+                            }
+                        }
+                        {
+                            assertTrue(message.hasId());
+                            assertThat(message.getIdAsString(true)).isNotNull().isEqualTo("4");
+                            assertThat(message.getIdAsNumber(true)).isNotNull()
+                                    .isEqualByComparingTo(BigInteger.valueOf(4L));
+                            assertThat(message.getIdAsLong(true)).isNotNull().isEqualTo(4L);
+                            assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(4);
+                        }
                     });
                 }
         );
@@ -97,14 +133,30 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                         }
                         log.debug("message: {}", message);
                         requireValid(message);
-                        assertEquals("subtract", message.getMethod());
-                        final List<Integer> params = message.getParamsAsList(Integer.class);
-                        assertIterableEquals(asList(42, 23), params);
-                        assertTrue(message.hasId());
-                        assertThat(message.getIdAsString()).isNotNull().isEqualTo("1");
-                        assertThat(message.getIdAsNumber()).isNotNull().isEqualByComparingTo(BigInteger.valueOf(1L));
-                        assertThat(message.getIdAsLong()).isNotNull().isEqualTo(1L);
-                        assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);
+                        {
+                            assertEquals("subtract", message.getMethod());
+                        }
+                        {
+                            assertTrue(message.hasParams());
+                            final List<Integer> params = message.getParamsAsArray(Integer.class);
+                            assertIterableEquals(asList(42, 23), params);
+                            {
+                                final Integer[] array = message.getParamsAsObject(Integer[].class, true);
+                                assertThat(array).isNotNull().containsSequence(42, 23);
+                            }
+                            {
+                                final int[] array = message.getParamsAsObject(int[].class, true);
+                                assertThat(array).isNotNull().containsSequence(42, 23);
+                            }
+                        }
+                        {
+                            assertTrue(message.hasId());
+                            assertThat(message.getIdAsString(true)).isNotNull().isEqualTo("1");
+                            assertThat(message.getIdAsNumber(true)).isNotNull()
+                                    .isEqualByComparingTo(BigInteger.valueOf(1L));
+                            assertThat(message.getIdAsLong(true)).isNotNull().isEqualTo(1L);
+                            assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);
+                        }
                     });
                 }
         );
@@ -124,14 +176,30 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                         }
                         log.debug("message: {}", message);
                         requireValid(message);
-                        assertEquals("subtract", message.getMethod());
-                        final List<Integer> params = message.getParamsAsList(Integer.class);
-                        assertIterableEquals(asList(23, 42), params);
-                        assertTrue(message.hasId());
-                        assertThat(message.getIdAsString()).isNotNull().isEqualTo("2");
-                        assertThat(message.getIdAsNumber()).isNotNull().isEqualByComparingTo(BigInteger.valueOf(2L));
-                        assertThat(message.getIdAsLong()).isNotNull().isEqualTo(2L);
-                        assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(2);
+                        {
+                            assertEquals("subtract", message.getMethod());
+                        }
+                        {
+                            assertTrue(message.hasParams());
+                            final List<Integer> params = message.getParamsAsArray(Integer.class);
+                            assertIterableEquals(asList(23, 42), params);
+                            {
+                                final Integer[] array = message.getParamsAsObject(Integer[].class, true);
+                                assertThat(array).isNotNull().containsSequence(23, 42);
+                            }
+                            {
+                                final int[] array = message.getParamsAsObject(int[].class, true);
+                                assertThat(array).isNotNull().containsSequence(23, 42);
+                            }
+                        }
+                        {
+                            assertTrue(message.hasId());
+                            assertThat(message.getIdAsString(true)).isNotNull().isEqualTo("2");
+                            assertThat(message.getIdAsNumber(true)).isNotNull()
+                                    .isEqualByComparingTo(BigInteger.valueOf(2L));
+                            assertThat(message.getIdAsLong(true)).isNotNull().isEqualTo(2L);
+                            assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(2);
+                        }
                     });
                 }
         );

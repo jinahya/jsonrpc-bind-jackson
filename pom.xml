@@ -47,9 +47,9 @@
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M3</version.maven-surefire>
-    <version.com.fasterxml.jackson.core>2.9.9.3</version.com.fasterxml.jackson.core>
-    <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
-    <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
+    <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
+<!--    <version.com.fasterxml.jackson.core-annotations-javadoc>${version.com.fasterxml.jackson.core-databind-javadoc}</version.com.fasterxml.jackson.core-annotations-javadoc>-->
+    <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
     <version.jsonrpc-bind>0.5.5</version.jsonrpc-bind>
   </properties>

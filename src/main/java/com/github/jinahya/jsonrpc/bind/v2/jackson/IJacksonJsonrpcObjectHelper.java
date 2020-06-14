@@ -14,6 +14,7 @@ import java.util.WeakHashMap;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
 import static com.github.jinahya.jsonrpc.bind.v2.RequestObject.PROPERTY_NAME_PARAMS;
+import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROPERTY_NAME_DATA;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
 import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -153,6 +154,15 @@ class IJacksonJsonrpcObjectHelper {
 
     static void error(final Class<?> clazz, final Object object, final ObjectNode value) {
         set(clazz, PROPERTY_NAME_ERROR, object, value);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    static BaseJsonNode errorData(final Class<?> clazz, final Object object) {
+        return (BaseJsonNode) get(clazz, PROPERTY_NAME_DATA, object);
+    }
+
+    static void errorData(final Class<?> clazz, final Object object, final BaseJsonNode value) {
+        set(clazz, PROPERTY_NAME_DATA, object, value);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

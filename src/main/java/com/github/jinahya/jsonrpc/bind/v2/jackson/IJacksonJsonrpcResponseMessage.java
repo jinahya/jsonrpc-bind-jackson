@@ -2,26 +2,23 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcResponseMessage;
 import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcResponseMessageError;
 
-import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.error;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.result;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -31,16 +28,22 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     @Override
     default boolean hasResult() {
         final BaseJsonNode result = result(getClass(), this);
-        return result == null || result.isNull();
+        return result != null && !result.isNull();
     }
 
     @Override
-    default Boolean getResultAsBoolean() {
+    default Boolean getResultAsBoolean(final boolean lenient) {
         if (!hasResult()) {
             return null;
         }
         final BaseJsonNode result = result(getClass(), this);
-        return result.asBoolean();
+        if (result.isBoolean()) {
+            return result.booleanValue();
+        }
+        if (lenient && result.isValueNode()) {
+            return result.asBoolean();
+        }
+        throw new JsonrpcBindException("unable to bind result as a boolean");
     }
 
     @Override
@@ -49,15 +52,18 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default String getResultAsString() {
+    default String getResultAsString(final boolean lenient) {
         if (!hasResult()) {
             return null;
         }
         final BaseJsonNode result = result(getClass(), this);
-        if (result.isValueNode()) {
-            return result(getClass(), this).asText();
+        if (result.isTextual()) {
+            return result.textValue();
         }
-        return null;
+        if (lenient && result.isValueNode()) {
+            return result.asText();
+        }
+        throw new JsonrpcBindException("unable to bind result as a string");
     }
 
     @Override
@@ -66,15 +72,18 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default BigDecimal getResultAsNumber() {
+    default BigDecimal getResultAsNumber(final boolean lenient) {
         if (!hasResult()) {
             return null;
         }
         final BaseJsonNode result = result(getClass(), this);
-        if (result.isNumber()) {
-            return result(getClass(), this).decimalValue();
+        if (result.isBigDecimal()) { // true in DecimalNode only
+            return result.decimalValue();
         }
-        return null;
+        if (lenient && result.isNumber()) {
+            return result.decimalValue(); // BigDecimal.ZERO if !isNumber()
+        }
+        throw new JsonrpcBindException("unable to bind result as a number");
     }
 
     @Override
@@ -83,35 +92,23 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default <T> List<T> getResultAsList(final Class<T> elementClass) {
+    default <T> List<T> getResultAsList(final Class<T> elementClass, final boolean lenient) {
+        requireNonNull(elementClass, "elementClass is null");
         if (!hasResult()) {
             return null;
         }
         final BaseJsonNode result = result(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
-        if (result instanceof ContainerNode) {
-            if (result instanceof ObjectNode) {
-                return ofNullable(getResultAsObject(elementClass))
-                        .map(Collections::singletonList)
-                        .map(ArrayList::new)
-                        .orElse(null);
-            }
-            assert result instanceof ArrayNode;
+        if (result.isArray()) {
             return mapper.convertValue(
                     result, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
         }
-        if (result instanceof ValueNode) {
-            final List<T> list = new ArrayList<>(1);
-            final T value;
-            try {
-                value = mapper.treeToValue(result, elementClass);
-            } catch (final JsonProcessingException jpe) {
-                throw new UncheckedIOException(jpe);
-            }
-            list.add(value);
-            return list;
+        if (lenient) {
+            final T object = getResultAsObject(elementClass, true);
+            assert object != null;
+            return new ArrayList<>(singletonList(object));
         }
-        return null;
+        throw new JsonrpcBindException("unable to bind result as an array");
     }
 
     @Override
@@ -121,17 +118,28 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     }
 
     @Override
-    default <T> T getResultAsObject(final Class<T> objectClass) {
+    default <T> T getResultAsObject(final Class<T> objectClass, final boolean lenient) {
         requireNonNull(objectClass, "objectClass is null");
         if (!hasResult()) {
             return null;
         }
         final BaseJsonNode result = result(getClass(), this);
-        try {
-            return getObjectMapper().treeToValue(result, objectClass);
-        } catch (final JsonProcessingException jpe) {
-            throw new UncheckedIOException(jpe);
+        final ObjectMapper mapper = getObjectMapper();
+        if (result.isObject()) {
+            try {
+                return mapper.treeToValue(result, objectClass);
+            } catch (final JsonProcessingException jpe) {
+                throw new JsonrpcBindException(jpe);
+            }
         }
+        if (lenient) {
+            try {
+                return mapper.treeToValue(result, objectClass);
+            } catch (final JsonProcessingException jpe) {
+                throw new JsonrpcBindException(jpe);
+            }
+        }
+        throw new JsonrpcBindException("unable to bind the value as an object");
     }
 
     @Override
@@ -144,10 +152,9 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     @Override
     default boolean hasError() {
         final ObjectNode error = error(getClass(), this);
-        return error == null || error.isNull();
+        return error != null && !error.isNull();
     }
 
-    //TODO: remove
     @Override
     default boolean isErrorContextuallyValid() {
         return JsonrpcResponseMessage.super.isErrorContextuallyValid();
@@ -159,10 +166,12 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
         if (!hasError()) {
             return null;
         }
+        final ObjectNode error = error(getClass(), this);
+        final ObjectMapper mapper = getObjectMapper();
         try {
-            return getObjectMapper().treeToValue(error(getClass(), this), clazz);
+            return mapper.treeToValue(error, clazz);
         } catch (final JsonProcessingException jpe) {
-            throw new UncheckedIOException(jpe);
+            throw new JsonrpcBindException(jpe);
         }
     }
 
