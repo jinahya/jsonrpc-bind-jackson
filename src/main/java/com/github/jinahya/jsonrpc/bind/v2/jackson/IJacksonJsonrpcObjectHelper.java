@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject.PROPERTY_NAME_ID;
-import static com.github.jinahya.jsonrpc.bind.v2.RequestObject.PROPERTY_NAME_PARAMS;
-import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.ErrorObject.PROPERTY_NAME_DATA;
-import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_ERROR;
-import static com.github.jinahya.jsonrpc.bind.v2.ResponseObject.PROPERTY_NAME_RESULT;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage.PROPERTY_NAME_ID;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage.PROPERTY_NAME_PARAMS;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage.PROPERTY_NAME_ERROR;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage.PROPERTY_NAME_RESULT;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError.PROPERTY_NAME_DATA;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Objects.requireNonNull;
@@ -86,6 +86,7 @@ class IJacksonJsonrpcObjectHelper {
                 });
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     static Object get(final Class<?> clazz, final String name, final Object object) {
         requireNonNull(clazz, "clazz is null");
         requireNonNull(name, "name is null");
@@ -108,19 +109,8 @@ class IJacksonJsonrpcObjectHelper {
         }
     }
 
-//    // -----------------------------------------------------------------------------------------------------------------
-//    static ObjectMapper mapper(final Class<?> clazz, final Object object) {
-//        requireNonNull(clazz, "clazz is null");
-//        requireNonNull(object, "object is null");
-//        final ObjectMapper mapper = (ObjectMapper) get(clazz, "mapper", object);
-//        assert mapper != null;
-//        return mapper;
-//    }
-
     // -----------------------------------------------------------------------------------------------------------------
     static ValueNode id(final Class<?> clazz, final Object object) {
-        assert clazz != null;
-        assert object != null;
         return (ValueNode) get(clazz, PROPERTY_NAME_ID, object);
     }
 
@@ -129,38 +119,38 @@ class IJacksonJsonrpcObjectHelper {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static ContainerNode<?> params(final Class<?> clazz, final Object object) {
+    static ContainerNode<?> requestParams(final Class<?> clazz, final Object object) {
         return (ContainerNode<?>) get(clazz, PROPERTY_NAME_PARAMS, object);
     }
 
-    static void params(final Class<?> clazz, final Object object, final ContainerNode<?> value) {
+    static void requestParams(final Class<?> clazz, final Object object, final ContainerNode<?> value) {
         set(clazz, PROPERTY_NAME_PARAMS, object, value);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static BaseJsonNode result(final Class<?> clazz, final Object object) {
+    static BaseJsonNode responseResult(final Class<?> clazz, final Object object) {
         return (BaseJsonNode) get(clazz, PROPERTY_NAME_RESULT, object);
     }
 
-    static void result(final Class<?> clazz, final Object object, final BaseJsonNode value) {
+    static void responseResult(final Class<?> clazz, final Object object, final BaseJsonNode value) {
         set(clazz, PROPERTY_NAME_RESULT, object, value);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static ObjectNode error(final Class<?> clazz, final Object object) {
+    static ObjectNode responseError(final Class<?> clazz, final Object object) {
         return (ObjectNode) get(clazz, PROPERTY_NAME_ERROR, object);
     }
 
-    static void error(final Class<?> clazz, final Object object, final ObjectNode value) {
+    static void responseError(final Class<?> clazz, final Object object, final ObjectNode value) {
         set(clazz, PROPERTY_NAME_ERROR, object, value);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static BaseJsonNode errorData(final Class<?> clazz, final Object object) {
+    static BaseJsonNode responseErrorData(final Class<?> clazz, final Object object) {
         return (BaseJsonNode) get(clazz, PROPERTY_NAME_DATA, object);
     }
 
-    static void errorData(final Class<?> clazz, final Object object, final BaseJsonNode value) {
+    static void responseErrorData(final Class<?> clazz, final Object object, final BaseJsonNode value) {
         set(clazz, PROPERTY_NAME_DATA, object, value);
     }
 

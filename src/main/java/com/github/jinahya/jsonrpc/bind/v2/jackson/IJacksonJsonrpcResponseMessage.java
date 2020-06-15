@@ -4,14 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcResponseMessageError;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.error;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.result;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.responseError;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.responseResult;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -21,7 +21,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     // ---------------------------------------------------------------------------------------------------------- result
     @Override
     default boolean hasResult() {
-        final BaseJsonNode result = result(getClass(), this);
+        final BaseJsonNode result = IJacksonJsonrpcObjectHelper.responseResult(getClass(), this);
         return result != null && !result.isNull();
     }
 
@@ -31,7 +31,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
         if (!hasResult()) {
             return null;
         }
-        final BaseJsonNode result = result(getClass(), this);
+        final BaseJsonNode result = IJacksonJsonrpcObjectHelper.responseResult(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
         if (result.isArray()) {
             return mapper.convertValue(
@@ -45,7 +45,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     @Override
     default void setResultAsArray(final List<?> result) {
         final ObjectMapper mapper = getObjectMapper();
-        result(getClass(), this, (ArrayNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
+        responseResult(getClass(), this, (ArrayNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }
 
     @Override
@@ -54,7 +54,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
         if (!hasResult()) {
             return null;
         }
-        final BaseJsonNode result = result(getClass(), this);
+        final BaseJsonNode result = IJacksonJsonrpcObjectHelper.responseResult(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
         return mapper.convertValue(result, objectClass);
     }
@@ -62,13 +62,13 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     @Override
     default void setResultAsObject(final Object result) {
         final ObjectMapper mapper = getObjectMapper();
-        result(getClass(), this, (BaseJsonNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
+        responseResult(getClass(), this, (BaseJsonNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }
 
     // ----------------------------------------------------------------------------------------------------------- error
     @Override
     default boolean hasError() {
-        final ObjectNode error = error(getClass(), this);
+        final ObjectNode error = IJacksonJsonrpcObjectHelper.responseError(getClass(), this);
         return error != null && !error.isNull();
     }
 
@@ -83,7 +83,7 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
         if (!hasError()) {
             return null;
         }
-        final ObjectNode error = error(getClass(), this);
+        final ObjectNode error = IJacksonJsonrpcObjectHelper.responseError(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
         return mapper.convertValue(error, clazz);
     }
@@ -91,6 +91,6 @@ interface IJacksonJsonrpcResponseMessage extends JsonrpcResponseMessage, IJackso
     @Override
     default void setErrorAs(final JsonrpcResponseMessageError error) {
         final ObjectMapper mapper = getObjectMapper();
-        error(getClass(), this, (ObjectNode) ofNullable(error).map(mapper::valueToTree).orElse(null));
+        responseError(getClass(), this, (ObjectNode) ofNullable(error).map(mapper::valueToTree).orElse(null));
     }
 }

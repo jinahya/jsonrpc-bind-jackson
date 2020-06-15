@@ -1,16 +1,16 @@
 package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
-import com.github.jinahya.jsonrpc.bind.v2b.JsonrpcRequestMessage;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.params;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJacksonJsonrpcObjectHelper.requestParams;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -19,7 +19,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
 
     @Override
     default boolean hasParams() {
-        final ContainerNode<?> params = params(getClass(), this);
+        final ContainerNode<?> params = requestParams(getClass(), this);
         return params != null && !params.isNull();
     }
 
@@ -29,7 +29,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
         if (!hasParams()) {
             return null;
         }
-        final ContainerNode<?> params = params(getClass(), this);
+        final ContainerNode<?> params = requestParams(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
         if (params.isArray()) {
             return mapper.convertValue(
@@ -44,7 +44,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
     @Override
     default void setParamsAsArray(final List<?> params) {
         final ObjectMapper mapper = getObjectMapper();
-        params(getClass(), this, (ArrayNode) ofNullable(params).map(mapper::valueToTree).orElse(null));
+        requestParams(getClass(), this, (ArrayNode) ofNullable(params).map(mapper::valueToTree).orElse(null));
     }
 
     @Override
@@ -53,7 +53,7 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
         if (!hasParams()) {
             return null;
         }
-        final ContainerNode<?> params = params(getClass(), this);
+        final ContainerNode<?> params = requestParams(getClass(), this);
         final ObjectMapper mapper = getObjectMapper();
         if (params.isObject()) {
             return mapper.convertValue(params, objectClass);
@@ -68,6 +68,10 @@ interface IJacksonJsonrpcRequestMessage extends JsonrpcRequestMessage, IJacksonJ
     @Override
     default void setParamsAsObject(final Object params) {
         final ObjectMapper mapper = getObjectMapper();
-        params(getClass(), this, (ContainerNode<?>) ofNullable(params).map(mapper.valueToTree(params)).orElse(null));
+        final JsonNode tree = ofNullable(params).<JsonNode>map(mapper.valueToTree(params)).orElse(null);
+        if (tree != null && !(tree instanceof ContainerNode)) {
+            throw new IllegalArgumentException("wrong type of params: " + params);
+        }
+        requestParams(getClass(), this, (ContainerNode<?>) tree);
     }
 }

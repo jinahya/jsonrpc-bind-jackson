@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -65,8 +64,6 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("1", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(1L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(1L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(1L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);
@@ -110,8 +107,6 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("2", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(2L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(2L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(2L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(2);
@@ -158,8 +153,6 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("3", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(3L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(3L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(3L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(3);
@@ -206,8 +199,6 @@ class JacksonJsonrpcRequestMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("4", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(4L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(4L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(4L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(4);

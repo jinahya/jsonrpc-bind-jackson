@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2b.AbstractJsonrpcResponseMessage;
+import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,11 +56,11 @@ public class JacksonJsonrpcResponseMessage
     private ObjectNode error;
 
     @JsonAnySetter
-    protected Object unrecognizedField(final String name, final Object value) {
-        return unrecognizedFields().put(name, value);
+    protected Object putUnrecognizedField(final String name, final Object value) {
+        return geUnrecognizedFields().put(name, value);
     }
 
-    public Map<String, Object> unrecognizedFields() {
+    public Map<String, Object> geUnrecognizedFields() {
         if (unrecognizedFields == null) {
             unrecognizedFields = new HashMap<>();
         }

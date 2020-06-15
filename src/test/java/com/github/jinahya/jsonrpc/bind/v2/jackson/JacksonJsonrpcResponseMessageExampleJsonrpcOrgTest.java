@@ -67,14 +67,12 @@ class JacksonJsonrpcResponseMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("3", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(3L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(3L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(3L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(3);
                         }
                         {
-                            log.debug("unrecognized fields: {}", message.unrecognizedFields());
+                            log.debug("unrecognized fields: {}", message.geUnrecognizedFields());
                         }
                     });
                 }
@@ -121,14 +119,12 @@ class JacksonJsonrpcResponseMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("4", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(4L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(4L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(4L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(4);
                         }
                         {
-                            log.debug("unrecognized fields: {}", message.unrecognizedFields());
+                            log.debug("unrecognized fields: {}", message.geUnrecognizedFields());
                         }
                     });
                 }
@@ -166,8 +162,6 @@ class JacksonJsonrpcResponseMessageExampleJsonrpcOrgTest {
                             assertTrue(message.hasId());
                             assertEquals("1", message.getIdAsString());
                             assertThat(message.getIdAsNumber()).isNotNull()
-                                    .isEqualByComparingTo(BigDecimal.valueOf(1L));
-                            assertThat(message.getIdAsBigInteger()).isNotNull()
                                     .isEqualByComparingTo(BigInteger.valueOf(1L));
                             assertThat(message.getIdAsLong()).isNotNull().isEqualTo(1L);
                             assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);

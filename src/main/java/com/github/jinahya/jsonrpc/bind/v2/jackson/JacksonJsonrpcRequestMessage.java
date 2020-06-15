@@ -3,7 +3,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.github.jinahya.jsonrpc.bind.v2b.AbstractJsonrpcRequestMessage;
+import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcRequestMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +42,11 @@ public class JacksonJsonrpcRequestMessage
     private ContainerNode<?> params;
 
     @JsonAnySetter
-    protected Object unrecognizedField(final String name, final Object value) {
-        return unrecognizedFields().put(name, value);
+    protected Object putUnrecognizedField(final String name, final Object value) {
+        return getUnrecognizedFields().put(name, value);
     }
 
-    public Map<String, Object> unrecognizedFields() {
+    public Map<String, Object> getUnrecognizedFields() {
         if (unrecognizedFields == null) {
             unrecognizedFields = new HashMap<>();
         }

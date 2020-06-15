@@ -2,8 +2,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
-import com.github.jinahya.jsonrpc.bind.v2b.AbstractJsonrpcResponseMessageError;
-import jdk.nashorn.internal.ir.ObjectNode;
+import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessageError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +30,11 @@ public class JacksonJsonrpcResponseMessageError
     private BaseJsonNode data;
 
     @JsonAnySetter
-    protected Object unrecognizedField(final String name, final Object value) {
-        return unrecognizedFields().put(name, value);
+    protected Object putUnrecognizedField(final String name, final Object value) {
+        return getUnrecognizedFields().put(name, value);
     }
 
-    public Map<String, Object> unrecognizedFields() {
+    public Map<String, Object> getUnrecognizedFields() {
         if (unrecognizedFields == null) {
             unrecognizedFields = new HashMap<>();
         }
