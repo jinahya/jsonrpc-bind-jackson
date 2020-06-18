@@ -45,7 +45,7 @@
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
     <version.maven-surefire>3.0.0-M3</version.maven-surefire>
-    <version.com.fasterxml.jackson.core>2.9.9.3</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.core>2.10.0.pr1</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-annotations-javadoc>2.9</version.com.fasterxml.jackson.core-annotations-javadoc>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.9</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.org.junit.jupiter>5.5.0</version.org.junit.jupiter>
