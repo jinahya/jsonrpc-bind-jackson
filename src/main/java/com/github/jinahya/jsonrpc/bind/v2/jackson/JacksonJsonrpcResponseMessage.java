@@ -1,19 +1,39 @@
 package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+/*-
+ * #%L
+ * jsonrpc-bind-jackson
+ * %%
+ * Copyright (C) 2019 - 2020 Jinahya, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessage;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NON_PRIVATE)
 public class JacksonJsonrpcResponseMessage
         extends AbstractJsonrpcResponseMessage
-        implements IJacksonJsonrpcResponseMessage {
+        implements IJsonrpcResponseMessage {
 
     @Override
     public String toString() {
@@ -21,7 +41,7 @@ public class JacksonJsonrpcResponseMessage
                + "id=" + id
                + ",result=" + result
                + ",error=" + error
-               + ",unrecognizedFields=" + unrecognizedFields
+               + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
                + "}";
     }
 
@@ -55,17 +75,5 @@ public class JacksonJsonrpcResponseMessage
 
     private ObjectNode error;
 
-    @JsonAnySetter
-    protected Object putUnrecognizedField(final String name, final Object value) {
-        return geUnrecognizedFields().put(name, value);
-    }
-
-    public Map<String, Object> geUnrecognizedFields() {
-        if (unrecognizedFields == null) {
-            unrecognizedFields = new HashMap<>();
-        }
-        return unrecognizedFields;
-    }
-
-    private Map<String, Object> unrecognizedFields;
+    private Map<String, Object> unrecognizedProperties;
 }

@@ -9,7 +9,7 @@ import java.io.UncheckedIOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.BeanValidations.requireValid;
+import static com.github.jinahya.jsonrpc.BeanValidationTests.requireValid;
 import static com.github.jinahya.jsonrpc.JacksonTests.acceptObjectMapper;
 import static com.github.jinahya.jsonrpc.JsonrpcTests.acceptResourceStream;
 import static java.util.Arrays.asList;

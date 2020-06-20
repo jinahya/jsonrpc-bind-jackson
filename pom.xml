@@ -46,12 +46,13 @@
     <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
-    <version.maven-surefire>3.0.0-M3</version.maven-surefire>
+    <version.maven-javadoc-plugin>3.2.0</version.maven-javadoc-plugin>
+    <version.maven-surefire>3.0.0-M4</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
 <!--    <version.com.fasterxml.jackson.core-annotations-javadoc>${version.com.fasterxml.jackson.core-databind-javadoc}</version.com.fasterxml.jackson.core-annotations-javadoc>-->
     <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
-    <version.jsonrpc-bind>0.5.5</version.jsonrpc-bind>
+    <version.jsonrpc-bind>0.6.3-SNAPSHOT</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>
@@ -74,7 +75,7 @@
     <dependency>
       <groupId>com.github.jinahya</groupId>
       <artifactId>jsonrpc-bind</artifactId>
-      <version>0.6.3-SNAPSHOT</version>
+      <version>${version.jsonrpc-bind}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -116,7 +117,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.8</version>
+      <version>1.18.12</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -134,7 +135,6 @@
             </additionalJOptions>
             <links>
               <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>
-              <!--              <link>https://javaee.github.io/javaee-spec/javadocs/</link>-->
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
             <offlineLinks>
@@ -148,7 +148,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -186,7 +186,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
         <executions>
           <execution>
             <id>unpack-jsonrpc-bind-javadoc</id>
@@ -213,7 +213,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M2</version>
+        <version>3.0.0-M3</version>
         <executions>
           <execution>
             <id>enforce-dependency-convergence</id>
@@ -336,7 +336,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -357,7 +357,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.12.0</version>
+        <version>3.13.0</version>
         <configuration>
           <skipEmptyReport>false</skipEmptyReport> <!-- https://issues.apache.org/jira/browse/MPMD-225 -->
         </configuration>
