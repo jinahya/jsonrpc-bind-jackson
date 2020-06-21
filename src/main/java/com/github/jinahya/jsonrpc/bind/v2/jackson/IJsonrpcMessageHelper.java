@@ -20,11 +20,14 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +38,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage.PROPERTY
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError.PROPERTY_NAME_DATA;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.get;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.set;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 
 final class IJsonrpcMessageHelper {
 
@@ -102,6 +106,61 @@ final class IJsonrpcMessageHelper {
             return unrecognizedProperties(clazz, object);
         }
         return unrecognizedProperties;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @SuppressWarnings({"unchecked"})
+    static <T extends IJsonrpcMessage> T readValue(final Object source, final Object type) {
+        assert source != null;
+        assert type != null;
+        for (final Method method : ObjectMapper.class.getMethods()) {
+            if (!"readValue".equals(method.getName())) {
+                continue;
+            }
+            if (method.getParameterCount() != 2) {
+                continue;
+            }
+            final Class<?>[] parameterTypes = method.getParameterTypes();
+            if (!parameterTypes[0].isAssignableFrom(source.getClass())) {
+                continue;
+            }
+            if (!parameterTypes[1].isAssignableFrom(type.getClass())) {
+                continue;
+            }
+            try {
+                return (T) method.invoke(getObjectMapper(), source, type);
+            } catch (final ReflectiveOperationException roe) {
+                throw new JsonrpcBindException(roe);
+            }
+        }
+        throw new JsonrpcBindException("unable to read a value from " + source + " as " + type);
+    }
+
+    static <T extends IJsonrpcMessage> void writeValue(final Object target, final T value) {
+        assert target != null;
+        assert value != null;
+        for (final Method method : ObjectMapper.class.getMethods()) {
+            if (!"writeValue".equals(method.getName())) {
+                continue;
+            }
+            if (method.getParameterCount() != 2) {
+                continue;
+            }
+            final Class<?>[] parameterTypes = method.getParameterTypes();
+            if (!parameterTypes[0].isAssignableFrom(target.getClass())) {
+                continue;
+            }
+            assert parameterTypes[1] == Object.class;
+            if (false && parameterTypes[1].isAssignableFrom(value.getClass())) {
+                continue;
+            }
+            try {
+                method.invoke(getObjectMapper(), target, value);
+            } catch (final ReflectiveOperationException roe) {
+                throw new JsonrpcBindException(roe);
+            }
+        }
+        throw new JsonrpcBindException("unable to write to " + target + " with " + value);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

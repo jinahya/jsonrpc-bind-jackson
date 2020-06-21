@@ -49,10 +49,9 @@
     <version.maven-javadoc-plugin>3.2.0</version.maven-javadoc-plugin>
     <version.maven-surefire>3.0.0-M4</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
-<!--    <version.com.fasterxml.jackson.core-annotations-javadoc>${version.com.fasterxml.jackson.core-databind-javadoc}</version.com.fasterxml.jackson.core-annotations-javadoc>-->
     <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
-    <version.jsonrpc-bind>0.6.3-SNAPSHOT</version.jsonrpc-bind>
+    <version.jsonrpc-bind>0.7.0</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>
@@ -134,7 +133,7 @@
               <additionalJOption>-Xdoclint:all</additionalJOption>
             </additionalJOptions>
             <links>
-              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>
+<!--              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>-->
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
             <offlineLinks>

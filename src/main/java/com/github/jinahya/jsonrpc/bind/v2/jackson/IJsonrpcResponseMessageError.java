@@ -29,7 +29,6 @@ import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.getResponseErrorData;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setResponseErrorData;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
@@ -42,51 +41,34 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
 
     @Override
     default boolean hasData() {
-        if (true) {
-            hasOneThenEvaluateOrFalse(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseErrorData,
-                    evaluatingTrue());
-        }
-        final BaseJsonNode data = getResponseErrorData(getClass(), this);
-        return data != null && !data.isNull();
+        return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseErrorData,
+                evaluatingTrue()
+        );
     }
 
     @Override
     default <T> List<T> getDataAsArray(final Class<T> elementClass) {
         requireNonNull(elementClass, "elementClass is null");
-        if (true) {
-            hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseErrorData,
-                    data -> {
-                        final ObjectMapper objectMapper = getObjectMapper();
-                        if (data.isArray()) {
-                            return objectMapper.convertValue(
-                                    data,
-                                    objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass)
-                            );
-                        }
-                        final List<T> list = new ArrayList<>(1);
-                        list.add(objectMapper.convertValue(data, elementClass));
-                        return list;
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseErrorData,
+                data -> {
+                    final ObjectMapper objectMapper = getObjectMapper();
+                    if (data.isArray()) {
+                        return objectMapper.convertValue(
+                                data,
+                                objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass)
+                        );
                     }
-            );
-        }
-        if (!hasData()) {
-            return null;
-        }
-        final BaseJsonNode data = IJsonrpcMessageHelper.getResponseErrorData(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        if (data.isArray()) {
-            return mapper.convertValue(
-                    data, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
-        }
-        final List<T> list = new ArrayList<>(1);
-        list.add(mapper.convertValue(data, elementClass));
-        return list;
+                    final List<T> list = new ArrayList<>(1);
+                    list.add(objectMapper.convertValue(data, elementClass));
+                    return list;
+                }
+        );
     }
 
     @Override
@@ -98,27 +80,19 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
     @Override
     default <T> T getDataAsObject(final Class<T> objectClass) {
         requireNonNull(objectClass, "objectClass is null");
-        if (true) {
-            hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseErrorData,
-                    data -> {
-                        final ObjectMapper objectMapper = getObjectMapper();
-                        try {
-                            return objectMapper.convertValue(data, objectClass);
-                        } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
-                        }
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseErrorData,
+                data -> {
+                    final ObjectMapper objectMapper = getObjectMapper();
+                    try {
+                        return objectMapper.convertValue(data, objectClass);
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
                     }
-            );
-        }
-        if (!hasData()) {
-            return null;
-        }
-        final BaseJsonNode data = IJsonrpcMessageHelper.getResponseErrorData(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        return mapper.convertValue(data, objectClass);
+                }
+        );
     }
 
     @Override

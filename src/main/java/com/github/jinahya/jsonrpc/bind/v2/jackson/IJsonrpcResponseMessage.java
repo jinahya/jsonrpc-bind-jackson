@@ -20,6 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
@@ -29,10 +30,10 @@ import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.getResponseError;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setResponseError;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setResponseResult;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
@@ -45,59 +46,57 @@ import static java.util.Optional.ofNullable;
 
 interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessage {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    @JsonIgnore
+    @Override
+    @AssertTrue
+    default boolean isResultAndErrorExclusive() {
+        return JsonrpcResponseMessage.super.isResultAndErrorExclusive();
+    }
+
     // ---------------------------------------------------------------------------------------------------------- result
     @Override
     default boolean hasResult() {
-        if (true) {
-            return hasOneThenEvaluateOrFalse(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseResult,
-                    evaluatingTrue()
-            );
-        }
-        final BaseJsonNode result = IJsonrpcMessageHelper.getResponseResult(getClass(), this);
-        return result != null && !result.isNull();
+        return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseResult,
+                evaluatingTrue()
+        );
     }
 
+    @JsonIgnore
+    @Override
+    default boolean isResultContextuallyValid() {
+        return JsonrpcResponseMessage.super.isResultContextuallyValid();
+    }
+
+    @JsonIgnore
     @Override
     default <T> List<T> getResultAsArray(final Class<T> elementClass) {
         requireNonNull(elementClass, "elementClass is null");
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseResult,
-                    result -> {
-                        final ObjectMapper mapper = getObjectMapper();
-                        final TypeFactory factory = mapper.getTypeFactory();
-                        if (result.isArray()) {
-                            try {
-                                return mapper.convertValue(
-                                        result, factory.constructCollectionType(List.class, elementClass));
-                            } catch (final IllegalArgumentException iae) {
-                                throw new JsonrpcBindException(iae.getCause());
-                            }
-                        }
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseResult,
+                result -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    final TypeFactory factory = mapper.getTypeFactory();
+                    if (result.isArray()) {
                         try {
-                            return new ArrayList<>(singletonList(mapper.convertValue(result, elementClass)));
+                            return mapper.convertValue(
+                                    result, factory.constructCollectionType(List.class, elementClass));
                         } catch (final IllegalArgumentException iae) {
                             throw new JsonrpcBindException(iae.getCause());
                         }
-                    });
-        }
-        if (!hasResult()) {
-            return null;
-        }
-        final BaseJsonNode result = IJsonrpcMessageHelper.getResponseResult(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        if (result.isArray()) {
-            return mapper.convertValue(
-                    result, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
-        }
-        final List<T> list = new ArrayList<>(1);
-        list.add(mapper.convertValue(result, elementClass));
-        return list;
+                    }
+                    try {
+                        return new ArrayList<>(singletonList(mapper.convertValue(result, elementClass)));
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
+                    }
+                }
+        );
     }
 
     @Override
@@ -106,30 +105,23 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
         setResponseResult(getClass(), this, (ArrayNode) ofNullable(result).map(mapper::valueToTree).orElse(null));
     }
 
+    @JsonIgnore
     @Override
     default <T> T getResultAsObject(final Class<T> objectClass) {
         requireNonNull(objectClass, "objectClass is null");
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseResult,
-                    result -> {
-                        final ObjectMapper mapper = getObjectMapper();
-                        try {
-                            return mapper.convertValue(result, objectClass);
-                        } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
-                        }
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseResult,
+                result -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    try {
+                        return mapper.convertValue(result, objectClass);
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
                     }
-            );
-        }
-        if (!hasResult()) {
-            return null;
-        }
-        final BaseJsonNode result = IJsonrpcMessageHelper.getResponseResult(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        return mapper.convertValue(result, objectClass);
+                }
+        );
     }
 
     @Override
@@ -141,18 +133,15 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
     // ----------------------------------------------------------------------------------------------------------- error
     @Override
     default boolean hasError() {
-        if (true) {
-            return hasOneThenEvaluateOrFalse(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseError,
-                    evaluatingTrue()
-            );
-        }
-        final ObjectNode error = getResponseError(getClass(), this);
-        return error != null && !error.isNull();
+        return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseError,
+                evaluatingTrue()
+        );
     }
 
+    @JsonIgnore
     @Override
     default boolean isErrorContextuallyValid() {
         return JsonrpcResponseMessage.super.isErrorContextuallyValid();
@@ -161,27 +150,19 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
     @Override
     default <T extends JsonrpcResponseMessageError> T getErrorAs(final Class<T> clazz) {
         requireNonNull(clazz, "clazz is null");
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getResponseError,
-                    error -> {
-                        final ObjectMapper mapper = getObjectMapper();
-                        try {
-                            return mapper.convertValue(error, clazz);
-                        } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
-                        }
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getResponseError,
+                error -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    try {
+                        return mapper.convertValue(error, clazz);
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
                     }
-            );
-        }
-        if (!hasError()) {
-            return null;
-        }
-        final ObjectNode error = getResponseError(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        return mapper.convertValue(error, clazz);
+                }
+        );
     }
 
     @Override

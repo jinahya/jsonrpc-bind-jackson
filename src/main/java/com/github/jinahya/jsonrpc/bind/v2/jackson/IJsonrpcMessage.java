@@ -20,6 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -31,7 +32,6 @@ import com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage;
 import javax.validation.constraints.AssertTrue;
 import java.math.BigInteger;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.getId;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setId;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
@@ -43,51 +43,40 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
 
     @Override
     default boolean hasId() {
-        if (true) {
-            return hasOneThenEvaluateOrFalse(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    evaluatingTrue()
-            );
-//            return hasIdThenEvaluateElseFalse(getClass(), this, evaluatingTrue());
-        }
-        final ValueNode id = getId(getClass(), this);
-        return id != null && !id.isNull();
+        return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                evaluatingTrue()
+        );
     }
 
+    @JsonIgnore
+    @Override
+    default boolean isNotification() {
+        return JsonrpcMessage.super.isNotification();
+    }
+
+    @JsonIgnore
     @Override
     default @AssertTrue boolean isIdContextuallyValid() {
-        if (true) {
-//            return hasIdThenEvaluateElseTrue(getClass(), this, id -> id.isTextual() || id.isIntegralNumber());
-            return hasOneThenEvaluateOrTrue(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    id -> id.isTextual() || id.isIntegralNumber());
-        }
-        if (!hasId()) {
-            return true;
-        }
-        final ValueNode id = getId(getClass(), this);
-        return id.isTextual() || id.isIntegralNumber();
+        return hasOneThenEvaluateOrTrue(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                id -> id.isTextual() || id.isIntegralNumber()
+        );
     }
 
+    @JsonIgnore
     @Override
     default String getIdAsString() {
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    ValueNode::asText
-            );
-        }
-        if (!hasId()) {
-            return null;
-        }
-        final ValueNode id = getId(getClass(), this);
-        return id.asText(); // empty string <- !isValueNode()
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                ValueNode::asText
+        );
     }
 
     @Override
@@ -95,39 +84,25 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(TextNode::new).orElse(null));
     }
 
+    @JsonIgnore
     @Override
     default BigInteger getIdAsNumber() {
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    id -> {
-                        if (id.isNumber()) {
-                            return id.bigIntegerValue(); // BigInteger.ZERO <- !isNumber()
-                        }
-                        try {
-                            return new BigInteger(id.asText());
-                        } catch (final NumberFormatException nfe) {
-                            // suppressed
-                        }
-                        throw new JsonrpcBindException("unable to bind id as a number");
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                id -> {
+                    if (id.isNumber()) {
+                        return id.bigIntegerValue(); // BigInteger.ZERO <- !isNumber()
                     }
-            );
-        }
-        if (!hasId()) {
-            return null;
-        }
-        final ValueNode id = getId(getClass(), this);
-        if (id.isNumber()) {
-            return id.bigIntegerValue(); // BigInteger.ZERO <- !isNumber()
-        }
-        try {
-            return new BigInteger(id.asText());
-        } catch (final NumberFormatException nfe) {
-            // empty
-        }
-        throw new JsonrpcBindException("unable to bind id as a number");
+                    try {
+                        return new BigInteger(id.asText());
+                    } catch (final NumberFormatException nfe) {
+                        // suppressed
+                    }
+                    throw new JsonrpcBindException("unable to bind id as a number");
+                }
+        );
     }
 
     @Override
@@ -135,29 +110,20 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(BigIntegerNode::valueOf).orElse(null));
     }
 
+    @JsonIgnore
     @Override
     default Long getIdAsLong() {
-        if (true) {
-            return ofNullable(hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    id -> {
-                        if (id.canConvertToLong()) {
-                            return id.longValue();
-                        }
-                        return null;
-                    }))
-                    .orElseGet(JsonrpcMessage.super::getIdAsLong);
-        }
-        if (!hasId()) {
-            return null;
-        }
-        final ValueNode id = getId(getClass(), this);
-        if (id.canConvertToLong()) {
-            return id.longValue();
-        }
-        return JsonrpcMessage.super.getIdAsLong();
+        return ofNullable(hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                id -> {
+                    if (id.canConvertToLong()) {
+                        return id.longValue();
+                    }
+                    return null;
+                }))
+                .orElseGet(JsonrpcMessage.super::getIdAsLong);
     }
 
     @Override
@@ -165,29 +131,20 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(LongNode::new).orElse(null));
     }
 
+    @JsonIgnore
     @Override
     default Integer getIdAsInteger() {
-        if (true) {
-            return ofNullable(hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getId,
-                    id -> {
-                        if (id.canConvertToInt()) {
-                            return id.intValue();
-                        }
-                        return null;
-                    }))
-                    .orElseGet(JsonrpcMessage.super::getIdAsInteger);
-        }
-        if (!hasId()) {
-            return null;
-        }
-        final ValueNode id = getId(getClass(), this);
-        if (id.canConvertToInt()) {
-            return id.intValue();
-        }
-        return JsonrpcMessage.super.getIdAsInteger();
+        return ofNullable(hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getId,
+                id -> {
+                    if (id.canConvertToInt()) {
+                        return id.intValue();
+                    }
+                    return null;
+                }))
+                .orElseGet(JsonrpcMessage.super::getIdAsInteger);
     }
 
     @Override

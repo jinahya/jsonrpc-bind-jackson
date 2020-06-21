@@ -22,11 +22,16 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessageError;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
 
+@Setter(AccessLevel.PROTECTED)
+@Getter(AccessLevel.PROTECTED)
 public class JacksonJsonrpcResponseMessageError
         extends AbstractJsonrpcResponseMessageError
         implements IJsonrpcResponseMessageError {
@@ -34,20 +39,14 @@ public class JacksonJsonrpcResponseMessageError
     @Override
     public String toString() {
         return super.toString() + "{"
-               + "data=" + data
+               + PROPERTY_NAME_DATA + "=" + data
                + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
                + "}";
     }
 
-    protected BaseJsonNode getData() {
-        return data;
-    }
-
-    protected void setData(final BaseJsonNode data) {
-        this.data = data;
-    }
-
     private BaseJsonNode data;
 
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private Map<String, Object> unrecognizedProperties;
 }

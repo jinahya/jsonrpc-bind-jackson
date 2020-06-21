@@ -31,7 +31,6 @@ import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.getRequestParams;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setRequestParams;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
@@ -45,59 +44,40 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
 
     @Override
     default boolean hasParams() {
-        if (true) {
-            return hasOneThenEvaluateOrFalse(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getRequestParams,
-                    evaluatingTrue()
-            );
-        }
-        final ContainerNode<?> params = getRequestParams(getClass(), this);
-        return params != null && !params.isNull();
+        return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getRequestParams,
+                evaluatingTrue()
+        );
     }
 
     @Override
     default <T> List<T> getParamsAsArray(final Class<T> elementClass) {
         requireNonNull(elementClass, "elementClass is null");
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getRequestParams,
-                    params -> {
-                        final ObjectMapper mapper = getObjectMapper();
-                        final TypeFactory factory = mapper.getTypeFactory();
-                        if (params.isArray()) {
-                            try {
-                                return mapper.convertValue(
-                                        params, factory.constructCollectionType(List.class, elementClass));
-                            } catch (final IllegalArgumentException iae) {
-                                throw new JsonrpcBindException(iae.getCause());
-                            }
-                        }
-                        assert params.isObject();
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getRequestParams,
+                params -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    final TypeFactory factory = mapper.getTypeFactory();
+                    if (params.isArray()) {
                         try {
-                            return new ArrayList<>(singletonList(mapper.convertValue(params, elementClass)));
+                            return mapper.convertValue(
+                                    params, factory.constructCollectionType(List.class, elementClass));
                         } catch (final IllegalArgumentException iae) {
                             throw new JsonrpcBindException(iae.getCause());
                         }
                     }
-            );
-        }
-        if (!hasParams()) {
-            return null;
-        }
-        final ContainerNode<?> params = getRequestParams(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        if (params.isArray()) {
-            return mapper.convertValue(
-                    params, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));
-        }
-        assert params.isObject();
-        final List<T> list = new ArrayList<>(1);
-        list.add(mapper.convertValue(params, elementClass));
-        return list;
+                    assert params.isObject();
+                    try {
+                        return new ArrayList<>(singletonList(mapper.convertValue(params, elementClass)));
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
+                    }
+                }
+        );
     }
 
     @Override
@@ -109,34 +89,19 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
     @Override
     default <T> T getParamsAsObject(final Class<T> objectClass) {
         requireNonNull(objectClass, "objectClass is null");
-        if (true) {
-            return hasOneThenMapOrNull(
-                    getClass(),
-                    this,
-                    IJsonrpcMessageHelper::getRequestParams,
-                    params -> {
-                        final ObjectMapper mapper = getObjectMapper();
-                        try {
-                            return mapper.convertValue(params, objectClass);
-                        } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
-                        }
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getRequestParams,
+                params -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    try {
+                        return mapper.convertValue(params, objectClass);
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
                     }
-            );
-        }
-        if (!hasParams()) {
-            return null;
-        }
-        final ContainerNode<?> params = getRequestParams(getClass(), this);
-        final ObjectMapper mapper = getObjectMapper();
-        if (params.isObject()) {
-            return mapper.convertValue(params, objectClass);
-        }
-        assert params.isArray();
-        if (objectClass.isArray()) {
-            return mapper.convertValue(params, objectClass);
-        }
-        throw new JsonrpcBindException("unable to bind params as an object");
+                }
+        );
     }
 
     @Override

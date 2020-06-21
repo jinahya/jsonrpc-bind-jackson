@@ -29,10 +29,13 @@ import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 public class JsonrpcTests {
+
+    public static final ThreadLocal<Class<?>> THREAD_LOCAL_CALLER = new ThreadLocal<>();
 
     /**
      * Applies a stream of specified resource to specified function and returns the result.
@@ -48,9 +51,15 @@ public class JsonrpcTests {
             throws IOException {
         requireNonNull(name, "name is null");
         requireNonNull(function, "function is null");
-        try (InputStream resource = currentThread().getContextClassLoader().getResourceAsStream(name)) {
-            assertNotNull(resource, "null resource stream loaded from '" + name + "'");
-            return function.apply(resource);
+        try {
+            try (InputStream resource = ofNullable(THREAD_LOCAL_CALLER.get())
+                    .map(c -> c.getResourceAsStream(name))
+                    .orElseGet(() -> currentThread().getContextClassLoader().getResourceAsStream(name))) {
+                assertNotNull(resource, "null resource stream loaded from '" + name + "'");
+                return function.apply(resource);
+            }
+        } finally {
+            THREAD_LOCAL_CALLER.remove();
         }
     }
 

@@ -39,14 +39,9 @@ interface IJsonrpcObject extends JsonrpcObject {
      * @return previous value mapped to the {@code key}.
      */
     @JsonAnySetter
-    default Object setUnrecognizedProperty(final String key, final Object value) {
+    default Object putUnrecognizedProperty(final String key, final Object value) {
         requireNonNull(key, "key is null");
-        final Map<String, Object> unrecognizedProperties = unrecognizedProperties(getClass(), this);
-        if (value == null) {
-            return unrecognizedProperties.remove(key);
-        } else {
-            return unrecognizedProperties.put(key, value);
-        }
+        return unrecognizedProperties(getClass(), this).put(key, value);
     }
 
     /**

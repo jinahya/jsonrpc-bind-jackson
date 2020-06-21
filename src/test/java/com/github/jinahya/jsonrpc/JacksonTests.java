@@ -33,8 +33,10 @@ import java.util.function.Function;
 
 import static com.github.jinahya.jsonrpc.BeanValidationTests.requireValid;
 import static com.github.jinahya.jsonrpc.JsonrpcTests.applyResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 
+@Deprecated // forRemoval = true
 @Slf4j
 public final class JacksonTests {
 
@@ -48,7 +50,7 @@ public final class JacksonTests {
     }
 
     public static <R> R applyObjectMapper(final Function<? super ObjectMapper, ? extends R> function) {
-        return requireNonNull(function, "function is null").apply(OBJECT_MAPPER);
+        return requireNonNull(function, "function is null").apply(getObjectMapper());
     }
 
     public static void acceptObjectMapper(final Consumer<? super ObjectMapper> consumer) {
