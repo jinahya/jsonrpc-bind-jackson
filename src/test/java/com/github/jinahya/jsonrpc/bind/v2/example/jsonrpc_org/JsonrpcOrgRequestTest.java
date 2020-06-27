@@ -21,8 +21,8 @@ package com.github.jinahya.jsonrpc.bind.v2.example.jsonrpc_org;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jinahya.jsonrpc.JsonrpcTests;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcRequestMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +33,9 @@ import java.io.UncheckedIOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.BeanValidationTests.requireValid;
-import static com.github.jinahya.jsonrpc.JsonrpcTests.acceptResourceStream;
-import static com.github.jinahya.jsonrpc.JsonrpcTests.applyResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.BeanValidationTests.requireValid;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests.acceptResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests.applyResourceStream;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcRequestMessage.readValue;
 import static java.util.Arrays.asList;
@@ -49,16 +49,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class JsonrpcOrgRequestTest {
 
-    static class NamedParams {
-
-        public int subtrahend;
-
-        public int minuend;
-    }
-
     @BeforeEach
     void setThreadLocalCaller() {
-        JsonrpcTests.THREAD_LOCAL_CALLER.set(getClass());
+        JsonrpcBindTests.THREAD_LOCAL_CALLER.set(getClass());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -319,6 +312,8 @@ class JsonrpcOrgRequestTest {
                     {
                         assertFalse(message.hasParams());
                     }
+                    assertFalse(message.hasId());
+                    assertTrue(message.isNotification());
                 }
         );
     }

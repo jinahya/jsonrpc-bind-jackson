@@ -20,7 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.example.random_org.v2.basic;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.JsonrpcTests;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcRequestMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static com.github.jinahya.jsonrpc.BeanValidationTests.requireValid;
-import static com.github.jinahya.jsonrpc.JsonrpcTests.acceptResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.BeanValidationTests.requireValid;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests.acceptResourceStream;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +40,7 @@ class RandomOrgBasicRequestTest {
 
     @BeforeEach
     void setThreadLocalCaller() {
-        JsonrpcTests.THREAD_LOCAL_CALLER.set(getClass());
+        JsonrpcBindTests.THREAD_LOCAL_CALLER.set(getClass());
     }
 
     @Test

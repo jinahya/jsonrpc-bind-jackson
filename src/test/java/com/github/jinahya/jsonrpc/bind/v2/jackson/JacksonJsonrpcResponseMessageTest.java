@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessageTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-class JacksonJsonrpcResponseMessageTest {
+class JacksonJsonrpcResponseMessageTest
+        extends AbstractJsonrpcResponseMessageTest<JacksonJsonrpcResponseMessage> {
+
+    JacksonJsonrpcResponseMessageTest() {
+        super(JacksonJsonrpcResponseMessage.class);
+    }
 
     @Test
     void testUnrecognizedProperties() throws JsonProcessingException {

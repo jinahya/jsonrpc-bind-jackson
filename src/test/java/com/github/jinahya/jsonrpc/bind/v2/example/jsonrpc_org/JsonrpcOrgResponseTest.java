@@ -21,7 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.example.jsonrpc_org;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jinahya.jsonrpc.JsonrpcTests;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcResponseMessage;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcResponseMessageError;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +33,9 @@ import java.io.UncheckedIOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.github.jinahya.jsonrpc.BeanValidationTests.requireValid;
-import static com.github.jinahya.jsonrpc.JsonrpcTests.acceptResourceStream;
-import static com.github.jinahya.jsonrpc.JsonrpcTests.applyResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.BeanValidationTests.requireValid;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests.acceptResourceStream;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests.applyResourceStream;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcResponseMessage.readValue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +55,7 @@ class JsonrpcOrgResponseTest {
 
     @BeforeEach
     void setThreadLocalCaller() {
-        JsonrpcTests.THREAD_LOCAL_CALLER.set(getClass());
+        JsonrpcBindTests.THREAD_LOCAL_CALLER.set(getClass());
     }
 
     // -----------------------------------------------------------------------------------------------------------------

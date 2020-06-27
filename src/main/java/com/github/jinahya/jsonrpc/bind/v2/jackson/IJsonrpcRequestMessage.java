@@ -23,7 +23,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
@@ -56,8 +55,7 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
     }
 
     @Override
-    @AssertTrue
-    default boolean isParamsContextuallyValid() {
+    default @AssertTrue boolean isParamsContextuallyValid() {
         return hasOneThenEvaluateOrTrue(
                 getClass(),
                 this,

@@ -1,9 +1,0 @@
-{
-  "jsonrpc": "2.0",
-  "method": "subtract",
-  "params": {
-    "subtrahend": 23,
-    "minuend": 42
-  },
-  "id": 3
-}
