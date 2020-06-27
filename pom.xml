@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -49,8 +50,8 @@
     <version.maven-surefire>3.0.0-M4</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
+    <version.jsonrpc-bind>0.7.1-SNAPSHOT</version.jsonrpc-bind>
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
-    <version.jsonrpc-bind>0.7.0</version.jsonrpc-bind>
   </properties>
 
   <dependencyManagement>
@@ -75,6 +76,14 @@
       <artifactId>jsonrpc-bind</artifactId>
       <version>${version.jsonrpc-bind}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jinahya</groupId>
+      <artifactId>jsonrpc-bind</artifactId>
+      <version>${version.jsonrpc-bind}</version>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+      <type>test-jar</type>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
@@ -132,7 +141,7 @@
               <additionalJOption>-Xdoclint:all</additionalJOption>
             </additionalJOptions>
             <links>
-<!--              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>-->
+              <!--              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>-->
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
             <offlineLinks>
@@ -191,7 +200,7 @@
             <!--            <phase>package</phase>-->
             <phase>generate-sources</phase>
             <goals>
-              <goal>unpack</goal>
+<!--              <goal>unpack</goal>-->
             </goals>
             <configuration>
               <artifactItems>
@@ -221,7 +230,7 @@
             <configuration>
               <skip>true</skip>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>

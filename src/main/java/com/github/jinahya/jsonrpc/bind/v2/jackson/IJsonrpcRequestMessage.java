@@ -23,17 +23,20 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setRequestParams;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrTrue;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenMapOrNull;
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
@@ -45,6 +48,17 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
     @Override
     default boolean hasParams() {
         return hasOneThenEvaluateOrFalse(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getRequestParams,
+                evaluatingTrue()
+        );
+    }
+
+    @Override
+    @AssertTrue
+    default boolean isParamsContextuallyValid() {
+        return hasOneThenEvaluateOrTrue(
                 getClass(),
                 this,
                 IJsonrpcMessageHelper::getRequestParams,
