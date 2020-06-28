@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfigura
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJsonrpcObject {
+interface IJsonrpcResponseMessageError<S extends IJsonrpcResponseMessageError<S>>
+        extends IJsonrpcObject<S>,
+                JsonrpcResponseMessageError {
 
     @Override
     default boolean hasData() {
@@ -50,6 +53,12 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
     }
 
     @Override
+    @AssertTrue
+    default boolean isDataContextuallyValid() {
+        return JsonrpcResponseMessageError.super.isDataContextuallyValid();
+    }
+
+    @Override
     default <T> List<T> getDataAsArray(final Class<T> elementClass) {
         requireNonNull(elementClass, "elementClass is null");
         return hasOneThenMapOrNull(
@@ -59,13 +68,21 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
                 data -> {
                     final ObjectMapper objectMapper = getObjectMapper();
                     if (data.isArray()) {
-                        return objectMapper.convertValue(
-                                data,
-                                objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass)
-                        );
+                        try {
+                            return objectMapper.convertValue(
+                                    data,
+                                    objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass)
+                            );
+                        } catch (final IllegalArgumentException iae) {
+                            throw new JsonrpcBindException(iae);
+                        }
                     }
                     final List<T> list = new ArrayList<>(1);
-                    list.add(objectMapper.convertValue(data, elementClass));
+                    try {
+                        list.add(objectMapper.convertValue(data, elementClass));
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae);
+                    }
                     return list;
                 }
         );
@@ -89,7 +106,7 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
                     try {
                         return objectMapper.convertValue(data, objectClass);
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -97,11 +114,18 @@ interface IJsonrpcResponseMessageError extends JsonrpcResponseMessageError, IJso
 
     @Override
     default void setDataAsObject(final Object data) {
-        final ObjectMapper mapper = getObjectMapper();
         setResponseErrorData(
                 getClass(),
                 this,
-                (BaseJsonNode) ofNullable(data).map(mapper::valueToTree).orElse(null)
+                (BaseJsonNode) ofNullable(data)
+                        .map(v -> {
+                            try {
+                                return getObjectMapper().valueToTree(v);
+                            } catch (final IllegalArgumentException iae) {
+                                throw new JsonrpcBindException(iae);
+                            }
+                        })
+                        .orElse(null)
         );
     }
 }

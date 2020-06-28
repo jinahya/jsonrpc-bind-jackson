@@ -22,8 +22,8 @@ package com.github.jinahya.jsonrpc.bind.v2.example.jsonrpc_org;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcResponseMessageError;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,13 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class JsonrpcOrgResponseTest {
 
-    static class NamedParams {
-
-        public int subtrahend;
-
-        public int minuend;
-    }
-
     @BeforeEach
     void setThreadLocalCaller() {
         JsonrpcBindTests.THREAD_LOCAL_CALLER.set(getClass());
@@ -65,7 +58,6 @@ class JsonrpcOrgResponseTest {
                 "e01_positional_parameters_01_response.json",
                 s -> {
                     final JacksonJsonrpcResponseMessage message = readValue(s);
-                    log.debug("message: {}", message);
                     requireValid(message);
                     {
                         assertTrue(message.hasResult());
@@ -117,7 +109,6 @@ class JsonrpcOrgResponseTest {
                 "e02_named_parameters_01_response.json",
                 s -> {
                     final JacksonJsonrpcResponseMessage message = readValue(s);
-                    log.debug("message: {}", message);
                     requireValid(message);
                     {
                         assertTrue(message.hasResult());
@@ -162,7 +153,6 @@ class JsonrpcOrgResponseTest {
                 "e02_named_parameters_02_response.json",
                 s -> {
                     final JacksonJsonrpcResponseMessage message = readValue(s);
-                    log.debug("message: {}", message);
                     requireValid(message);
                     {
                         assertTrue(message.hasResult());
@@ -211,16 +201,13 @@ class JsonrpcOrgResponseTest {
                 "e04_non_existent_method_response.json",
                 s -> {
                     final JacksonJsonrpcResponseMessage message = readValue(s);
-                    log.debug("message: {}", message);
                     requireValid(message);
                     {
                         assertFalse(message.hasResult());
                     }
                     {
                         assertTrue(message.hasError());
-                        final JacksonJsonrpcResponseMessageError error
-                                = message.getErrorAs(JacksonJsonrpcResponseMessageError.class);
-                        log.debug("error: {}", error);
+                        final JsonrpcResponseMessageError error = message.getErrorAsDefaultType();
                         requireValid(error);
                         assertEquals(-32601, error.getCode());
                         assertEquals("Method not found", error.getMessage());

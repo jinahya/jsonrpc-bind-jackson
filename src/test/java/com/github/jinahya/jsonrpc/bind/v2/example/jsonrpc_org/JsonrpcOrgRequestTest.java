@@ -23,6 +23,7 @@ package com.github.jinahya.jsonrpc.bind.v2.example.jsonrpc_org;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcBindTests;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 import com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcRequestMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,26 +62,31 @@ class JsonrpcOrgRequestTest {
                 "e01_positional_parameters_01_request.json",
                 s -> {
                     final JacksonJsonrpcRequestMessage message = readValue(s);
-                    log.debug("message: {}", message);
                     requireValid(message);
-                    assertEquals("subtract", message.getMethod());
-                    assertTrue(message.hasParams());
-                    final List<Integer> params = message.getParamsAsArray(Integer.class);
-                    assertIterableEquals(asList(42, 23), params);
                     {
-                        final Integer[] array = message.getParamsAsObject(Integer[].class);
-                        assertThat(array).isNotNull().containsSequence(42, 23);
+                        assertEquals("subtract", message.getMethod());
                     }
                     {
-                        final int[] array = message.getParamsAsObject(int[].class);
-                        assertThat(array).isNotNull().containsSequence(42, 23);
+                        assertTrue(message.hasParams());
+                        final List<Integer> params = message.getParamsAsArray(Integer.class);
+                        assertIterableEquals(asList(42, 23), params);
+                        {
+                            final Integer[] array = message.getParamsAsObject(Integer[].class);
+                            assertThat(array).isNotNull().containsSequence(42, 23);
+                        }
+                        {
+                            final int[] array = message.getParamsAsObject(int[].class);
+                            assertThat(array).isNotNull().containsSequence(42, 23);
+                        }
                     }
-                    assertTrue(message.hasId());
-                    assertEquals("1", message.getIdAsString());
-                    assertThat(message.getIdAsNumber()).isNotNull()
-                            .isEqualByComparingTo(BigInteger.valueOf(1L));
-                    assertThat(message.getIdAsLong()).isNotNull().isEqualTo(1L);
-                    assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);
+                    {
+                        assertTrue(message.hasId());
+                        assertEquals("1", message.getIdAsString());
+                        assertThat(message.getIdAsNumber()).isNotNull()
+                                .isEqualByComparingTo(BigInteger.valueOf(1L));
+                        assertThat(message.getIdAsLong()).isNotNull().isEqualTo(1L);
+                        assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(1);
+                    }
                 }
         );
     }
@@ -94,12 +100,14 @@ class JsonrpcOrgRequestTest {
                 throw new UncheckedIOException(ioe);
             }
         });
-        final JacksonJsonrpcRequestMessage message = new JacksonJsonrpcRequestMessage();
+        final JsonrpcRequestMessage message = new JacksonJsonrpcRequestMessage();
         message.setMethod("subtract");
         message.setParamsAsArray(asList(42, 23));
         message.setIdAsInteger(1);
+        requireValid(message);
         final JsonNode actual = getObjectMapper().valueToTree(message);
         assertEquals(expected, actual);
+        log.debug("json: {}", message.toJson());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -108,13 +116,7 @@ class JsonrpcOrgRequestTest {
         acceptResourceStream(
                 "e01_positional_parameters_02_request.json",
                 s -> {
-                    final JacksonJsonrpcRequestMessage message;
-                    try {
-                        message = getObjectMapper().readValue(s, JacksonJsonrpcRequestMessage.class);
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
-                    log.debug("message: {}", message);
+                    final JacksonJsonrpcRequestMessage message = readValue(s);
                     requireValid(message);
                     {
                         assertEquals("subtract", message.getMethod());
@@ -139,6 +141,7 @@ class JsonrpcOrgRequestTest {
                                 .isEqualByComparingTo(BigInteger.valueOf(2L));
                         assertThat(message.getIdAsLong()).isNotNull().isEqualTo(2L);
                         assertThat(message.getIdAsInteger()).isNotNull().isEqualTo(2);
+                        assertFalse(message.isNotification());
                     }
                 }
         );
@@ -163,16 +166,11 @@ class JsonrpcOrgRequestTest {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Test
-    void e02_named_parameters_01_request() throws IOException {
+    void r_e02_named_parameters_01_request() throws IOException {
         acceptResourceStream(
                 "e02_named_parameters_01_request.json",
                 s -> {
-                    final JacksonJsonrpcRequestMessage message;
-                    try {
-                        message = getObjectMapper().readValue(s, JacksonJsonrpcRequestMessage.class);
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
+                    final JacksonJsonrpcRequestMessage message = readValue(s);
                     log.debug("message: {}", message);
                     requireValid(message);
                     {
@@ -207,16 +205,11 @@ class JsonrpcOrgRequestTest {
     }
 
     @Test
-    void e02_named_parameters_02_request() throws IOException {
+    void r_e02_named_parameters_02_request() throws IOException {
         acceptResourceStream(
                 "e02_named_parameters_02_request.json",
                 s -> {
-                    final JacksonJsonrpcRequestMessage message;
-                    try {
-                        message = getObjectMapper().readValue(s, JacksonJsonrpcRequestMessage.class);
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
+                    final JacksonJsonrpcRequestMessage message = readValue(s);
                     log.debug("message: {}", message);
                     requireValid(message);
                     {
@@ -251,17 +244,11 @@ class JsonrpcOrgRequestTest {
     }
 
     @Test
-    void e03_notification_01_request() throws IOException {
+    void r_e03_notification_01_request() throws IOException {
         acceptResourceStream(
                 "e03_notification_01_request.json",
                 s -> {
-                    final JacksonJsonrpcRequestMessage message;
-                    try {
-                        message = getObjectMapper().readValue(s, JacksonJsonrpcRequestMessage.class);
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
-                    log.debug("message: {}", message);
+                    final JsonrpcRequestMessage message = readValue(s);
                     requireValid(message);
                     {
                         assertEquals("update", message.getMethod());
@@ -288,6 +275,7 @@ class JsonrpcOrgRequestTest {
                     }
                     {
                         assertFalse(message.hasId());
+                        assertTrue(message.isNotification());
                     }
                 }
         );
@@ -298,13 +286,7 @@ class JsonrpcOrgRequestTest {
         acceptResourceStream(
                 "e03_notification_02_request.json",
                 s -> {
-                    final JacksonJsonrpcRequestMessage message;
-                    try {
-                        message = getObjectMapper().readValue(s, JacksonJsonrpcRequestMessage.class);
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
-                    log.debug("message: {}", message);
+                    final JacksonJsonrpcRequestMessage message = readValue(s);
                     requireValid(message);
                     {
                         assertEquals("foobar", message.getMethod());
@@ -312,8 +294,10 @@ class JsonrpcOrgRequestTest {
                     {
                         assertFalse(message.hasParams());
                     }
-                    assertFalse(message.hasId());
-                    assertTrue(message.isNotification());
+                    {
+                        assertFalse(message.hasId());
+                        assertTrue(message.isNotification());
+                    }
                 }
         );
     }

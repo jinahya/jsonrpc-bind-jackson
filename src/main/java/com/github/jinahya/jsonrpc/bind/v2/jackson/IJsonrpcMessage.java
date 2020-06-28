@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -39,7 +38,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.ha
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenMapOrNull;
 import static java.util.Optional.ofNullable;
 
-interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
+interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
+        extends IJsonrpcObject<S>,
+                JsonrpcMessage {
 
     @Override
     default boolean hasId() {
@@ -51,13 +52,7 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         );
     }
 
-    @JsonIgnore
-    @Override
-    default boolean isNotification() {
-        return JsonrpcMessage.super.isNotification();
-    }
-
-    @JsonIgnore
+    //    @JsonIgnore
     @Override
     default @AssertTrue boolean isIdContextuallyValid() {
         return hasOneThenEvaluateOrTrue(
@@ -68,7 +63,13 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         );
     }
 
-    @JsonIgnore
+    //    @JsonIgnore
+    @Override
+    default boolean isNotification() {
+        return JsonrpcMessage.super.isNotification();
+    }
+
+    //    @JsonIgnore
     @Override
     default String getIdAsString() {
         return hasOneThenMapOrNull(
@@ -84,7 +85,7 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(TextNode::new).orElse(null));
     }
 
-    @JsonIgnore
+    //    @JsonIgnore
     @Override
     default BigInteger getIdAsNumber() {
         return hasOneThenMapOrNull(
@@ -110,7 +111,7 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(BigIntegerNode::valueOf).orElse(null));
     }
 
-    @JsonIgnore
+    //    @JsonIgnore
     @Override
     default Long getIdAsLong() {
         return ofNullable(hasOneThenMapOrNull(
@@ -131,7 +132,7 @@ interface IJsonrpcMessage extends JsonrpcMessage, IJsonrpcObject {
         setId(getClass(), this, ofNullable(id).map(LongNode::new).orElse(null));
     }
 
-    @JsonIgnore
+    //    @JsonIgnore
     @Override
     default Integer getIdAsInteger() {
         return ofNullable(hasOneThenMapOrNull(

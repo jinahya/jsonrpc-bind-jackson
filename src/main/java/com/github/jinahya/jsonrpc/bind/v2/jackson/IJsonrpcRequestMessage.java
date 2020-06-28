@@ -42,7 +42,9 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage {
+interface IJsonrpcRequestMessage<S extends IJsonrpcRequestMessage<S>>
+        extends IJsonrpcMessage<S>,
+                JsonrpcRequestMessage {
 
     @Override
     default boolean hasParams() {
@@ -79,14 +81,14 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
                             return mapper.convertValue(
                                     params, factory.constructCollectionType(List.class, elementClass));
                         } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
+                            throw new JsonrpcBindException(iae);
                         }
                     }
                     assert params.isObject();
                     try {
                         return new ArrayList<>(singletonList(mapper.convertValue(params, elementClass)));
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -110,7 +112,7 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
                     try {
                         return mapper.convertValue(params, objectClass);
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -124,7 +126,7 @@ interface IJsonrpcRequestMessage extends JsonrpcRequestMessage, IJsonrpcMessage 
                     try {
                         return objectMapper.valueToTree(v);
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 })
                 .orElse(null);

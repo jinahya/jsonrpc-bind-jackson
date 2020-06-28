@@ -26,51 +26,48 @@ import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessage;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A class implements {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage} interface.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Setter(AccessLevel.PROTECTED)
-@Getter(AccessLevel.PROTECTED)
 public class JacksonJsonrpcResponseMessage
         extends AbstractJsonrpcResponseMessage
-        implements IJsonrpcResponseMessage {
+        implements IJsonrpcResponseMessage<JacksonJsonrpcResponseMessage> {
 
     public static <T extends JacksonJsonrpcResponseMessage> T readValue(final Object source, final Object type) {
         requireNonNull(source, "source is null");
         requireNonNull(type, "type is null");
-        return IJsonrpcMessageHelper.readValue(source, type);
+        return IJsonrpcObjectHelper.readValue(source, type);
     }
 
-    public static <T extends JacksonJsonrpcResponseMessage> T readValue(final Object source) {
+    public static JacksonJsonrpcResponseMessage readValue(final Object source) {
         requireNonNull(source, "source is null");
         return readValue(source, JacksonJsonrpcResponseMessage.class);
     }
 
-    public static <T extends JacksonJsonrpcResponseMessage> void writeValue(final Object target, final T value) {
+    public static void writeValue(final Object target, final JacksonJsonrpcResponseMessage value) {
         requireNonNull(target, "target is null");
         requireNonNull(value, "value is null");
-        IJsonrpcMessageHelper.writeValue(target, value);
+        IJsonrpcObjectHelper.writeValue(target, value);
     }
 
     @Override
     public String toString() {
         return super.toString() + "{"
-               + PROPERTY_NAME_ID + "=" + id
-               + "," + PROPERTY_NAME_RESULT + "=" + result
+               + PROPERTY_NAME_RESULT + "=" + result
                + "," + PROPERTY_NAME_ERROR + "=" + error
+               + "," + PROPERTY_NAME_ID + "=" + id
                + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
                + "}";
     }
-
-    @JsonProperty
-    private ValueNode id;
 
     @JsonProperty
     private BaseJsonNode result;
@@ -78,7 +75,10 @@ public class JacksonJsonrpcResponseMessage
     @JsonProperty
     private ObjectNode error;
 
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
+    @JsonProperty
+    private ValueNode id;
+
+    //    @Setter(AccessLevel.NONE)
+//    @Getter(AccessLevel.NONE)
     private Map<String, Object> unrecognizedProperties;
 }

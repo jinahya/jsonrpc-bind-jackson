@@ -44,7 +44,9 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessage {
+interface IJsonrpcResponseMessage<S extends IJsonrpcResponseMessage<S>>
+        extends IJsonrpcMessage<S>,
+                JsonrpcResponseMessage {
 
     // -----------------------------------------------------------------------------------------------------------------
     @JsonIgnore
@@ -87,13 +89,13 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
                             return mapper.convertValue(
                                     result, factory.constructCollectionType(List.class, elementClass));
                         } catch (final IllegalArgumentException iae) {
-                            throw new JsonrpcBindException(iae.getCause());
+                            throw new JsonrpcBindException(iae);
                         }
                     }
                     try {
                         return new ArrayList<>(singletonList(mapper.convertValue(result, elementClass)));
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -118,7 +120,7 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
                     try {
                         return mapper.convertValue(result, objectClass);
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -159,7 +161,7 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
                     try {
                         return mapper.convertValue(error, clazz);
                     } catch (final IllegalArgumentException iae) {
-                        throw new JsonrpcBindException(iae.getCause());
+                        throw new JsonrpcBindException(iae);
                     }
                 }
         );
@@ -169,5 +171,10 @@ interface IJsonrpcResponseMessage extends JsonrpcResponseMessage, IJsonrpcMessag
     default void setErrorAs(final JsonrpcResponseMessageError error) {
         final ObjectMapper objectMapper = getObjectMapper();
         setResponseError(getClass(), this, (ObjectNode) ofNullable(error).map(objectMapper::valueToTree).orElse(null));
+    }
+
+    @Override
+    default JsonrpcResponseMessageError getErrorAsDefaultType() {
+        return getErrorAs(JacksonJsonrpcResponseMessageError.class);
     }
 }
