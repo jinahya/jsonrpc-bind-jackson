@@ -20,6 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessageError;
@@ -33,6 +35,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.PR
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class JacksonJsonrpcResponseMessageError
         extends AbstractJsonrpcResponseMessageError
         implements IJsonrpcResponseMessageError<JacksonJsonrpcResponseMessageError> {

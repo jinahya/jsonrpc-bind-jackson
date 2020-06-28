@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JacksonJsonrpcConfiguration {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper;
 
     /**
      * Returns current object mapper.
@@ -49,6 +49,10 @@ public final class JacksonJsonrpcConfiguration {
      */
     public static synchronized void setObjectMapper(final ObjectMapper objectMapper) {
         JacksonJsonrpcConfiguration.objectMapper = requireNonNull(objectMapper, "objectMapper is null");
+    }
+
+    static {
+        setObjectMapper(new ObjectMapper());
     }
 
     private JacksonJsonrpcConfiguration() {

@@ -20,6 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ContainerNode;
@@ -37,6 +39,8 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE,
+                setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public class JacksonJsonrpcRequestMessage
         extends AbstractJsonrpcRequestMessage
         implements IJsonrpcRequestMessage<JacksonJsonrpcRequestMessage> {
