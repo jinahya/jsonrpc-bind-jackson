@@ -199,6 +199,82 @@ final class IJsonrpcObjectHelper {
         return hasOneThenEvaluateOrGet(clazz, object, getter, predicate, SUPPLYING_FALSE);
     }
 
+    // ------------------------------------------------------------------------------------------ unrecognizedProperties
+    static final String PROPERTY_NAME_UNRECOGNIZED_PROPERTIES = "unrecognizedProperties";
+
+    @SuppressWarnings({"unchecked"})
+    static Map<String, Object> getUnrecognizedProperties(final Class<?> clazz, final Object object) {
+        return (Map<String, Object>) get(clazz, PROPERTY_NAME_UNRECOGNIZED_PROPERTIES, object);
+    }
+
+    static void setUnrecognizedProperties(final Class<?> clazz, final Object object, final Map<String, Object> value) {
+        set(clazz, PROPERTY_NAME_UNRECOGNIZED_PROPERTIES, object, value);
+    }
+
+    static Map<String, Object> unrecognizedProperties(final Class<?> clazz, final Object object) {
+        final Map<String, Object> unrecognizedProperties = getUnrecognizedProperties(clazz, object);
+        if (unrecognizedProperties == null) {
+            setUnrecognizedProperties(clazz, object, new HashMap<>());
+            return unrecognizedProperties(clazz, object);
+        }
+        return unrecognizedProperties;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+//    @SuppressWarnings({"unchecked"})
+//    static <T extends IJsonrpcObject<?>> T readValue(final Object source, final Object type) {
+//        assert source != null;
+//        assert type != null;
+//        for (final Method method : ObjectMapper.class.getMethods()) {
+//            if (!"readValue".equals(method.getName())) {
+//                continue;
+//            }
+//            if (method.getParameterCount() != 2) {
+//                continue;
+//            }
+//            final Class<?>[] parameterTypes = method.getParameterTypes();
+//            if (!parameterTypes[0].isAssignableFrom(source.getClass())) {
+//                continue;
+//            }
+//            if (!parameterTypes[1].isAssignableFrom(type.getClass())) {
+//                continue;
+//            }
+//            try {
+//                return (T) method.invoke(getObjectMapper(), source, type);
+//            } catch (final ReflectiveOperationException roe) {
+//                throw new JsonrpcBindException(roe);
+//            }
+//        }
+//        throw new JsonrpcBindException("unable to read a value from " + source + " as " + type);
+//    }
+//
+//    static <T extends IJsonrpcObject<?>> void writeValue(final Object target, final T value) {
+//        assert target != null;
+//        assert value != null;
+//        for (final Method method : ObjectMapper.class.getMethods()) {
+//            if (!"writeValue".equals(method.getName())) {
+//                continue;
+//            }
+//            if (method.getParameterCount() != 2) {
+//                continue;
+//            }
+//            final Class<?>[] parameterTypes = method.getParameterTypes();
+//            if (!parameterTypes[0].isAssignableFrom(target.getClass())) {
+//                continue;
+//            }
+//            assert parameterTypes[1] == Object.class;
+//            if (false && parameterTypes[1].isAssignableFrom(value.getClass())) {
+//                continue;
+//            }
+//            try {
+//                method.invoke(getObjectMapper(), target, value);
+//            } catch (final ReflectiveOperationException roe) {
+//                throw new JsonrpcBindException(roe);
+//            }
+//        }
+//        throw new JsonrpcBindException("unable to write to " + target + " with " + value);
+//    }
+
     // -----------------------------------------------------------------------------------------------------------------
     private IJsonrpcObjectHelper() {
         throw new AssertionError("instantiation is not allowed");

@@ -20,6 +20,34 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.setObjectMapper;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class JacksonJsonrpcConfigurationTest {
 
+    @DisplayName("getObjectMapper() returns non-null")
+    @Test
+    void assertGetObjectMapperReturnsNonNull() {
+        assertNotNull(getObjectMapper());
+    }
+
+    @DisplayName("setObjectMapper(null) throws NullPointerException")
+    @Test
+    void assertSetObjectMapperThrowsNullPointerExceptionWhenObjectMapperIsNull() {
+        assertThrows(NullPointerException.class, () -> setObjectMapper(null));
+    }
+
+    @Test
+    void testSetObjectMapper() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        setObjectMapper(objectMapper);
+        assertSame(objectMapper, getObjectMapper());
+    }
 }

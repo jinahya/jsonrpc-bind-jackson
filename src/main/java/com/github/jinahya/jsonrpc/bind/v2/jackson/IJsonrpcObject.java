@@ -22,14 +22,34 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.JsonrpcObject;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.unrecognizedProperties;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.unrecognizedProperties;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 
-interface IJsonrpcObject extends JsonrpcObject {
+interface IJsonrpcObject<S extends IJsonrpcObject<S>>
+        extends JsonrpcObject {
+
+    @Override
+    @AssertTrue
+    default boolean isContextuallyValid() {
+        return JsonrpcObject.super.isContextuallyValid();
+    }
+
+    @Override
+    default String toJson() {
+        try {
+            return getObjectMapper().writeValueAsString(this);
+        } catch (final JsonProcessingException jpe) {
+            throw new JsonrpcBindException(jpe);
+        }
+    }
 
     /**
      * Sets an entry of unrecognized property.
@@ -45,9 +65,9 @@ interface IJsonrpcObject extends JsonrpcObject {
     }
 
     /**
-     * Returns unrecognized properties.
+     * Returns unrecognized properties of this object.
      *
-     * @return unrecognized properties.
+     * @return unrecognized properties of this object.
      */
     @JsonAnyGetter
     default Map<String, Object> getUnrecognizedProperties() {
