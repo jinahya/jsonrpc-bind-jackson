@@ -21,16 +21,28 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcRequestMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.AssertTrue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenMapOrNull;
+import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 @Setter(AccessLevel.PROTECTED)
@@ -63,6 +75,92 @@ public class JacksonJsonrpcRequestMessage
                + "," + PROPERTY_NAME_PARAMS + "=" + params
                + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
                + "}";
+    }
+
+    // ---------------------------------------------------------------------------------------------------------- params
+    @Override
+    public boolean hasParams() {
+        return params != null;
+    }
+
+    @Override
+    public @AssertTrue boolean isParamsContextuallyValid() {
+        return !hasParams() || params instanceof ArrayNode || params instanceof ObjectNode;
+    }
+
+    @Override
+    public <T> List<T> getParamsAsArray(final Class<T> elementClass) {
+        requireNonNull(elementClass, "elementClass is null");
+        if (!hasParams()) {
+            return null;
+        }
+        final ObjectMapper mapper = getObjectMapper();
+        final TypeFactory factory = mapper.getTypeFactory();
+        if (params.isArray()) {
+            try {
+                return mapper.convertValue(
+                        params, factory.constructCollectionType(List.class, elementClass));
+            } catch (final IllegalArgumentException iae) {
+                throw new JsonrpcBindException(iae.getCause());
+            }
+        }
+        assert params.isObject();
+        try {
+            return new ArrayList<>(singletonList(getParamsAsObject(elementClass)));
+        } catch (final IllegalArgumentException iae) {
+            throw new JsonrpcBindException(iae.getCause());
+        }
+    }
+
+    @Override
+    public void setParamsAsArray(final List<?> params) {
+        if (params == null) {
+            this.params = null;
+            return;
+        }
+        final ObjectMapper mapper = getObjectMapper();
+        this.params = (ArrayNode) mapper.valueToTree(params);
+    }
+
+    @Override
+    public <T> T getParamsAsObject(final Class<T> objectClass) {
+        if (params == null) {
+            return null;
+        }
+        requireNonNull(objectClass, "objectClass is null");
+        return hasOneThenMapOrNull(
+                getClass(),
+                this,
+                IJsonrpcMessageHelper::getRequestParams,
+                params -> {
+                    final ObjectMapper mapper = getObjectMapper();
+                    try {
+                        return mapper.convertValue(params, objectClass);
+                    } catch (final IllegalArgumentException iae) {
+                        throw new JsonrpcBindException(iae.getCause());
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void setParamsAsObject(final Object params) {
+        if (params == null) {
+            this.params = null;
+            return;
+        }
+        final ObjectMapper objectMapper = getObjectMapper();
+        final JsonNode tree;
+        try {
+            tree = objectMapper.valueToTree(params);
+        } catch (final IllegalArgumentException iae) {
+            throw new JsonrpcBindException(iae.getCause());
+        }
+        assert tree != null;
+        if (!(tree instanceof ContainerNode)) {
+            throw new JsonrpcBindException("illegal value for params: " + params);
+        }
+        this.params = (ContainerNode<?>) tree;
     }
 
     @JsonProperty
