@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -21,35 +21,29 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcRequestMessageTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcRequestMessage.readValue;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage.fromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-class JacksonJsonrpcRequestMessageTest
-        extends AbstractJsonrpcRequestMessageTest<JacksonJsonrpcRequestMessage> {
-
-    JacksonJsonrpcRequestMessageTest() {
-        super(JacksonJsonrpcRequestMessage.class);
-    }
+class JacksonJsonrpcResponseMessageTest {
 
     @Test
     void testUnrecognizedProperties() throws JsonProcessingException {
         final String string1 = "{"
                                + "\"jsonrpc\": 2.0,"
-                               + "\"method\": \"method\","
-                               + "\"params\": [1],"
+                               + "\"result\": 1,"
                                + "\"id\": 1,"
                                + "\"unknown\": true"
                                + "}";
-        final JacksonJsonrpcRequestMessage message = readValue(new StringReader(string1));
+        final JacksonJsonrpcResponseMessage message
+                = (JacksonJsonrpcResponseMessage) fromJson(new StringReader(string1));
         log.debug("unrecognized properties: {}", message.getUnrecognizedProperties());
         assertEquals(1, message.getUnrecognizedProperties().size());
         assertTrue(message.getUnrecognizedProperties().containsKey("unknown"));

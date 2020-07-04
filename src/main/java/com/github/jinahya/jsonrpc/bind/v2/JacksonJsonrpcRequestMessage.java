@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -32,15 +32,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
-import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcRequestMessage;
 
 import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
@@ -56,23 +55,7 @@ public class JacksonJsonrpcRequestMessage
         extends AbstractJsonrpcRequestMessage
         implements IJsonrpcRequestMessage<JacksonJsonrpcRequestMessage> {
 
-    public static <T extends JacksonJsonrpcRequestMessage> T readValue(final Object source, Class<T> clazz) {
-        requireNonNull(source, "source is null");
-        requireNonNull(clazz, "clazz is null");
-        return JacksonJsonrpcMessages.readValue(source, clazz);
-    }
-
-    public static JacksonJsonrpcRequestMessage readValue(final Object source) {
-        requireNonNull(source, "source is null");
-        return readValue(source, JacksonJsonrpcRequestMessage.class);
-    }
-
-    public static void writeValue(final Object target, final JacksonJsonrpcRequestMessage value) {
-        requireNonNull(target, "target is null");
-        requireNonNull(value, "value is null");
-        JacksonJsonrpcMessages.writeValue(target, value);
-    }
-
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return super.toString() + "{"
@@ -82,7 +65,7 @@ public class JacksonJsonrpcRequestMessage
                + "}";
     }
 
-    // ---------------------------------------------------------------------------------------------------------- params
+    // -------------------------------------------------------------------------------------------------------- $.params
     @Override
     public boolean hasParams() {
         return params != null && !params.isNull();
@@ -164,6 +147,7 @@ public class JacksonJsonrpcRequestMessage
         this.params = (ContainerNode<?>) tree;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @JsonProperty
     private ContainerNode<?> params;
 

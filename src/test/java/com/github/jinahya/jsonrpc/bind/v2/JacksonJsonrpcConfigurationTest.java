@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.setObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.setObjectMapper;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;

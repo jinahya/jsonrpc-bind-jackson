@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -26,16 +26,15 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage;
 
 import javax.validation.constraints.AssertTrue;
 import java.math.BigInteger;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcMessageHelper.setId;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.evaluatingTrue;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenEvaluateOrTrue;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.hasOneThenMapOrNull;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcMessageHelper.setId;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenEvaluateOrTrue;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenMapOrNull;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.evaluatingTrue;
 import static java.util.Optional.ofNullable;
 
 interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>

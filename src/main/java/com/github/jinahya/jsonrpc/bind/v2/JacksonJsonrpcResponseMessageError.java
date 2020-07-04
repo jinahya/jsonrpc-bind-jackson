@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
-import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessageError;
 
 import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
@@ -34,8 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 
 /**

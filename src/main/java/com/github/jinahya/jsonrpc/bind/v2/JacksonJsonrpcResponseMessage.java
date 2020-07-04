@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -31,15 +31,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
-import com.github.jinahya.jsonrpc.bind.v2.AbstractJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
@@ -55,23 +53,7 @@ public class JacksonJsonrpcResponseMessage
         extends AbstractJsonrpcResponseMessage
         implements IJsonrpcResponseMessage<JacksonJsonrpcResponseMessage> {
 
-    public static <T extends JacksonJsonrpcResponseMessage> T readValue(final Object source, final Class<T> clazz) {
-        requireNonNull(source, "source is null");
-        requireNonNull(clazz, "clazz is null");
-        return JacksonJsonrpcMessages.readValue(source, clazz);
-    }
-
-    public static JacksonJsonrpcResponseMessage readValue(final Object source) {
-        requireNonNull(source, "source is null");
-        return readValue(source, JacksonJsonrpcResponseMessage.class);
-    }
-
-    public static void writeValue(final Object target, final JacksonJsonrpcResponseMessage value) {
-        requireNonNull(target, "target is null");
-        requireNonNull(value, "value is null");
-        JacksonJsonrpcMessages.writeValue(target, value);
-    }
-
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return super.toString() + "{"
@@ -82,7 +64,7 @@ public class JacksonJsonrpcResponseMessage
                + "}";
     }
 
-    // ---------------------------------------------------------------------------------------------------------- result
+    // -------------------------------------------------------------------------------------------------------- $.result
     @Override
     public boolean hasResult() {
         return result != null && !result.isNull();
@@ -154,7 +136,7 @@ public class JacksonJsonrpcResponseMessage
         }
     }
 
-    // ----------------------------------------------------------------------------------------------------------- error
+    // --------------------------------------------------------------------------------------------------------- $.error
     @Override
     public boolean hasError() {
         return error != null && !error.isNull();
@@ -198,6 +180,7 @@ public class JacksonJsonrpcResponseMessage
         return getErrorAs(JacksonJsonrpcResponseMessageError.class);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @JsonProperty
     private BaseJsonNode result;
 

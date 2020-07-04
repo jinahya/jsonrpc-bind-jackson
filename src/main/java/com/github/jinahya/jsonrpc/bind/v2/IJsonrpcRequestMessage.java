@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -20,19 +20,12 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
-
-import javax.validation.constraints.AssertTrue;
-
-interface IJsonrpcResponseMessage<S extends IJsonrpcResponseMessage<S>>
+interface IJsonrpcRequestMessage<S extends IJsonrpcRequestMessage<S>>
         extends IJsonrpcMessage<S>,
-                JsonrpcResponseMessage {
+                JsonrpcRequestMessage {
 
-    @JsonIgnore
     @Override
-    @AssertTrue
-    default boolean isResultAndErrorExclusive() {
-        return JsonrpcResponseMessage.super.isResultAndErrorExclusive();
+    default boolean isNotification() {
+        return JsonrpcRequestMessage.super.isNotification();
     }
 }

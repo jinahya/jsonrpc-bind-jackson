@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -21,13 +21,12 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import static com.github.jinahya.jsonrpc.bind.v2.jackson.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.lang.invoke.MethodHandles.publicLookup;
 import static java.lang.invoke.MethodType.methodType;
 import static java.util.Collections.synchronizedMap;
@@ -36,7 +35,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A utility class for messages.
  */
-public final class JacksonJsonrpcMessages {
+final class JacksonJsonrpcMessages {
 
     private static final Map<Class<?>, MethodHandle> READ_VALUE_HANDLES = synchronizedMap(new WeakHashMap<>());
 
@@ -59,7 +58,7 @@ public final class JacksonJsonrpcMessages {
         });
     }
 
-    public static <T extends JsonrpcMessage> T readValue(final Object source, final Class<T> clazz) {
+    static <T extends JsonrpcMessage> T readValue(final Object source, final Class<T> clazz) {
         requireNonNull(source, "source is null");
         requireNonNull(clazz, "clazz is null");
         try {
@@ -90,7 +89,7 @@ public final class JacksonJsonrpcMessages {
         });
     }
 
-    public static <T extends JsonrpcMessage> void writeValue(final Object target, final T value) {
+    static <T extends JsonrpcMessage> void writeValue(final Object target, final T value) {
         requireNonNull(target, "target is null");
         requireNonNull(value, "value is null");
         try {

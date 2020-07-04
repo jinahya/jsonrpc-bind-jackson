@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.jackson;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -19,8 +19,6 @@ package com.github.jinahya.jsonrpc.bind.v2.jackson;
  * limitations under the License.
  * #L%
  */
-
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageError;
 
 interface IJsonrpcResponseMessageError<S extends IJsonrpcResponseMessageError<S>>
         extends IJsonrpcObject<S>,
