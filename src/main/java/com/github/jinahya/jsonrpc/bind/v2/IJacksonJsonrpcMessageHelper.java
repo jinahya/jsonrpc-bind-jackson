@@ -26,7 +26,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage.PROPERTY_NAME_ID
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.get;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.set;
 
-final class IJsonrpcMessageHelper {
+final class IJacksonJsonrpcMessageHelper {
 
     // --------------------------------------------------------------------------------------------------------- /*/$.id
     static ValueNode getId(final Class<?> clazz, final Object object) {
@@ -38,7 +38,7 @@ final class IJsonrpcMessageHelper {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private IJsonrpcMessageHelper() {
+    private IJacksonJsonrpcMessageHelper() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -20,16 +20,13 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
-import lombok.extern.slf4j.Slf4j;
+interface IJacksonJsonrpcRequestMessage<S extends IJacksonJsonrpcRequestMessage<S>>
+        extends IJacksonJsonrpcMessage<S>,
+                JsonrpcRequestMessage {
 
-@Slf4j
-class JacksonJsonrpcOrgResponseTest
-        extends JsonrpcOrgResponseTest {
-
+    // TODO: Remove!!!
     @Override
-    protected JsonrpcResponseMessage newInstance() {
-        return new JacksonJsonrpcResponseMessage();
+    default boolean isNotification() {
+        return JsonrpcRequestMessage.super.isNotification();
     }
 }

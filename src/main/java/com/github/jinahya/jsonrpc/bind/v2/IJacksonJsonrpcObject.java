@@ -28,13 +28,14 @@ import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import javax.validation.constraints.AssertTrue;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.unrecognizedProperties;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.unrecognizedProperties;
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 
-interface IJsonrpcObject<S extends IJsonrpcObject<S>>
+interface IJacksonJsonrpcObject<S extends IJacksonJsonrpcObject<S>>
         extends JsonrpcObject {
 
+    // TODO: Remove!!!
     @Override
     @AssertTrue
     default boolean isContextuallyValid() {

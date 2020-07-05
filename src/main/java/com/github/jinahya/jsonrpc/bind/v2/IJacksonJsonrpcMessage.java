@@ -30,15 +30,15 @@ import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import javax.validation.constraints.AssertTrue;
 import java.math.BigInteger;
 
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcMessageHelper.setId;
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenEvaluateOrTrue;
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.hasOneThenMapOrNull;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcMessageHelper.setId;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.hasOneThenEvaluateOrFalse;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.hasOneThenEvaluateOrTrue;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.hasOneThenMapOrNull;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.evaluatingTrue;
 import static java.util.Optional.ofNullable;
 
-interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
-        extends IJsonrpcObject<S>,
+interface IJacksonJsonrpcMessage<S extends IJacksonJsonrpcMessage<S>>
+        extends IJacksonJsonrpcObject<S>,
                 JsonrpcMessage {
 
     @Override
@@ -46,7 +46,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenEvaluateOrFalse(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 evaluatingTrue()
         );
     }
@@ -56,7 +56,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenEvaluateOrTrue(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 id -> id.isTextual() || id.isIntegralNumber()
         );
     }
@@ -66,7 +66,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenMapOrNull(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 ValueNode::asText
         );
     }
@@ -81,7 +81,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenMapOrNull(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 id -> {
                     if (id.isNumber()) {
                         return id.bigIntegerValue(); // BigInteger.ZERO <- !isNumber()
@@ -106,7 +106,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenMapOrNull(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 id -> {
                     if (id.canConvertToLong()) {
                         return id.longValue();
@@ -126,7 +126,7 @@ interface IJsonrpcMessage<S extends IJsonrpcMessage<S>>
         return hasOneThenMapOrNull(
                 getClass(),
                 this,
-                IJsonrpcMessageHelper::getId,
+                IJacksonJsonrpcMessageHelper::getId,
                 id -> {
                     if (id.canConvertToInt()) {
                         return id.intValue();

@@ -20,10 +20,16 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  * #L%
  */
 
+import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcRequestMessage;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class JacksonJsonrpcOrgRequestTest
         extends JsonrpcOrgRequestTest {
 
+    @Override
+    protected JsonrpcRequestMessage newInstance() {
+        return new JacksonJsonrpcRequestMessage();
+    }
 }

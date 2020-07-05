@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
+package com.github.jinahya.jsonrpc.bind.v2.examples.random_org.v2.basic;
 
 /*-
  * #%L
@@ -20,16 +20,14 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
-import lombok.extern.slf4j.Slf4j;
+import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcRequestMessage;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
 
-@Slf4j
-class JacksonJsonrpcOrgResponseTest
-        extends JsonrpcOrgResponseTest {
+class JacksonRandomOrgV2BasicRequestTest
+        extends RandomOrgV2BasicRequestTest {
 
     @Override
-    protected JsonrpcResponseMessage newInstance() {
-        return new JacksonJsonrpcResponseMessage();
+    protected JsonrpcRequestMessage newInstance() {
+        return new JacksonJsonrpcRequestMessage();
     }
 }

@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.spi;
 
 /*-
  * #%L
@@ -20,12 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-interface IJsonrpcRequestMessage<S extends IJsonrpcRequestMessage<S>>
-        extends IJsonrpcMessage<S>,
-                JsonrpcRequestMessage {
+class JacksonJsonrpcRequestMessageServiceTest
+        extends JsonrpcRequestMessageServiceTest {
 
-    @Override
-    default boolean isNotification() {
-        return JsonrpcRequestMessage.super.isNotification();
-    }
 }

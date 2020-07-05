@@ -20,8 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-interface IJsonrpcResponseMessageError<S extends IJsonrpcResponseMessageError<S>>
-        extends IJsonrpcObject<S>,
+interface IJacksonJsonrpcResponseMessageError<S extends IJacksonJsonrpcResponseMessageError<S>>
+        extends IJacksonJsonrpcObject<S>,
                 JsonrpcResponseMessageError {
 
 }

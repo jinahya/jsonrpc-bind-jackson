@@ -21,8 +21,13 @@ package com.github.jinahya.jsonrpc.bind.v2;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -30,6 +35,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_FALSE;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_FALSE_;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_TRUE;
@@ -37,8 +43,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_T
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.get;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.set;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.supplyingNull;
+import static java.util.Objects.requireNonNull;
 
-final class IJsonrpcObjectHelper {
+final class IJacksonJsonrpcObjectHelper {
 
     // -----------------------------------------------------------------------------------------------------------------
     static <N extends JsonNode, R> R hasOneThenMapOrGet(final Class<?> clazz, final Object object,
@@ -83,6 +90,28 @@ final class IJsonrpcObjectHelper {
         return hasOneThenEvaluateOrGet(clazz, object, getter, predicate, SUPPLYING_FALSE);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    static <T> List<T> arrayToList(final ArrayNode node, final Class<T> clazz) {
+        requireNonNull(node, "node is null");
+        requireNonNull(clazz, "clazz is null");
+        final ObjectMapper mapper = getObjectMapper();
+        final CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+        try {
+            return mapper.convertValue(node, type);
+        } catch (final IllegalArgumentException iae) {
+            throw new JsonrpcBindException(iae);
+        }
+    }
+
+    static ArrayNode listToArray(final List<?> list) {
+        requireNonNull(list, "list is null");
+        try {
+            return getObjectMapper().valueToTree(list);
+        } catch (final IllegalArgumentException iae) {
+            throw new JsonrpcBindException(iae);
+        }
+    }
+
     // ------------------------------------------------------------------------------------------ unrecognizedProperties
     static final String PROPERTY_NAME_UNRECOGNIZED_PROPERTIES = "unrecognizedProperties";
 
@@ -105,7 +134,7 @@ final class IJsonrpcObjectHelper {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private IJsonrpcObjectHelper() {
+    private IJacksonJsonrpcObjectHelper() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

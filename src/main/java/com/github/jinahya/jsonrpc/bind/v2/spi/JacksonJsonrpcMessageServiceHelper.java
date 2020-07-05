@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2;
+package com.github.jinahya.jsonrpc.bind.v2.spi;
 
 /*-
  * #%L
@@ -21,6 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
@@ -33,10 +34,13 @@ import static java.util.Collections.synchronizedMap;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A utility class for messages.
+ * A utility class for message service classes.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class JacksonJsonrpcMessages {
+final class JacksonJsonrpcMessageServiceHelper {
 
+    // -----------------------------------------------------------------------------------------------------------------
     private static final Map<Class<?>, MethodHandle> READ_VALUE_HANDLES = synchronizedMap(new WeakHashMap<>());
 
     private static MethodHandle readValueHandle(final Class<?> clazz) {
@@ -68,16 +72,17 @@ final class JacksonJsonrpcMessages {
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     private static final Map<Class<?>, MethodHandle> WRITE_VALUE_HANDLES = synchronizedMap(new WeakHashMap<>());
 
-    private static MethodHandle writeValueHandle(final Class<?> clazz) {
-        assert clazz != null;
-        return WRITE_VALUE_HANDLES.computeIfAbsent(clazz, k -> {
+    private static MethodHandle writeValueHandle(final Class<?> targetClass) {
+        assert targetClass != null;
+        return WRITE_VALUE_HANDLES.computeIfAbsent(targetClass, k -> {
             try {
                 for (Class<?> c = k; c != null; c = c.getSuperclass()) {
                     try {
                         return publicLookup().findVirtual(
-                                ObjectMapper.class, "writeValue", methodType(Void.class, c, Class.class));
+                                ObjectMapper.class, "writeValue", methodType(void.class, c, Object.class));
                     } catch (final NoSuchMethodException nsme) {
                         // suppressed
                     }
@@ -99,7 +104,8 @@ final class JacksonJsonrpcMessages {
         }
     }
 
-    private JacksonJsonrpcMessages() {
+    // -----------------------------------------------------------------------------------------------------------------
+    private JacksonJsonrpcMessageServiceHelper() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

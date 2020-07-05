@@ -24,13 +24,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import javax.validation.constraints.AssertTrue;
@@ -38,7 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.arrayToList;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.listToArray;
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -53,7 +52,7 @@ import static java.util.Objects.requireNonNull;
                 setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public class JacksonJsonrpcRequestMessage
         extends AbstractJsonrpcRequestMessage
-        implements IJsonrpcRequestMessage<JacksonJsonrpcRequestMessage> {
+        implements IJacksonJsonrpcRequestMessage<JacksonJsonrpcRequestMessage> {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override
@@ -65,7 +64,7 @@ public class JacksonJsonrpcRequestMessage
                + "}";
     }
 
-    // -------------------------------------------------------------------------------------------------------- $.params
+    // ---------------------------------------------------------------------------------------------------------- params
     @Override
     public boolean hasParams() {
         return params != null && !params.isNull();
@@ -82,22 +81,10 @@ public class JacksonJsonrpcRequestMessage
         if (!hasParams()) {
             return null;
         }
-        final ObjectMapper mapper = getObjectMapper();
-        final TypeFactory factory = mapper.getTypeFactory();
         if (params.isArray()) {
-            try {
-                return mapper.convertValue(
-                        params, factory.constructCollectionType(List.class, elementClass));
-            } catch (final IllegalArgumentException iae) {
-                throw new JsonrpcBindException(iae.getCause());
-            }
+            return arrayToList((ArrayNode) params, elementClass);
         }
-        assert params.isObject();
-        try {
-            return new ArrayList<>(singletonList(getParamsAsObject(elementClass)));
-        } catch (final IllegalArgumentException iae) {
-            throw new JsonrpcBindException(iae.getCause());
-        }
+        return new ArrayList<>(singletonList(getParamsAsObject(elementClass)));
     }
 
     @Override
@@ -106,22 +93,17 @@ public class JacksonJsonrpcRequestMessage
             this.params = null;
             return;
         }
-        final ObjectMapper mapper = getObjectMapper();
-        this.params = (ArrayNode) mapper.valueToTree(params);
+        this.params = listToArray(params);
     }
 
     @Override
     public <T> T getParamsAsObject(final Class<T> objectClass) {
+        requireNonNull(objectClass, "objectClass is null");
         if (!hasParams()) {
             return null;
         }
-        requireNonNull(objectClass, "objectClass is null");
-        if (params == null) {
-            return null;
-        }
-        final ObjectMapper mapper = getObjectMapper();
         try {
-            return mapper.convertValue(params, objectClass);
+            return getObjectMapper().convertValue(params, objectClass);
         } catch (final IllegalArgumentException iae) {
             throw new JsonrpcBindException(iae.getCause());
         }
@@ -133,26 +115,21 @@ public class JacksonJsonrpcRequestMessage
             this.params = null;
             return;
         }
-        final ObjectMapper objectMapper = getObjectMapper();
-        final JsonNode tree;
         try {
-            tree = objectMapper.valueToTree(params);
+            this.params = getObjectMapper().valueToTree(params);
         } catch (final IllegalArgumentException iae) {
             throw new JsonrpcBindException(iae.getCause());
         }
-        assert tree != null;
-        if (!(tree instanceof ContainerNode)) {
-            throw new JsonrpcBindException("illegal value for params: " + params);
-        }
-        this.params = (ContainerNode<?>) tree;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @JsonProperty
     private ContainerNode<?> params;
 
+    // -----------------------------------------------------------------------------------------------------------------
     @JsonProperty
     private ValueNode id;
 
+    // -----------------------------------------------------------------------------------------------------------------
     private Map<String, Object> unrecognizedProperties;
 }

@@ -23,18 +23,20 @@ package com.github.jinahya.jsonrpc.bind.v2;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jinahya.jsonrpc.bind.v2.IJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.PROPERTY_NAME_UNRECOGNIZED_PROPERTIES;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.arrayToList;
+import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.listToArray;
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -47,7 +49,7 @@ import static java.util.Objects.requireNonNull;
                 setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class JacksonJsonrpcResponseMessageError
         extends AbstractJsonrpcResponseMessageError
-        implements IJsonrpcResponseMessageError<JacksonJsonrpcResponseMessageError> {
+        implements IJacksonJsonrpcResponseMessageError<JacksonJsonrpcResponseMessageError> {
 
     @Override
     public String toString() {
@@ -57,6 +59,7 @@ public class JacksonJsonrpcResponseMessageError
                + "}";
     }
 
+    // ------------------------------------------------------------------------------------------------------------ data
     @Override
     public boolean hasData() {
         return data != null && !data.isNull();
@@ -74,18 +77,10 @@ public class JacksonJsonrpcResponseMessageError
         if (!hasData()) {
             return null;
         }
-        final ObjectMapper objectMapper = getObjectMapper();
         if (data.isArray()) {
-            try {
-                return objectMapper.convertValue(
-                        data,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass)
-                );
-            } catch (final IllegalArgumentException iae) {
-                throw new JsonrpcBindException(iae);
-            }
+            return arrayToList((ArrayNode) data, elementClass);
         }
-        return new ArrayList<>(Collections.singletonList(getDataAsObject(elementClass)));
+        return new ArrayList<>(singletonList(getDataAsObject(elementClass)));
     }
 
     @Override
@@ -94,11 +89,7 @@ public class JacksonJsonrpcResponseMessageError
             this.data = null;
             return;
         }
-        try {
-            this.data = getObjectMapper().valueToTree(data);
-        } catch (final IllegalArgumentException iae) {
-            throw new JsonrpcBindException(iae);
-        }
+        this.data = listToArray(data);
     }
 
     @Override
@@ -127,8 +118,10 @@ public class JacksonJsonrpcResponseMessageError
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @JsonProperty
     private BaseJsonNode data;
 
+    // -----------------------------------------------------------------------------------------------------------------
     private Map<String, Object> unrecognizedProperties;
 }

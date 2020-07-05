@@ -20,15 +20,13 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.validation.constraints.AssertTrue;
 
-interface IJsonrpcResponseMessage<S extends IJsonrpcResponseMessage<S>>
-        extends IJsonrpcMessage<S>,
+interface IJacksonJsonrpcResponseMessage<S extends IJacksonJsonrpcResponseMessage<S>>
+        extends IJacksonJsonrpcMessage<S>,
                 JsonrpcResponseMessage {
 
-    @JsonIgnore
+    // TODO: Remove!!!
     @Override
     @AssertTrue
     default boolean isResultAndErrorExclusive() {

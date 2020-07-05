@@ -1,1 +1,1 @@
-com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcRequestMessageService
+com.github.jinahya.jsonrpc.bind.v2.spi.JacksonJsonrpcRequestMessageService
