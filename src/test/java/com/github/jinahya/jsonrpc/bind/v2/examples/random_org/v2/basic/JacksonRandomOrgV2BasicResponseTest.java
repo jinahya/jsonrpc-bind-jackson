@@ -20,14 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.random_org.v2.basic;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
-
 class JacksonRandomOrgV2BasicResponseTest
         extends RandomOrgV2BasicResponseTest {
 
-    @Override
-    protected JsonrpcResponseMessage newInstance() {
-        return new JacksonJsonrpcResponseMessage();
-    }
 }
