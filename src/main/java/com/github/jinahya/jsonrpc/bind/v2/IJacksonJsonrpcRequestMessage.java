@@ -24,7 +24,6 @@ interface IJacksonJsonrpcRequestMessage<S extends IJacksonJsonrpcRequestMessage<
         extends IJacksonJsonrpcMessage<S>,
                 JsonrpcRequestMessage {
 
-    // TODO: Remove!!!
     @Override
     default boolean isNotification() {
         return JsonrpcRequestMessage.super.isNotification();

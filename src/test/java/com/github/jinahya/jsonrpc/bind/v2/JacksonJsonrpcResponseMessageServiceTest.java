@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.spi;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -20,7 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2.spi;
  * #L%
  */
 
-class JacksonJsonrpcRequestMessageServiceTest
-        extends JsonrpcRequestMessageServiceTest {
+class JacksonJsonrpcResponseMessageServiceTest
+        extends JsonrpcResponseMessageServiceTest {
 
 }

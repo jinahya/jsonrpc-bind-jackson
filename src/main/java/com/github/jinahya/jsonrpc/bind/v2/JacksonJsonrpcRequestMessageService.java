@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.spi;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -20,11 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2.spi;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcRequestMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage;
-
-import static com.github.jinahya.jsonrpc.bind.v2.spi.JacksonJsonrpcMessageServiceHelper.readValue;
-import static com.github.jinahya.jsonrpc.bind.v2.spi.JacksonJsonrpcMessageServiceHelper.writeValue;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcMessageServiceHelper.readValue;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcMessageServiceHelper.writeValue;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -32,8 +29,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class JacksonJsonrpcRequestMessageService
-        implements JsonrpcRequestMessageService {
+public class JacksonJsonrpcRequestMessageService implements JsonrpcRequestMessageService {
 
     @Override
     public JsonrpcRequestMessage fromJson(final Object source) {

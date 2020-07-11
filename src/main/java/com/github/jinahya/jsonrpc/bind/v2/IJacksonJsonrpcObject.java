@@ -22,14 +22,11 @@ package com.github.jinahya.jsonrpc.bind.v2;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import javax.validation.constraints.AssertTrue;
 import java.util.Map;
 
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.unrecognizedProperties;
-import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Objects.requireNonNull;
 
 interface IJacksonJsonrpcObject<S extends IJacksonJsonrpcObject<S>>
@@ -40,15 +37,6 @@ interface IJacksonJsonrpcObject<S extends IJacksonJsonrpcObject<S>>
     @AssertTrue
     default boolean isContextuallyValid() {
         return JsonrpcObject.super.isContextuallyValid();
-    }
-
-    @Override
-    default String toJson() {
-        try {
-            return getObjectMapper().writeValueAsString(this);
-        } catch (final JsonProcessingException jpe) {
-            throw new JsonrpcBindException(jpe);
-        }
     }
 
     /**

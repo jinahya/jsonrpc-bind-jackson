@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.spi;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -20,11 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2.spi;
  * #L%
  */
 
-import com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcResponseMessage;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessage;
-
-import static com.github.jinahya.jsonrpc.bind.v2.spi.JacksonJsonrpcMessageServiceHelper.readValue;
-import static com.github.jinahya.jsonrpc.bind.v2.spi.JacksonJsonrpcMessageServiceHelper.writeValue;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcMessageServiceHelper.readValue;
+import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcMessageServiceHelper.writeValue;
 import static java.util.Objects.requireNonNull;
 
 /**

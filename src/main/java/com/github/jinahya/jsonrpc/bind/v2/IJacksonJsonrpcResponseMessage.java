@@ -26,7 +26,6 @@ interface IJacksonJsonrpcResponseMessage<S extends IJacksonJsonrpcResponseMessag
         extends IJacksonJsonrpcMessage<S>,
                 JsonrpcResponseMessage {
 
-    // TODO: Remove!!!
     @Override
     @AssertTrue
     default boolean isResultAndErrorExclusive() {

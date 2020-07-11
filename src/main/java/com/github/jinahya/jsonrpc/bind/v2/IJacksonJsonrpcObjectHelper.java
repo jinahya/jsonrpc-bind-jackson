@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -29,66 +28,13 @@ import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_FALSE;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_FALSE_;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_TRUE;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.SUPPLYING_TRUE_;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.get;
 import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.set;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.supplyingNull;
 import static java.util.Objects.requireNonNull;
 
 final class IJacksonJsonrpcObjectHelper {
-
-    // -----------------------------------------------------------------------------------------------------------------
-    static <N extends JsonNode, R> R hasOneThenMapOrGet(final Class<?> clazz, final Object object,
-                                                        final BiFunction<Class<?>, Object, ? extends N> getter,
-                                                        final Function<? super N, ? extends R> function,
-                                                        final Supplier<? extends R> supplier) {
-        assert getter != null;
-        assert function != null;
-        assert supplier != null;
-        final N node = getter.apply(clazz, object);
-        if (node != null && !node.isNull()) {
-            return function.apply(node);
-        }
-        return supplier.get();
-    }
-
-    static <N extends JsonNode, R> R hasOneThenMapOrNull(final Class<?> clazz, final Object object,
-                                                         final BiFunction<Class<?>, Object, ? extends N> getter,
-                                                         final Function<? super N, ? extends R> function) {
-        return hasOneThenMapOrGet(clazz, object, getter, function, supplyingNull());
-    }
-
-    private static <N extends JsonNode> boolean hasOneThenEvaluateOrGet(
-            final Class<?> clazz, final Object object, final BiFunction<Class<?>, Object, ? extends N> getter,
-            final Predicate<? super N> predicate, final BooleanSupplier supplier) {
-        assert predicate != null;
-        assert supplier != null;
-        assert supplier == SUPPLYING_TRUE || supplier == SUPPLYING_FALSE;
-        return hasOneThenMapOrGet(clazz, object, getter, predicate::test,
-                                  supplier == SUPPLYING_TRUE ? SUPPLYING_TRUE_ : SUPPLYING_FALSE_);
-    }
-
-    static <N extends JsonNode> boolean hasOneThenEvaluateOrTrue(final Class<?> clazz, final Object object,
-                                                                 final BiFunction<Class<?>, Object, ? extends N> getter,
-                                                                 final Predicate<? super N> predicate) {
-        return hasOneThenEvaluateOrGet(clazz, object, getter, predicate, SUPPLYING_TRUE);
-    }
-
-    static <N extends JsonNode> boolean hasOneThenEvaluateOrFalse(
-            final Class<?> clazz, final Object object, final BiFunction<Class<?>, Object, ? extends N> getter,
-            final Predicate<? super N> predicate) {
-        return hasOneThenEvaluateOrGet(clazz, object, getter, predicate, SUPPLYING_FALSE);
-    }
 
     // -----------------------------------------------------------------------------------------------------------------
     static <T> List<T> arrayToList(final ArrayNode node, final Class<T> clazz) {

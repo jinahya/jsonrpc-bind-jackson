@@ -20,24 +20,8 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.node.ValueNode;
-
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage.PROPERTY_NAME_ID;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.get;
-import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcObjectHelper.set;
-
 final class IJacksonJsonrpcMessageHelper {
 
-    // --------------------------------------------------------------------------------------------------------- /*/$.id
-    static ValueNode getId(final Class<?> clazz, final Object object) {
-        return (ValueNode) get(clazz, PROPERTY_NAME_ID, object);
-    }
-
-    static void setId(final Class<?> clazz, final Object object, final ValueNode value) {
-        set(clazz, PROPERTY_NAME_ID, object, value);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     private IJacksonJsonrpcMessageHelper() {
         throw new AssertionError("instantiation is not allowed");
     }

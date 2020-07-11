@@ -25,12 +25,17 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import javax.validation.constraints.AssertTrue;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +46,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.lis
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * A class implements {@link com.github.jinahya.jsonrpc.bind.v2.JsonrpcRequestMessage} interface.
@@ -62,6 +68,87 @@ public class JacksonJsonrpcRequestMessage
                + "," + PROPERTY_NAME_ID + "=" + id
                + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
                + "}";
+    }
+
+    // -------------------------------------------------------------------------------------------------------------- id
+    @Override
+    public boolean hasId() {
+        return id != null && !id.isNull();
+    }
+
+    @Override
+    @AssertTrue
+    public boolean isIdContextuallyValid() {
+        if (!hasId()) {
+            return true;
+        }
+        return id.isTextual() || id.isIntegralNumber();
+    }
+
+    @Override
+    public String getIdAsString() {
+        if (!hasId()) {
+            return null;
+        }
+        return id.asText();
+    }
+
+    @Override
+    public void setIdAsString(final String id) {
+        this.id = ofNullable(id).map(TextNode::new).orElse(null);
+    }
+
+    @Override
+    public BigInteger getIdAsNumber() {
+        if (!hasId()) {
+            return null;
+        }
+        if (id.isNumber()) {
+            return id.bigIntegerValue(); // BigInteger.ZERO <- !isNumber()
+        }
+        try {
+            return new BigInteger(getIdAsString());
+        } catch (final NumberFormatException nfe) {
+            // suppressed
+        }
+        throw new JsonrpcBindException("unable to bind id as a number");
+    }
+
+    @Override
+    public void setIdAsNumber(final BigInteger id) {
+        this.id = ofNullable(id).map(BigIntegerNode::valueOf).orElse(null);
+    }
+
+    @Override
+    public Long getIdAsLong() {
+        if (!hasId()) {
+            return null;
+        }
+        if (id.canConvertToLong()) {
+            return id.longValue();
+        }
+        return super.getIdAsLong();
+    }
+
+    @Override
+    public void setIdAsLong(final Long id) {
+        this.id = ofNullable(id).map(LongNode::new).orElse(null);
+    }
+
+    @Override
+    public Integer getIdAsInteger() {
+        if (!hasId()) {
+            return null;
+        }
+        if (id.canConvertToInt()) {
+            return id.intValue();
+        }
+        return super.getIdAsInteger();
+    }
+
+    @Override
+    public void setIdAsInteger(final Integer id) {
+        this.id = ofNullable(id).map(IntNode::new).orElse(null);
     }
 
     // ---------------------------------------------------------------------------------------------------------- params

@@ -1,4 +1,4 @@
-package com.github.jinahya.jsonrpc.bind.v2.spi;
+package com.github.jinahya.jsonrpc.bind.v2;
 
 /*-
  * #%L
@@ -21,7 +21,7 @@ package com.github.jinahya.jsonrpc.bind.v2.spi;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessage;
+import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
@@ -57,7 +57,7 @@ final class JacksonJsonrpcMessageServiceHelper {
                 }
                 throw new NoSuchMethodException("no readValue method for " + k);
             } catch (final ReflectiveOperationException roe) {
-                throw new RuntimeException(roe);
+                throw new JsonrpcBindException(roe);
             }
         });
     }
@@ -68,7 +68,7 @@ final class JacksonJsonrpcMessageServiceHelper {
         try {
             return clazz.cast(readValueHandle(source.getClass()).invoke(getObjectMapper(), source, clazz));
         } catch (final Throwable t) {
-            throw new RuntimeException(t);
+            throw new JsonrpcBindException(t);
         }
     }
 
@@ -89,7 +89,7 @@ final class JacksonJsonrpcMessageServiceHelper {
                 }
                 throw new NoSuchMethodException("no writeValue method for " + k);
             } catch (final ReflectiveOperationException roe) {
-                throw new RuntimeException(roe);
+                throw new JsonrpcBindException(roe);
             }
         });
     }
@@ -100,7 +100,7 @@ final class JacksonJsonrpcMessageServiceHelper {
         try {
             writeValueHandle(target.getClass()).invoke(getObjectMapper(), target, value);
         } catch (final Throwable t) {
-            throw new RuntimeException(t);
+            throw new JsonrpcBindException(t);
         }
     }
 
