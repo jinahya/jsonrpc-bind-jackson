@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.github.jinahya</groupId>
     <artifactId>jinahya-parent</artifactId>
-    <version>0.8.4</version>
+    <version>0.8.5</version>
   </parent>
 
   <artifactId>jsonrpc-bind-jackson</artifactId>
-  <version>0.2.0</version>
+  <version>0.7.1</version>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
@@ -32,7 +32,7 @@
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
     <url>https://github.com/jinahya/${project.artifactId}</url>
-    <tag>0.2.0</tag>
+    <tag>0.7.1</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
@@ -49,21 +49,24 @@
     <version.maven-surefire>3.0.0-M4</version.maven-surefire>
     <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
-    <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
-    <version.jsonrpc-bind>0.7.0</version.jsonrpc-bind>
+    <version.jsonrpc-bind>0.7.1</version.jsonrpc-bind>
+    <version.jsonrpc-bind-tests>${version.jsonrpc-bind}</version.jsonrpc-bind-tests>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-    </dependencies>
-  </dependencyManagement>
+  <repositories>
+    <repository>
+      <id>ossrh-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -77,40 +80,16 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <groupId>com.github.jinahya</groupId>
+      <artifactId>jsonrpc-bind-tests</artifactId>
+      <version>${version.jsonrpc-bind-tests}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.0.0</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.16.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.1.0.Alpha5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${version.org.junit.jupiter}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${version.org.junit.jupiter}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <version>${version.org.junit.jupiter}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -132,14 +111,14 @@
               <additionalJOption>-Xdoclint:all</additionalJOption>
             </additionalJOptions>
             <links>
-<!--              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>-->
+              <link>https://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</link>
               <link>https://fasterxml.github.io/jackson-databind/javadoc/${version.com.fasterxml.jackson.core-databind-javadoc}</link>
             </links>
             <offlineLinks>
-              <offlineLink>
-                <url>http://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</url>
-                <location>${project.build.directory}/jsonrpc-bind-javadoc</location>
-              </offlineLink>
+<!--              <offlineLink>-->
+<!--                <url>http://static.javadoc.io/com.github.jinahya/jsonrpc-bind/${version.jsonrpc-bind}</url>-->
+<!--                <location>${project.build.directory}/jsonrpc-bind-javadoc</location>-->
+<!--              </offlineLink>-->
             </offlineLinks>
           </configuration>
         </plugin>
@@ -191,7 +170,7 @@
             <!--            <phase>package</phase>-->
             <phase>generate-sources</phase>
             <goals>
-              <goal>unpack</goal>
+              <!--              <goal>unpack</goal>-->
             </goals>
             <configuration>
               <artifactItems>
