@@ -20,7 +20,7 @@ package com.github.jinahya.jsonrpc.bind.v2;
  * #L%
  */
 
-import javax.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.AssertTrue;
 
 interface IJacksonJsonrpcResponseMessage<S extends IJacksonJsonrpcResponseMessage<S>>
         extends IJacksonJsonrpcMessage<S>,

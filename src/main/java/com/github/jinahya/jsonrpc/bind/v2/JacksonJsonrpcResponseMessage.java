@@ -33,8 +33,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
+import jakarta.validation.constraints.AssertTrue;
 
-import javax.validation.constraints.AssertTrue;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +44,9 @@ import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.PRO
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.arrayToList;
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.listToArray;
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcMessageConstants.PROPERTY_NAME_ID;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageConstants.PROPERTY_NAME_ERROR;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageConstants.PROPERTY_NAME_RESULT;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -63,12 +66,12 @@ public class JacksonJsonrpcResponseMessage
     // -----------------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
-        return super.toString() + "{"
-               + PROPERTY_NAME_ID + "=" + id
-               + "," + PROPERTY_NAME_RESULT + "=" + result
-               + "," + PROPERTY_NAME_ERROR + "=" + error
-               + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
-               + "}";
+        return super.toString() + '{'
+               + PROPERTY_NAME_ID + '=' + id
+               + "," + PROPERTY_NAME_RESULT + '=' + result
+               + "," + PROPERTY_NAME_ERROR + '=' + error
+               + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + '=' + unrecognizedProperties
+               + '}';
     }
 
     // -------------------------------------------------------------------------------------------------------------- id

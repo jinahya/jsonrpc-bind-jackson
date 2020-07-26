@@ -26,8 +26,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import com.github.jinahya.jsonrpc.bind.JsonrpcBindException;
+import jakarta.validation.constraints.AssertTrue;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +36,7 @@ import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.PRO
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.arrayToList;
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.listToArray;
 import static com.github.jinahya.jsonrpc.bind.v2.JacksonJsonrpcConfiguration.getObjectMapper;
+import static com.github.jinahya.jsonrpc.bind.v2.JsonrpcResponseMessageErrorConstants.PROPERTY_NAME_DATA;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
@@ -53,10 +54,10 @@ public class JacksonJsonrpcResponseMessageError
 
     @Override
     public String toString() {
-        return super.toString() + "{"
-               + PROPERTY_NAME_DATA + "=" + data
-               + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + "=" + unrecognizedProperties
-               + "}";
+        return super.toString() + '{'
+               + PROPERTY_NAME_DATA + '=' + data
+               + "," + PROPERTY_NAME_UNRECOGNIZED_PROPERTIES + '=' + unrecognizedProperties
+               + '}';
     }
 
     // ------------------------------------------------------------------------------------------------------------ data

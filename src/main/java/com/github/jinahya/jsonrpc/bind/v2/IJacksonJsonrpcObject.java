@@ -22,8 +22,8 @@ package com.github.jinahya.jsonrpc.bind.v2;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import jakarta.validation.constraints.AssertTrue;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Map;
 
 import static com.github.jinahya.jsonrpc.bind.v2.IJacksonJsonrpcObjectHelper.unrecognizedProperties;

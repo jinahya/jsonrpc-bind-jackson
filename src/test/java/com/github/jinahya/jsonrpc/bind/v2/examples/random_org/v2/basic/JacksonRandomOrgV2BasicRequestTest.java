@@ -20,7 +20,6 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.random_org.v2.basic;
  * #L%
  */
 
-class JacksonRandomOrgV2BasicRequestTest
-        extends RandomOrgV2BasicRequestTest {
+class JacksonRandomOrgV2BasicRequestTest extends RandomOrgV2BasicRequestTest {
 
 }

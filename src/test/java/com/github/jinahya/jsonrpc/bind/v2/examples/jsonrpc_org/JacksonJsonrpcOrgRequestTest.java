@@ -23,7 +23,6 @@ package com.github.jinahya.jsonrpc.bind.v2.examples.jsonrpc_org;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class JacksonJsonrpcOrgRequestTest
-        extends JsonrpcOrgRequestTest {
+class JacksonJsonrpcOrgRequestTest extends JsonrpcOrgRequestTest {
 
 }
