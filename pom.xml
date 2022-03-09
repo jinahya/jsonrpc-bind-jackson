@@ -47,7 +47,7 @@
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-javadoc-plugin>3.2.0</version.maven-javadoc-plugin>
     <version.maven-surefire>3.0.0-M4</version.maven-surefire>
-    <version.com.fasterxml.jackson.core>2.11.0</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.core>2.12.6</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.core-databind-javadoc>2.11</version.com.fasterxml.jackson.core-databind-javadoc>
     <version.jsonrpc-bind>0.7.1</version.jsonrpc-bind>
     <version.jsonrpc-bind-tests>${version.jsonrpc-bind}</version.jsonrpc-bind-tests>
@@ -200,7 +200,7 @@
             <configuration>
               <skip>true</skip>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
